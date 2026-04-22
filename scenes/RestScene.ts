@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import { RunManager } from '../core/RunManager';
 import { createStatus } from '../combat/StatusSystem';
-
 type RestMode = 'root' | 'drill' | 'meditate' | 'reorganize';
 
 export class RestScene extends Phaser.Scene {
@@ -79,3 +78,34 @@ export class RestScene extends Phaser.Scene {
         onClick: () => this.renderReorganize(),
       },
     ];
+    const cx = Math.round(this.scale.width / 2);
+    options.forEach((option, index) => {
+      this.optionContainers.push(this.createButton(cx, 220 + index * 92, option.label, option.onClick));
+    });
+
+    this.optionContainers.push(this.createTextButton(640, 580, 'Leave', () => this.finish()));
+  }
+
+  private renderDrill(): void {
+    this.mode = 'drill';
+    this.clearOptions();
+
+    const run = RunManager.getRunState();
+    const upgradable = run?.deck.filter((card) => !card.upgraded) ?? [];
+    this.addSectionTitle('Choose a card to upgrade');
+
+    upgradable.slice(0, 6).forEach((card, index) => {
+      this.optionContainers.push(this.createButton(640, 200 + index * 60, `${card.name} (${card.type})`, () => {
+        card.upgraded = true;
+        if (card.value !== undefined) card.value += 3;
+        card.effects.forEach((effect) => {
+          if (effect.type === 'damage' || effect.type === 'block') effect.value += 3;
+          if (effect.type === 'draw') effect.value += 1;
+        });
+        RunManager.commitRunState();
+        this.finish(`Drilled ${card.name}`);
+      }));
+    });
+
+    this.optionContainers.push(this.createTextButton(640, 610, 'Back', () => this.renderRoot()));
+  }
