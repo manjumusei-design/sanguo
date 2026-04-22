@@ -135,3 +135,42 @@ export class HandManager {
       this.tweenTo(hc.container, targetPos, targetAlpha, isHovered);
     });
   }
+
+  setHover(index: number): void {
+    if (this.hoveredIndex === index) return;
+    this.hoveredIndex = index;
+    this.updateFan();
+    this.onCardHover?.(index);
+  }
+
+  clearHover(): void {
+    if (this.hoveredIndex === -1) return;
+    this.hoveredIndex = -1;
+    this.updateFan();
+    this.onCardHover?.(-1);
+  }
+
+  private tweenTo(
+    container: Phaser.GameObjects.Container,
+    pos: CardPosition,
+    alpha: number,
+    isHover: boolean
+  ): void {
+    this.scene.tweens.add({
+      targets: container,
+      x: pos.x,
+      y: pos.y,
+      rotation: pos.rotation,
+      scaleX: pos.scale,
+      scaleY: pos.scale,
+      alpha,
+      duration: TWEEN.fanTransition.duration,
+      ease: TWEEN.fanTransition.ease,
+    });
+
+    const idx = this.handCards.findIndex((handCard) => handCard.container === container);
+    const center = (this.handCards.length - 1) / 2;
+    const baseDepth = idx >= 0 ? this.handCards.length - Math.abs(idx - center) : 0;
+    container.setDepth(isHover ? 100 : baseDepth);
+  }
+}
