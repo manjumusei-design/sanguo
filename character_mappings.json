@@ -1,0 +1,1390 @@
+{
+  "version": 3,
+  "description": "Character to Spine asset mapping sheet.",
+  "required_animation_fields": [
+    "appear",
+    "dead",
+    "hit_1",
+    "hit_2",
+    "hit_3",
+    "ready",
+    "run",
+    "skill_0",
+    "skill_1",
+    "skill_2",
+    "style",
+    "win"
+  ],
+  "characters": {
+    "caocao": {
+      "display_name": "Cao Cao",
+      "assets": [
+        {
+          "id": "900200",
+          "label": "primary",
+          "animations": {
+            "appear": "appear",
+            "dead": "dead",
+            "hit_1": "hit1",
+            "hit_2": "hit2",
+            "hit_3": "hit3",
+            "ready": "ready",
+            "run": "run",
+            "skill_0": "skill0",
+            "skill_1": "skill1",
+            "skill_2": "skill2",
+            "style": "style",
+            "win": "win"
+          }
+        },
+        {
+          "id": "50200",
+          "label": "evil_version",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "liubei": {
+      "display_name": "Liu Bei",
+      "assets": [
+        {
+          "id": "900300",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "99900",
+          "label": "evil_version",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "sunquan": {
+      "display_name": "Sun Quan",
+      "assets": [
+        {
+          "id": "12100",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "50100",
+          "label": "evil_version",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "guanyu": {
+      "display_name": "Guan Yu",
+      "assets": [
+        {
+          "id": "900400",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "zhangfei": {
+      "display_name": "Zhang Fei",
+      "assets": [
+        {
+          "id": "110000",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "zhaoyun": {
+      "display_name": "Zhao Yun",
+      "assets": [
+        {
+          "id": "700200",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "zhugeliang": {
+      "display_name": "Zhuge Liang",
+      "assets": [
+        {
+          "id": "900100",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "machao": {
+      "display_name": "Ma Chao",
+      "assets": [
+        {
+          "id": "103006",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "huangzhong": {
+      "display_name": "Huang Zhong",
+      "assets": [
+        {
+          "id": "1300200",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "pangtong": {
+      "display_name": "Pang Tong",
+      "assets": [
+        {
+          "id": "105002",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "jiangwei": {
+      "display_name": "Jiang Wei",
+      "assets": [
+        {
+          "id": "900700",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "weiyan": {
+      "display_name": "Wei Yan",
+      "assets": [
+        {
+          "id": "11900",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "xiahoudun": {
+      "display_name": "Xiahou Dun",
+      "assets": [
+        {
+          "id": "31500",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "xiahouyuan": {
+      "display_name": "Xiahou Yuan",
+      "assets": [
+        {
+          "id": "30800",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "dianwei": {
+      "display_name": "Dian Wei",
+      "assets": [
+        {
+          "id": "900500",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "20201",
+          "label": "stage_2",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "xuchu": {
+      "display_name": "Xu Chu",
+      "assets": [
+        {
+          "id": "41300",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "zhangliao": {
+      "display_name": "Zhang Liao",
+      "assets": [
+        {
+          "id": "700600",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "simayi": {
+      "display_name": "Sima Yi",
+      "assets": [
+        {
+          "id": "109001",
+          "label": "phase_1",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "109002",
+          "label": "phase_2",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "109003",
+          "label": "phase_3",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "guojia": {
+      "display_name": "Guo Jia",
+      "assets": [
+        {
+          "id": "20100",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "xunyu": {
+      "display_name": "Xun Yu",
+      "assets": [
+        {
+          "id": "10050",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "yuejin": {
+      "display_name": "Yue Jin",
+      "assets": [
+        {
+          "id": "30901",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "caoren": {
+      "display_name": "Cao Ren",
+      "assets": [
+        {
+          "id": "20300",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "zhenji": {
+      "display_name": "Zhen Ji",
+      "assets": [
+        {
+          "id": "31401",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "zhouyu": {
+      "display_name": "Zhou Yu",
+      "assets": [
+        {
+          "id": "800200",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "luxun": {
+      "display_name": "Lu Xun",
+      "note": "No asset mapped yet.",
+      "assets": []
+    },
+    "lumeng": {
+      "display_name": "Lu Meng",
+      "assets": [
+        {
+          "id": "30600",
+          "label": "scholar",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "30700",
+          "label": "soldier",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "ganning": {
+      "display_name": "Gan Ning",
+      "assets": [
+        {
+          "id": "30900",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "taishici": {
+      "display_name": "Taishi Ci",
+      "assets": [
+        {
+          "id": "600800",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "huanggai": {
+      "display_name": "Huang Gai",
+      "assets": [
+        {
+          "id": "30100",
+          "label": "primary",
+          "note": "ID originally marked with uncertainty.",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "chengpu": {
+      "display_name": "Cheng Pu",
+      "assets": [
+        {
+          "id": "104001",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "sunce": {
+      "display_name": "Sun Ce",
+      "assets": [
+        {
+          "id": "12900",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "daqiao": {
+      "display_name": "Da Qiao",
+      "assets": [
+        {
+          "id": "104000",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "xiaoqiao": {
+      "display_name": "Xiao Qiao",
+      "assets": [
+        {
+          "id": "103004",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "lubu": {
+      "display_name": "LÃ¼ Bu",
+      "assets": [
+        {
+          "id": "104002",
+          "label": "first_encounter",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "10701",
+          "label": "second_encounter",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "104003",
+          "label": "mutation_third_phase",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "dongzhuo": {
+      "display_name": "Dong Zhuo",
+      "assets": [
+        {
+          "id": "103001",
+          "label": "phase_1",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "103002",
+          "label": "phase_2",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "103003",
+          "label": "phase_3",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "yuanshao": {
+      "display_name": "Yuan Shao",
+      "assets": [
+        {
+          "id": "31300",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "yuanshu": {
+      "display_name": "Yuan Shu",
+      "assets": [
+        {
+          "id": "1100700",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "huaxiong": {
+      "display_name": "Hua Xiong",
+      "assets": [
+        {
+          "id": "12300",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "diaochan": {
+      "display_name": "Diao Chan",
+      "assets": [
+        {
+          "id": "103005",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "zhangjiao": {
+      "display_name": "Zhang Jiao",
+      "assets": [
+        {
+          "id": "101001",
+          "label": "phase_1",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "101002",
+          "label": "phase_2",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        },
+        {
+          "id": "101003",
+          "label": "phase_3",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "menghuo": {
+      "display_name": "Meng Huo",
+      "assets": [
+        {
+          "id": "10601",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "zhurong": {
+      "display_name": "Zhurong",
+      "assets": [
+        {
+          "id": "40800",
+          "label": "primary",
+          "note": "ID originally marked with uncertainty.",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "yanliang": {
+      "display_name": "Yan Liang",
+      "assets": [
+        {
+          "id": "700300",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "wenchou": {
+      "display_name": "Wen Chou",
+      "assets": [
+        {
+          "id": "1100800",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "jiaxu": {
+      "display_name": "Jia Xu",
+      "assets": [
+        {
+          "id": "10200",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "chengong": {
+      "display_name": "Chen Gong",
+      "assets": [
+        {
+          "id": "10900",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "yujin": {
+      "display_name": "Yu Jin",
+      "assets": [
+        {
+          "id": "700400",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "pangde": {
+      "display_name": "Pang De",
+      "assets": [
+        {
+          "id": "200700",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "xuhuang": {
+      "display_name": "Xu Huang",
+      "assets": [
+        {
+          "id": "40200",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    },
+    "sunshangxiang": {
+      "display_name": "Sun Shangxiang",
+      "assets": [
+        {
+          "id": "31100",
+          "label": "primary",
+          "animations": {
+            "appear": "",
+            "dead": "",
+            "hit_1": "",
+            "hit_2": "",
+            "hit_3": "",
+            "ready": "",
+            "run": "",
+            "skill_0": "",
+            "skill_1": "",
+            "skill_2": "",
+            "style": "",
+            "win": ""
+          }
+        }
+      ]
+    }
+  }
+}
+
+
