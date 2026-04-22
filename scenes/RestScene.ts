@@ -175,3 +175,59 @@ export class RestScene extends Phaser.Scene {
       else this.renderRoot();
     }));
   }
+
+  private addSectionTitle(text: string): void {
+    const label = this.add.text(640, 140, text, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '18px',
+      color: '#e5e7eb',
+    }).setOrigin(0.5);
+    const container = this.add.container(0, 0, [label]);
+    this.optionContainers.push(container);
+  }
+
+  private createButton(x: number, y: number, label: string, onClick: () => void): Phaser.GameObjects.Container {
+    const btn = this.add.container(x, y);
+    const bg = this.add.rectangle(0, 0, 520, 52, 0x000000, 1).setStrokeStyle(2, 0x333333);
+    const text = this.add.text(0, 0, label, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      color: '#ffffff',
+      wordWrap: { width: 470 },
+      align: 'center',
+    }).setOrigin(0.5);
+    btn.add([bg, text]);
+    btn.setSize(520, 52);
+    btn.setInteractive({ useHandCursor: true });
+    btn.on('pointerover', () => bg.setFillStyle(0x111111));
+    btn.on('pointerout', () => bg.setFillStyle(0x000000));
+    btn.on('pointerdown', onClick);
+    return btn;
+  }
+
+  private createTextButton(x: number, y: number, label: string, onClick: () => void): Phaser.GameObjects.Container {
+    const container = this.add.container(x, y);
+    const text = this.add.text(0, 0, label, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '16px',
+      color: '#94a3b8',
+    }).setOrigin(0.5);
+    container.add(text);
+    container.setSize(180, 30);
+    container.setInteractive({ useHandCursor: true });
+    container.on('pointerover', () => text.setColor('#ffffff'));
+    container.on('pointerout', () => text.setColor('#94a3b8'));
+    container.on('pointerdown', onClick);
+    return container;
+  }
+
+  private finish(message?: string): void {
+    if (message && this.messageText) {
+      this.messageText.setText(message);
+    }
+    this.time.delayedCall(message ? 700 : 100, () => {
+      this.cameras.main.fadeOut(400, 0x000000);
+      this.time.delayedCall(400, () => this.scene.start('MapScene'));
+    });
+  }
+}
