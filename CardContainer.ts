@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import type { Card } from '../types';
 import { EMOJI } from '../data/emoji';
 import { TWEEN } from './TweenConfig';
+import { EffectResolverOptions, QueuedEffect } from './campaign/characters/combat/combat/EffectQueue';
+import { getStatusDefinition } from './campaign/characters/combat/StatusSystem';
 
 
 const CARD_COLORS: Record<Card['type'], number> = {
@@ -227,3 +229,68 @@ export function animateCardExhaust(
     },
   });
 }
+    if (queuedEffect.source === 'player' && target.id !== combatState.player.id && remainingDamage > 0) {
+      if (hasStatus(combatState.player, 'momentum')) {
+        removeStatus(combatState.player, 'momentum');
+      }
+      if (isEnemyCombatant(target)) {
+        revealRealIllusionTarget(target);
+        revealIllusionGroup(combatState, target.illusionGroupId);
+      }
+    }
+  }
+}
+
+function applyBlock(
+  queuedEffect: QueuedEffect,
+  combatState: CombatState,
+  options: EffectResolverOptions
+): void {
+  const targets = getTargets(queuedEffect.effect.target, combatState, queuedEffect);
+  for (const target of targets) {
+    if (hasStatus(target, 'encircled')) continue;
+
+    let blockValue = queuedEffect.effect.value;
+    blockValue += getStatusStacks(target, 'formation');
+    blockValue += getStatusStacks(target, 'rallied') * 2;
+    if (hasStatus(target, 'broken_formation')) {
+      blockValue = Math.floor(blockValue * 0.5);
+    }
+    if (target.id === combatState.player.id) {
+      forEachPlayerPower(combatState, (definition) => {
+        blockValue = definition.modifyBlockGained?.(blockValue, combatState, queuedEffect) ?? blockValue;
+      });
+    }
+
+		target.block += blockValue;
+		if (target.id === combatState.player.id && blockValue > 0) {
+			options.relicManager?. invoke('onBlockGained', {
+				combatState,
+				effectQueue: { enqueue: () => undefined },
+				blockAmount: blockValue,
+				rng: options.rng,
+			});
+		}
+	}
+}
+
+function applyDraw(
+  queuedEffect: QueuedEffect,
+  combatState: CombatState,
+  options: EffectResolverOptions
+): void {
+  for (let i = 0; i < queuedEffect.effect.value; i++) {
+    if (combatState.drawPile.length === 0) {
+      const newDrawPile = [...combatState.discardPile];
+      shuffleInPlace(newDrawPile, options.rng);
+      combatState.drawPile = newDrawPile;
+      combatState.discardPile = [];
+    }  
+
+    if (combatState.drawPile.length > 0) {
+      const card = combatState.drawPile.pop()!;
+      combatState.hand.push(card);
+    }
+  }
+}
+
