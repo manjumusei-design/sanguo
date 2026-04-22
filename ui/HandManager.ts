@@ -74,3 +74,24 @@ export class HandManager {
     }
     this.updateFan();
   }
+
+  addCard(container: Phaser.GameObjects.Container, data: Card): void {
+    this.handCards.push({ container, data, index: this.handCards.length });
+    this.updateFan();
+  }
+
+  getCard(index: number): Card | undefined {
+    return this.handCards[index]?.data;
+  }
+
+  getContainer(index: number): Phaser.GameObjects.Container | undefined {
+    return this.handCards[index]?.container;
+  }
+
+  size(): number {
+    return this.handCards.length;
+  }
+
+  onHover(callback: (index: number) => void): void {
+    this.onCardHover = callback;
+  }
