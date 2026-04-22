@@ -156,3 +156,11 @@ export function buildPreludeMap(config: PreludeConfig, rngSeed = 'prelude'): Map
     };
     return node;
   });
+
+  return {
+    nodes,
+    seed: rngSeed,
+    act: 1,
+    debug: { pathBias: 'safe', favoredRow: 1 },
+  };
+}
