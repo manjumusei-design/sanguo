@@ -272,3 +272,73 @@ export class LoreScene extends Phaser.Scene {
 
     this.continueButton = btn;
   }
+
+  //Timeline
+
+  private advanceTimeline(): void {
+    if (this.currentIndex >= LORE_EVENTS.length - 1) {
+      // Last event — go to menu
+      this.skipToMenu();
+      return;
+    }
+
+    // Select next event
+    this.selectEvent(this.currentIndex + 1);
+
+    // Scroll to keep selected event visible
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const sy = h / 720;
+    const startY = Math.round(120 * sy);
+    const spacing = Math.round(130 * sy);
+    const viewportCenter = Math.round(h / 2);
+    const eventY = startY + this.currentIndex * spacing;
+    const targetScroll = eventY - viewportCenter;
+    this.scrollY = Math.max(0, targetScroll);
+    this.clampScroll();
+    this.tweens.add({
+      targets: this.contentContainer,
+      y: -this.scrollY,
+      duration: 300,
+      ease: 'Sine.easeOut',
+    });
+  }
+  private skipToMenu(): void {
+    this.cameras.main.fadeOut(400, 0x0d0d1a);
+    this.time.delayedCall(400, () => {
+      this.scene.start('MenuScene');
+    });
+  }
+  private createMask(): void {
+    // Clip content to viewport area
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cx = Math.round(w / 2);
+    const sy = h / 720;
+
+    const maskGraphics = this.add.graphics();
+    maskGraphics.fillStyle(0xffffff);
+    maskGraphics.fillRect(0, Math.round(90 * sy), w, Math.round(540 * sy));
+
+    const mask = maskGraphics.createGeometryMask();
+    this.contentContainer.setMask(mask);
+    const topFade = this.add.rectangle(cx, Math.round(90 * sy), w, Math.round(30 * sy), 0x0d0d1a, 0.8);
+    topFade.setDepth(5);
+    const bottomFade = this.add.rectangle(cx, Math.round(630 * sy), w, Math.round(30 * sy), 0x0d0d1a, 0.8);
+    bottomFade.setDepth(5);
+  }
+  private scrollBy(amount: number): void {
+    this.scrollY += amount;
+    this.clampScroll();
+    this.contentContainer.setPosition(0, -this.scrollY);
+  }
+  private clampScroll(): void {
+    const h = this.scale.height;
+    const sy = h / 720;
+    const startY = Math.round(120 * sy);
+    const spacing = Math.round(130 * sy);
+    const viewport = Math.round(540 * sy);
+    const maxScroll = Math.max(0, LORE_EVENTS.length * spacing + startY - viewport);
+    this.scrollY = Phaser.Math.Clamp(this.scrollY, 0, maxScroll);
+  }
+}
