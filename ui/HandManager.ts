@@ -112,3 +112,26 @@ export class HandManager {
 
     return { x, y, rotation, scale };
   }
+
+  getHoveredPosition(pos: CardPosition): CardPosition {
+    return {
+      ...pos,
+      y: pos.y - 48,
+      scale: 1.12,
+      rotation: 0,
+    };
+  }
+
+  updateFan(): void {
+    const total = this.handCards.length;
+    if (total === 0) return;
+
+    this.handCards.forEach((hc, i) => {
+      const isHovered = i === this.hoveredIndex;
+      const basePos = this.getCardPosition(i, total);
+      const targetPos = isHovered ? this.getHoveredPosition(basePos) : basePos;
+      const targetAlpha = isHovered ? 1.0 : 0.95;
+
+      this.tweenTo(hc.container, targetPos, targetAlpha, isHovered);
+    });
+  }
