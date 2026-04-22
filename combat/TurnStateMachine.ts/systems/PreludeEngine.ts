@@ -131,3 +131,28 @@ export function getPreludeUnlock( //debug
   const lastNode = state.config.nodes[state.config.nodes.length - 1];
   return lastNode?.unlock ?? null;
 }
+
+import type { MapGraph, MapNode, NodeType } from '../types';
+export function buildPreludeMap(config: PreludeConfig, rngSeed = 'prelude'): MapGraph {
+  const nodes: MapNode[] = config.nodes.map((preludeNode, index) => {
+    const type = preludeNode.type === 'battle'
+      ? 'BATTLE'
+      : preludeNode.type === 'boss_preview'
+        ? 'BOSS'
+        : 'EVENT';
+
+    const id = `prelude_${index}`;
+    const x = index / Math.max(1, config.nodes.length - 1);
+    const y = 0.5;
+
+    const node: MapNode = {
+      id,
+      type: type as NodeType,
+      act: 1,
+      x,
+      y,
+      connections: index < config.nodes.length - 1 ? [`prelude_${index + 1}`] : [],
+      data: { preludeNodeIndex: index, preludeNodeType: preludeNode.type },
+    };
+    return node;
+  });
