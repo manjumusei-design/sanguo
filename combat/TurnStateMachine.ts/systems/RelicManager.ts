@@ -72,3 +72,30 @@ export class RelicManager {
         return 2;
     }
   }
+
+    invoke(hook: RelicHook, context: RelicContext): void {
+    const ordered = this.relics
+      .filter((relic) => relic.hooks.includes(hook))
+      .map((relic, index) => ({ relic, index }))
+      .sort((a, b) => {
+        const rarityDiff = this.rarityWeight(a.relic) - this.rarityWeight(b.relic);
+        if (rarityDiff !== 0) return rarityDiff;
+        return a.index - b.index;
+      })
+      .map((entry) => entry.relic);
+
+    for (const relic of ordered) {
+      if (relic.hooks.includes(hook)) {
+        relic.effect({
+          ...context,
+          relicManager: {
+            setFlag: this.setFlag.bind(this),
+            getFlag: this.getFlag.bind(this),
+            incrementCounter: this.incrementCounter.bind(this),
+            getCounter: this.getCounter.bind(this),
+          },
+        });
+      }
+    }
+  }
+}
