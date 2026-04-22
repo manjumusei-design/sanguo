@@ -158,6 +158,7 @@ export class DragDropSystem {
     }
   }
 
+
     private findValidZone(pointer: Phaser.Input.Pointer): DropZone | null {
     for (const zone of this.zones) {
       if (Phaser.Geom.Rectangle.Contains(zone.bounds, pointer.x, pointer.y)) {
@@ -166,3 +167,33 @@ export class DragDropSystem {
     }
     return null;
   }
+
+
+//Check if the drop zone type like enemy or self is compatible with the card target
+  private isTargetCompatible(zoneType: DropZoneType, cardTarget: CardTarget): boolean {
+    switch (cardTarget) {
+      case 'ENEMY':
+        return zoneType === 'enemy';
+      case 'SELF':
+        return zoneType === 'self';
+      case 'ALL_ENEMIES':
+        return zoneType === 'enemy' || zoneType === 'all_enemies';
+      case 'ALL':
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  private clearZoneHighlights(): void {
+    for (const zone of this.zones) {
+      zone.highlight?.clear();
+      zone.visual?.clear();
+    }
+    this.activeZone = null;
+  }
+
+  private timeDelayedCall(ms: number, callback: () => void): void {
+    this.scene.time.delayedCall(ms, callback);
+  }
+}
