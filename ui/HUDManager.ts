@@ -40,3 +40,29 @@ export class HUDManager {
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
   }
+
+  create(): void {
+    this.createTopBar();
+    this.createQiOrb();
+    this.createPileDisplays();
+    this.createRelicRack();
+    this.createPowerDisplay();
+    this.createStatusDisplay();
+  }
+  private createTopBar(): void {
+    this.topBar = this.scene.add.container(0, 0).setDepth(120);
+    this.topBarBg = this.scene.add.graphics();
+  }
+
+//Energy orb rendering 
+  private createQiOrb(): void {
+    const sw = this.scene.scale.width;
+    const sh = this.scene.scale.height;
+    const x = Math.round(sw * 0.18);
+    const y = Math.round(sh * 0.90);
+    this.qiOrb = this.scene.add.container(x, y).setDepth(100);
+    const orb = this.scene.add.circle(0, 0, 32, 0x2d8a4e, 0.9)
+      .setStrokeStyle(2, 0x4ade80);
+    this.qiOrb.add(orb);
+    const glow = this.scene.add.circle(0, 0, 22, 0x4ade80, 0.3);
+    this.qiOrb.add(glow);
