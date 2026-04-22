@@ -23,3 +23,7 @@ export class DragDropSystem {
   // Store original position so card can return if drop is invalid
   private originalX = 0;
   private originalY = 0;
+
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
