@@ -212,3 +212,13 @@ function generateCardStock(character: CharacterId, deck: Card[], rng: RNG): stri
 
   return stock;
 }
+
+function generateRelicStock(rng: RNG): string[] {
+  const relics = Array.from(relicRegistry.values());
+  const standard = relics.filter((relic) => classifyRelicTier(relic.id) === 'STANDARD');
+  const premium = relics.filter((relic) => classifyRelicTier(relic.id) === 'PREMIUM');
+  return [
+    rng.pick(standard).id,
+    rng.pick(premium).id,
+  ];
+}
