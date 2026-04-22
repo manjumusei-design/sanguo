@@ -137,3 +137,27 @@ export class RewardScene extends Phaser.Scene {
         this.refreshStateText();
       });
     }
+
+    const fixedRelic = this.rewardData.relicId ? getRelic(this.rewardData.relicId) : undefined;
+    if (fixedRelic) {
+      this.fixedRelicRow = this.createRewardRow(cx, rowStartY + 64, rowWidth, `Relic: ${fixedRelic.name}`, '#c7a8ff', () => {
+        this.openRelicModal('fixed', [{
+          id: fixedRelic.id,
+          name: fixedRelic.name,
+          description: fixedRelic.description,
+        }]);
+      });
+    }
+
+    const relicOptions: RelicChoice[] = (this.rewardData.relicOptions ?? [])
+      .map((id) => getRelic(id))
+      .filter((relic): relic is NonNullable<typeof relic> => Boolean(relic))
+      .map((relic) => ({ id: relic.id, name: relic.name, description: relic.description }));
+    if ((this.rewardData.relicOptions?.length ?? 0) > 0 && relicOptions.length === 0) {
+      // No valid relics after filtering: resolve this gate to avoid soft-lock.
+      this.relicChoiceResolved = true;
+    } else if (relicOptions.length > 0) {
+      this.relicChoiceRow = this.createRewardRow(cx, rowStartY + 128, rowWidth, 'Choose a Relic', '#c7a8ff', () => {
+        this.openRelicModal('choice', relicOptions);
+      });
+    }
