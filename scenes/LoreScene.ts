@@ -234,3 +234,41 @@ export class LoreScene extends Phaser.Scene {
       textObj.setText(event.text);
     }
   }
+
+//Cont
+
+  private createContinueButton(): void {
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cx = Math.round(w / 2);
+    const sy = h / 720;
+
+    const btn = this.add.container(cx, Math.round(670 * sy));
+
+    const bg = this.add.rectangle(0, 0, 200, 40, 0xf0c060, 0.9)
+      .setStrokeStyle(2, 0xffd080);
+    const label = this.add.text(0, 0, 'Continue', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '16px',
+      color: '#000000',
+    }).setOrigin(0.5);
+
+    btn.add([bg, label]);
+    btn.setSize(200, 40);
+    btn.setInteractive({ useHandCursor: true });
+    btn.setDepth(10);
+
+    btn.on('pointerover', () => {
+      bg.setScale(1.05);
+      label.setScale(1.05);
+    });
+    btn.on('pointerout', () => {
+      bg.setScale(1);
+      label.setScale(1);
+    });
+    btn.on('pointerdown', () => {
+      this.advanceTimeline();
+    });
+
+    this.continueButton = btn;
+  }
