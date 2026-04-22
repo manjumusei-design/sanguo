@@ -182,3 +182,33 @@ function generateCardStock(character: CharacterId, deck: Card[], rng: RNG): stri
 
     return weight;
   };
+
+    const drawFromBucket = (rarity: CardRarity, count: number) => {
+    const bucket = byRarity(rarity).filter((card) => !stock.includes(card.id));
+    for (let i = 0; i < count && bucket.length > 0; i++) {
+      const chosen = pickWeighted(rng, bucket, weightCard);
+      stock.push(chosen.id);
+      bucket.splice(bucket.findIndex((card) => card.id === chosen.id), 1);
+    }
+  };
+
+  drawFromBucket('COMMON', 2);
+  drawFromBucket('UNCOMMON', 2);
+  drawFromBucket('RARE', 1);
+
+  const hasFixCard = stock
+    .map((id) => allCards.get(id))
+    .some((card) => card && (isDefensiveCard(card) || isConsistencyCard(card)));
+
+  if (!hasFixCard) {
+    const fixCandidate = candidates
+      .filter((card) => !stock.includes(card.id))
+      .sort((a, b) => weightCard(b) - weightCard(a))
+      .find((card) => isDefensiveCard(card) || isConsistencyCard(card));
+    if (fixCandidate) {
+      stock[0] = fixCandidate.id;
+    }
+  }
+
+  return stock;
+}
