@@ -55,3 +55,20 @@ export class RelicManager {
   getCounter(key: string): number {
     return this.counters.get(key) ?? 0;
   }
+
+    private rarityWeight(relic: Relic): number {
+    switch (relic.rarity) {
+      case 'boss':
+        return 0;
+      case 'rare':
+        return 1;
+      case 'uncommon':
+        return 2;
+      case 'common':
+        return 3;
+      case 'cursed':
+        return 4;
+      default:
+        return 2;
+    }
+  }
