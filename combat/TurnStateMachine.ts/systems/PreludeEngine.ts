@@ -104,3 +104,23 @@ export function advancePrelude(
       reward = choice.reward;
     }
   }
+
+  state.currentNodeIndex += 1;
+  if (state.currentNodeIndex >= state.config.nodes.length) {
+    state.completed = true;
+  }
+
+  return { state, reward };
+}
+
+export function applyBattleReward(state: PreludeState, cardOrRelicId: string): void {
+  const card = getCard(cardOrRelicId);
+  if (card) {
+    state.deck.push(card);
+    return;
+  }
+
+  if (getRelic(cardOrRelicId) && !state.relicIds.includes(cardOrRelicId)) {
+    state.relicIds.push(cardOrRelicId);
+  }
+}
