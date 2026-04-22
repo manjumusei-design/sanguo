@@ -222,3 +222,32 @@ function generateRelicStock(rng: RNG): string[] {
     rng.pick(premium).id,
   ];
 }
+
+export function generateShopInventory(character: CharacterId, deck: Card[], seed: string, rerollCount = 0): ShopInventory {
+  const rng = new RNG(`${seed}::shop::${character}::${rerollCount}`);
+  return {
+    cardIds: generateCardStock(character, deck, rng),
+    relicIds: generateRelicStock(rng),
+    rerollCount,
+  };
+}
+
+export function getCardPrice(cardId: string): number {
+  switch (classifyCardRarity(cardId)) {
+    case 'COMMON':
+      return 50;
+    case 'UNCOMMON':
+      return 75;
+    case 'RARE':
+      return 120;
+  }
+}
+
+export function getRelicPrice(relicId: string): number {
+  switch (classifyRelicTier(relicId)) {
+    case 'STANDARD':
+      return 150;
+    case 'PREMIUM':
+      return 220;
+  }
+}
