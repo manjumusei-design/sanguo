@@ -182,3 +182,96 @@ export class RewardScene extends Phaser.Scene {
     this.refreshCardSelectionVisuals();
     this.refreshStateText();
   }
+
+  private renderCardSection(cx: number, y: number, panelW: number): void {
+    const cardIds = this.rewardData.cardOptions?.slice(0, 3) ?? [];
+    if (cardIds.length === 0) return;
+
+    this.add.text(cx, y - 36, 'Choose a Card', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '18px',
+      color: '#d8c8af',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+
+    const gap = 20;
+    const cardW = Math.min(240, Math.floor((panelW - 160 - gap * 2) / 3));
+    const cardH = 320;
+    const startX = cx - ((cardIds.length * cardW + (cardIds.length - 1) * gap) / 2) + cardW / 2;
+
+    cardIds.forEach((cardId, index) => {
+      const card = getCard(cardId);
+      if (!card) return;
+      const cardX = startX + index * (cardW + gap);
+
+      const container = this.add.container(cardX, y + cardH / 2);
+
+      // Card background - flat solid color, no gradients
+      const bg = this.add.rectangle(0, 0, cardW, cardH, 0x000000, 1).setStrokeStyle(2, 0x444444, 1);
+
+      // Rarity color
+      const rarityColor = card.rarity === 'RARE' ? '#f6d37c' : card.rarity === 'UNCOMMON' ? '#9cd0ff' : '#c4b5a0';
+
+      // Cost badge (top-left)
+      const costBg = this.add.rectangle(-cardW / 2 + 22, -cardH / 2 + 22, 32, 32, 0x0f0f0f, 1).setStrokeStyle(1, 0x444444, 1);
+      const costText = this.add.text(-cardW / 2 + 22, -cardH / 2 + 22, String(card.cost), {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '16px',
+        color: '#ffd37a',
+        fontStyle: 'bold',
+      }).setOrigin(0.5);
+
+      // Card name
+      const name = this.add.text(0, -cardH / 2 + 60, card.name, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '17px',
+        color: rarityColor,
+        fontStyle: 'bold',
+        wordWrap: { width: cardW - 20 },
+        align: 'center',
+      }).setOrigin(0.5);
+
+      // Type line
+      const typeLine = this.add.text(0, -cardH / 2 + 88, card.type.toUpperCase(), {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '11px',
+        color: '#8a7e6b',
+      }).setOrigin(0.5);
+
+      // Divider line
+      const divider = this.add.rectangle(0, -cardH / 2 + 108, cardW - 24, 1, 0x4a3f32, 0.8);
+
+      // Description
+      const description = this.add.text(0, 8, card.description ?? 'No description available.', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        color: '#e0d5c5',
+        wordWrap: { width: cardW - 24 },
+        align: 'center',
+        lineSpacing: 4,
+      }).setOrigin(0.5);
+
+      container.add([bg, costBg, costText, name, typeLine, divider, description]);
+      container.setSize(cardW, cardH);
+      container.setInteractive({ useHandCursor: true });
+      container.on('pointerover', () => {
+        if (this.cardRewardResolved) return;
+        bg.setStrokeStyle(2, 0xd8b06a, 1);
+        this.tweens.add({ targets: container, scaleX: 1.04, scaleY: 1.04, duration: 80, ease: 'Sine.easeOut' });
+      });
+      container.on('pointerout', () => {
+        if (this.cardRewardResolved) return;
+        const selected = this.selectedCardId === card.id;
+        bg.setStrokeStyle(2, selected ? 0xd8b06a : 0x444444, 1);
+        this.tweens.add({ targets: container, scaleX: 1, scaleY: 1, duration: 90, ease: 'Sine.easeOut' });
+      });
+      container.on('pointerdown', () => {
+        if (this.cardRewardResolved) return;
+        this.selectedCardId = card.id;
+        this.cardSkipped = false;
+        this.refreshCardSelectionVisuals();
+        this.refreshStateText();
+      });
+
+      this.cardButtons.push({ id: card.id, container, bg });
+    });
