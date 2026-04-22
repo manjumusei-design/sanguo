@@ -95,3 +95,45 @@ export class RewardScene extends Phaser.Scene {
     const panelW = Math.min(1120, Math.max(860, w - 100));
     const panelH = Math.min(860, Math.max(700, h - 60));
     const panelTop = cy - panelH / 2;
+
+    this.add.rectangle(cx, cy, w, h, 0x0a0a10, 1);
+    this.add.rectangle(cx, cy, panelW, panelH, 0x000000, 1).setStrokeStyle(2, 0x444444, 1);
+    this.add.rectangle(cx, panelTop + 2, panelW, 3, 0x8f7647, 1);
+    this.scene.launch('HUDScene');
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.scene.stop('HUDScene');
+    });
+
+    this.add.text(cx, panelTop + 42, 'Victory!', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '38px',
+      color: '#f0d5a3',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+
+    this.add.text(cx, panelTop + 78, `Act ${run?.act ?? '?'}  •  ${nodeType}`, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      color: '#8a7e6b',
+    }).setOrigin(0.5);
+
+    this.infoText = this.add.text(cx, panelTop + 102, '', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '13px',
+      color: '#a09580',
+    }).setOrigin(0.5);
+
+    const rowWidth = panelW - 120;
+    const rowStartY = panelTop + 148;
+
+    if (this.rewardData.gold > 0) {
+      this.goldRow = this.createRewardRow(cx, rowStartY, rowWidth, `+${this.rewardData.gold} Gold`, '#ffd37a', () => {
+        if (this.claimedGold) return;
+        this.claimedGold = true;
+        RunManager.applyReward({ gold: this.rewardData.gold });
+        this.hideClaimedRow(this.goldRow);
+        this.goldRow = null;
+        this.playGoldClaimFlair(cx, rowStartY);
+        this.refreshStateText();
+      });
+    }
