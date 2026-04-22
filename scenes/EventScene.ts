@@ -252,3 +252,9 @@ export class EventScene extends Phaser.Scene {
         }],
       });
     }
+
+      this.cameras.main.fadeOut(400, 0x000000);
+    this.time.delayedCall(400, () => {
+      this.scene.start('MapScene');
+    });
+  }
