@@ -115,3 +115,15 @@ export class DragDropSystem {
     this.draggingContainer.setDepth(0);
   }
 
+// Abort the drag without any callbacks 
+  cancel(): void {
+    this.clearZoneHighlights();
+    this.draggingContainer = null;
+    this.draggingData = null;
+    this.activeZone = null;
+  }
+
+  isDragging(): boolean {
+    return this.draggingContainer !== null;
+  }
+  
