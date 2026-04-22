@@ -144,3 +144,11 @@ function isConsistencyCard(card: Card): boolean {
 function isScalingCard(card: Card): boolean {
   return card.type === 'POWER' || card.effects.some((effect) => effect.statusId === 'valor' || effect.statusId === 'formation');
 }
+
+function analyzeDeck(deck: Card[]) {
+  return {
+    defense: deck.filter(isDefensiveCard).length,
+    consistency: deck.filter(isConsistencyCard).length,
+    scaling: deck.filter(isScalingCard).length,
+  };
+}
