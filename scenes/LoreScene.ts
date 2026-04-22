@@ -192,3 +192,45 @@ export class LoreScene extends Phaser.Scene {
 
     return container;
   }
+
+//Select
+  private selectEvent(index: number): void {
+    // Deselect previous
+    if (this.selectedEvent) {
+      const bg = this.selectedEvent.getData('bg') as Phaser.GameObjects.Rectangle | null;
+      if (bg) {
+        bg.setStrokeStyle(2, 0x444455);
+        bg.setFillStyle(0x000000, 1);
+      }
+      this.tweens.add({
+        targets: this.selectedEvent,
+        scaleX: 1,
+        scaleY: 1,
+        duration: 100,
+      });
+    }
+
+    // Select new
+    this.currentIndex = index;
+    this.selectedEvent = this.eventBoxes[index];
+
+    const bg = this.selectedEvent.getData('bg') as Phaser.GameObjects.Rectangle | null;
+    if (bg) {
+      bg.setStrokeStyle(2, 0xf0c060);
+      bg.setFillStyle(0x2a2040, 0.95);
+    }
+
+    this.tweens.add({
+      targets: this.selectedEvent,
+      scaleX: 1.03,
+      scaleY: 1.03,
+      duration: 150,
+      ease: 'Sine.easeOut',
+    });
+
+    const event = this.selectedEvent.getData('event') as LoreEvent;
+    const textObj = this.selectedEvent.getData('text') as Phaser.GameObjects.Text | null;
+    if (textObj) {
+      textObj.setText(event.text);
+    }
+  }
