@@ -1,0 +1,94 @@
+import Phaser from 'phaser';
+import { RunManager } from '../core/RunManager';
+import { getEvent } from '../data/events';
+import type { Card, EventOutcome, GameEvent, StatusId } from '../types';
+import { allCards, getCard, getStartingDeck } from '../data/cards';
+import { getRNG } from '../core/SeedUtils';
+import { selectEventForRun } from '../systems/EventSelector';
+import { GameDebug } from '../systems/GameDebug';
+
+export class EventScene extends Phaser.Scene {
+  private event!: GameEvent;
+  private forcedEventId?: string;
+  private eventPool: 'general' | 'risk_reward' = 'general';
+  private eventSource: 'event' | 'mystery' = 'event';
+  private selectedCategory: 'shared' | 'character' | 'act' | null = null;
+
+  constructor() {
+    super({ key: 'EventScene' });
+  }
+
+  init(data?: { eventId?: string; eventPool?: 'general' | 'risk_reward'; eventSource?: 'event' | 'mystery' }): void {
+    this.forcedEventId = data?.eventId;
+    this.eventPool = data?.eventPool ?? 'general';
+    this.eventSource = data?.eventSource ?? 'event';
+  }
+
+  create(): void {
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cx = Math.round(w / 2);
+
+    this.add.rectangle(cx, Math.round(h / 2), w, h, 0x000000, 1);
+
+    const run = RunManager.getRunState();
+    if (!run) {
+      this.scene.start('MenuScene');
+      return;
+    }
+
+    // Launch persistent HUD overlay
+    this.scene.launch('HUDScene');
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.scene.stop('HUDScene');
+    });
+
+    const rng = getRNG(run.seed, `event:${run.currentNode}`);
+    const selected = this.forcedEventId
+      ? { eventId: this.forcedEventId, definition: undefined, category: 'shared' as const }
+      : selectEventForRun(run, this.eventPool, this.eventSource, rng);
+    const eventId = selected.eventId;
+    const picked = getEvent(eventId);
+    if (!picked) {
+      this.scene.start('MapScene');
+      return;
+    }
+
+    this.event = picked;
+    this.selectedCategory = selected.category;
+    if (!this.forcedEventId && selected.definition) {
+      RunManager.recordEventSeen({
+        id: selected.eventId,
+        act: run.act,
+        category: selected.category,
+        family: selected.definition.family,
+        source: this.eventSource,
+      });
+    }
+
+    if (import.meta.env.DEV) {
+      GameDebug.setSceneContext('EventScene', () => {
+        const latestRun = RunManager.getRunState();
+        return {
+          eventId: this.event.id,
+          eventTitle: this.event.title,
+          forcedEventId: this.forcedEventId ?? null,
+          eventPool: this.eventPool,
+          eventSource: this.eventSource,
+          selectedCategory: this.selectedCategory,
+          choices: this.event.choices.map((choice) => ({
+            text: choice.text,
+            outcomeType: choice.outcome.type,
+            statusId: choice.outcome.statusId ?? null,
+            value: choice.outcome.value ?? null,
+          })),
+          pendingStatuses: latestRun?.pendingStatuses ?? [],
+          nextCombatModifiers: latestRun?.nextCombatModifiers ?? null,
+          recentEvents: latestRun?.eventHistory.slice(-5) ?? [],
+        };
+      });
+      this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => GameDebug.clearSceneContext('EventScene'));
+    }
+
+    this.renderEvent();
+  }
