@@ -563,3 +563,92 @@ export class RewardScene extends Phaser.Scene {
       this.continueButton?.setAlpha(0.95);
     }
   }
+
+  private createRewardRow(
+    x: number,
+    y: number,
+    width: number,
+    label: string,
+    accentColor: string,
+    onClick: () => void
+  ): Phaser.GameObjects.Container {
+    const container = this.add.container(x, y);
+    const bg = this.add.rectangle(0, 0, width, 52, 0x000000, 1).setStrokeStyle(1, 0x444444, 1);
+    const icon = this.add.text(-width / 2 + 20, 0, '>', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      color: accentColor,
+    }).setOrigin(0, 0.5);
+    const text = this.add.text(-width / 2 + 42, 0, label, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '15px',
+      color: '#e8dcc8',
+      wordWrap: { width: width - 70 },
+    }).setOrigin(0, 0.5);
+
+    container.add([bg, icon, text]);
+    container.setSize(width, 52);
+    container.setInteractive({ useHandCursor: true });
+    container.on('pointerover', () => {
+      bg.setFillStyle(0x111111);
+      bg.setStrokeStyle(1, 0x8f7647, 1);
+    });
+    container.on('pointerout', () => {
+      bg.setFillStyle(0x000000);
+      bg.setStrokeStyle(1, 0x4a3f32, 1);
+    });
+    container.on('pointerdown', () => onClick());
+    return container;
+  }
+
+  private hideClaimedRow(row: Phaser.GameObjects.Container | null): void {
+    if (!row) return;
+    row.disableInteractive();
+    this.tweens.add({
+      targets: row,
+      alpha: 0,
+      y: row.y - 6,
+      duration: 200,
+      ease: 'Sine.easeOut',
+      onComplete: () => row.setVisible(false),
+    });
+  }
+
+  private setBackgroundInteractives(enabled: boolean): void {
+    const toggle = (obj: Phaser.GameObjects.GameObject | null | undefined) => {
+      if (!obj) return;
+      if (enabled) {
+        (obj as Phaser.GameObjects.GameObject & { setInteractive: (config?: { useHandCursor?: boolean }) => void })
+          .setInteractive({ useHandCursor: true });
+      } else {
+        (obj as Phaser.GameObjects.GameObject & { disableInteractive: () => void }).disableInteractive();
+      }
+    };
+
+    this.cardButtons.forEach((entry) => toggle(entry.container));
+    toggle(this.goldRow);
+    toggle(this.fixedRelicRow);
+    toggle(this.relicChoiceRow);
+    toggle(this.cardConfirmButton);
+    toggle(this.cardSkipButton);
+    toggle(this.continueButton);
+  }
+
+  private playGoldClaimFlair(x: number, y: number): void {
+    const burst = this.add.text(x, y - 30, `+${this.rewardData.gold} Gold`, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '18px',
+      color: '#ffd37a',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+
+    this.tweens.add({
+      targets: burst,
+      y: y - 60,
+      alpha: 0,
+      duration: 400,
+      ease: 'Sine.easeOut',
+      onComplete: () => burst.destroy(),
+    });
+  }
+}
