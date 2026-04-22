@@ -48,3 +48,22 @@ export class IntentDisplay {
       this.pulse();
       return;
     }
+
+    const { icon, text } = this.getIntentVisual(enemy);
+    this.icon.setText(icon);
+    this.text.setText(text);
+    this.container.setVisible(true);
+    this.pulse();
+  }
+
+  hide(): void {
+    this.container.setVisible(false);
+  }
+
+  clear(): void {
+    this.hide();
+  }
+
+  destroy(): void {
+    this.container.destroy();
+  }
