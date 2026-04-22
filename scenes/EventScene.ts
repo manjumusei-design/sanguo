@@ -258,3 +258,43 @@ export class EventScene extends Phaser.Scene {
       this.scene.start('MapScene');
     });
   }
+
+  private applyAttachedStatus(outcome: EventOutcome): void {
+    if (!outcome.statusId || outcome.type === 'status' || outcome.type === 'remove_card') {
+      return;
+    }
+
+    RunManager.addPendingStatus(outcome.statusId, outcome.statusStacks ?? 1);
+
+    if (this.event.id === 'war_drums' && outcome.statusId === 'rallied') {
+      RunManager.addPendingStatus('command', 1);
+    }
+  }
+
+  private applyCombatModifiers(outcome: EventOutcome): void {
+    if (!outcome.combatModifiers) {
+      return;
+    }
+
+    const startStatuses = (outcome.combatModifiers.playerStatuses ?? []).map((status) => ({
+      id: status.id,
+      name: status.id,
+      description: '',
+      stacks: status.stacks,
+    }));
+    const enemyStartStatuses = (outcome.combatModifiers.enemyStatuses ?? []).map((status) => ({
+      id: status.id,
+      name: status.id,
+      description: '',
+      stacks: status.stacks,
+    }));
+
+    if (!startStatuses.length && !enemyStartStatuses.length) {
+      return;
+    }
+
+    RunManager.prepareNextCombat({
+      startStatuses,
+      enemyStartStatuses,
+    });
+  }
