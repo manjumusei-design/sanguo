@@ -53,3 +53,29 @@ export class RestScene extends Phaser.Scene {
     this.mode = 'root';
     this.clearOptions();
   }
+
+    const run = RunManager.getRunState();
+    if (!run) return;
+
+    const options = [
+      {
+        label: `Recover (${Math.floor(run.maxHp * 0.3)} HP)`,
+        onClick: () => {
+          const amount = Math.floor(run.maxHp * 0.3);
+          RunManager.heal(amount);
+          this.finish(`Recovered ${amount} HP`);
+        },
+      },
+      {
+        label: 'Drill (upgrade any card)',
+        onClick: () => this.renderDrill(),
+      },
+      {
+        label: 'Meditate (remove a card or exhaust one for next combat)',
+        onClick: () => this.renderMeditate(),
+      },
+      {
+        label: 'Reorganize (prepare next combat)',
+        onClick: () => this.renderReorganize(),
+      },
+    ];
