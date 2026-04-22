@@ -349,3 +349,56 @@ export class RewardScene extends Phaser.Scene {
     this.relicModalBody = body;
     this.relicModalSelectText = selectText;
   }
+
+  private openRelicModal(target: 'fixed' | 'choice', choices: RelicChoice[]): void {
+    if (!this.relicModal || choices.length === 0) return;
+
+    this.relicModalTarget = target;
+    this.relicModalChoices = choices;
+    this.selectedRelicModalId = choices[0].id;
+
+    this.relicModalTitle?.setText(target === 'fixed' ? 'Relic Reward' : 'Choose a Relic');
+    this.relicModalBody?.setText(choices[0].description);
+
+    this.relicModalRows.forEach((entry) => entry.row.destroy(true));
+    this.relicModalRows = [];
+
+    const startY = -140;
+    choices.forEach((choice, index) => {
+      const rowY = startY + index * 54;
+      const bg = this.add.rectangle(0, 0, 600, 44, 0x000000, 1).setStrokeStyle(1, 0x444444, 1);
+      const icon = this.add.text(-280, 0, '>', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '14px',
+        color: '#c7a8ff',
+      }).setOrigin(0, 0.5);
+      const text = this.add.text(-258, 0, choice.name, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '15px',
+        color: '#e8dcc8',
+      }).setOrigin(0, 0.5);
+      const row = this.add.container(0, rowY, [bg, icon, text]).setSize(600, 44).setInteractive({ useHandCursor: true });
+      row.on('pointerover', () => {
+        bg.setFillStyle(0x2a2438);
+        bg.setStrokeStyle(1, 0x8f7647, 1);
+      });
+      row.on('pointerout', () => {
+        const selected = this.selectedRelicModalId === choice.id;
+        bg.setFillStyle(selected ? 0x3d2f1d : 0x000000, 1);
+        bg.setStrokeStyle(1, selected ? 0xd8b06a : 0x444444, 1);
+      });
+      row.on('pointerdown', () => {
+        this.selectedRelicModalId = choice.id;
+        this.relicModalBody?.setText(choice.description);
+        this.refreshRelicModalRows();
+        // One-click confirm for better flow; still supports explicit Select button.
+        this.confirmRelicModal();
+      });
+      this.relicModal?.add(row);
+      this.relicModalRows.push({ id: choice.id, row, bg });
+    });
+
+    this.refreshRelicModalRows();
+    this.setBackgroundInteractives(false);
+    this.relicModal.setVisible(true);
+  }
