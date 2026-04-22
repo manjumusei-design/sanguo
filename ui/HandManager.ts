@@ -95,3 +95,20 @@ export class HandManager {
   onHover(callback: (index: number) => void): void {
     this.onCardHover = callback;
   }
+
+  getCardPosition(index: number, total: number): CardPosition {
+    const { centerX, baseY, cardSpacing, maxSpreadAngle, maxLift } = this.config;
+
+    const totalWidth = (total - 1) * cardSpacing;
+    const x = centerX - totalWidth / 2 + index * cardSpacing;
+
+    const normalizedIndex = index - (total - 1) / 2;
+    const maxIndexRadius = Math.max(1, total / 2);
+    const t = normalizedIndex / maxIndexRadius; // -1 to 1
+
+    const rotation = t * maxSpreadAngle * (Math.PI / 180);
+    const y = baseY + Math.abs(t) * maxLift;
+    const scale = 1.0;
+
+    return { x, y, rotation, scale };
+  }
