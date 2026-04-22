@@ -152,3 +152,13 @@ function analyzeDeck(deck: Card[]) {
     scaling: deck.filter(isScalingCard).length,
   };
 }
+
+function pickWeighted<T>(rng: RNG, items: T[], weightOf: (item: T) => number): T {
+  const total = items.reduce((sum, item) => sum + Math.max(1, weightOf(item)), 0);
+  let roll = rng.next() * total;
+  for (const item of items) {
+    roll -= Math.max(1, weightOf(item));
+    if (roll <= 0) return item;
+  }
+  return items[items.length - 1];
+}
