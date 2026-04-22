@@ -124,3 +124,10 @@ export function applyBattleReward(state: PreludeState, cardOrRelicId: string): v
     state.relicIds.push(cardOrRelicId);
   }
 }
+
+export function getPreludeUnlock(
+  state: PreludeState
+): { character: CharacterId; trait: string; relic: string } | null {
+  const lastNode = state.config.nodes[state.config.nodes.length - 1];
+  return lastNode?.unlock ?? null;
+}
