@@ -67,3 +67,87 @@ export class IntentDisplay {
   destroy(): void {
     this.container.destroy();
   }
+
+  private pulse(): void {
+    this.scene.tweens.add({
+      targets: this.container,
+      scaleX: 1.05,
+      scaleY: 1.05,
+      duration: TWEEN.intentPulse.duration,
+      yoyo: true,
+      repeat: 1,
+      ease: TWEEN.intentPulse.ease,
+    });
+  }
+
+  private getIntentVisual(enemy: Enemy): { icon: string; text: string } {
+    const intent = enemy.intent;
+    if (!intent) {
+      return { icon: '?', text: '' };
+    }
+
+    const damageEffects = intent.effects.filter((effect) => effect.type === 'damage');
+    if (damageEffects.length > 1) {
+      const perHit = damageEffects[0]?.value ?? intent.value;
+      return { icon: EMOJI.attack, text: `${damageEffects.length}x${perHit}` };
+    }
+    if (damageEffects.length === 1) {
+      return { icon: EMOJI.attack, text: `${damageEffects[0]?.value ?? intent.value}` };
+    }
+
+    const blockEffect = intent.effects.find((effect) => effect.type === 'block');
+    if (blockEffect) {
+      return { icon: EMOJI.block, text: `+${blockEffect.value}` };
+    }
+
+    const statusEffect = intent.effects.find((effect) => effect.type === 'apply_status' && effect.statusId);
+    if (statusEffect?.statusId) {
+      return {
+        icon: this.getStatusEmoji(statusEffect.statusId),
+        text: `${statusEffect.value}`,
+      };
+    }
+
+    if (intent.type === 'summon') {
+      return { icon: '👥', text: 'SUM' };
+    }
+
+    if (intent.type === 'draw') {
+      return { icon: EMOJI.draw, text: `+${intent.value}` };
+    }
+
+    return { icon: '?', text: intent.value > 0 ? `${intent.value}` : (intent.label ?? '') };
+  }
+
+  private getStatusEmoji(statusId: StatusId): string {
+    const mapped = EMOJI[statusId as keyof typeof EMOJI];
+    if (mapped) return mapped;
+
+    const fallbackMap: Partial<Record<StatusId, string>> = {
+      exposed: '🎯',
+      disarmed: '🫳',
+      burning: '🔥',
+      bleed: '🩸',
+      broken_formation: '🧱',
+      entrenched: '🛡️',
+      momentum: '💨',
+      command: '📯',
+      fire_setup: '🪔',
+      panic: '😱',
+      supply_shortage: '📦',
+      isolated: '🎯',
+      insight: '🧠',
+      guarded: '🛡️',
+      revealed: '👁️',
+      evade: '💫',
+      formation: '🪖',
+      valor: '⚔️',
+      strength: '💪',
+      weak: '🫠',
+      vulnerable: '🩹',
+      poison: '☠️',
+      frost: '❄️',
+    };
+    return fallbackMap[statusId] ?? '❔';
+  }
+}
