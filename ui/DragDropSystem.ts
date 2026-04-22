@@ -79,3 +79,39 @@ export class DragDropSystem {
       onReturn();
       return;
     }
+
+    const validZone = this.findValidZone(pointer);
+
+    if (validZone && this.isTargetCompatible(validZone.type, this.draggingData.target)) {
+      // Valid target: trigger card play
+      this.clearZoneHighlights();
+      onPlay(validZone);
+    } else {
+      // Invalid target: return card to hand with animation
+      this.clearZoneHighlights();
+      this.returnToHand();
+      this.timeDelayedCall(TWEEN.return.duration, () => onReturn());
+    }
+
+    this.draggingContainer = null;
+    this.draggingData = null;
+    this.activeZone = null;
+  }
+
+//Back to hand animation for invalid dropping 
+  returnToHand(): void {
+    if (!this.draggingContainer) return;
+
+    this.scene.tweens.add({
+      targets: this.draggingContainer,
+      x: this.originalX,
+      y: this.originalY,
+      scaleX: 1,
+      scaleY: 1,
+      duration: TWEEN.return.duration,
+      ease: TWEEN.return.ease,
+    });
+
+    this.draggingContainer.setDepth(0);
+  }
+
