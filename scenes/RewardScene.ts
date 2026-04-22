@@ -498,3 +498,51 @@ export class RewardScene extends Phaser.Scene {
       entry.bg.setStrokeStyle(2, selected ? 0xd8b06a : 0x444444, 1);
     });
   }
+
+  private finish(): void {
+    if (!this.cardRewardResolved) {
+      this.infoText?.setText('Choose or skip the card reward first.');
+      return;
+    }
+    if (!this.fixedRelicResolved) {
+      this.infoText?.setText('Claim the relic reward first.');
+      return;
+    }
+    if (!this.relicChoiceResolved) {
+      this.infoText?.setText('Choose a relic first.');
+      return;
+    }
+
+    trace('REWARD', 'finish', {
+      selectedCardId: this.selectedCardId ?? null,
+      selectedRelicId: this.selectedRelicId ?? null,
+      claimedGold: this.claimedGold,
+      hasOnContinue: Boolean(this.onContinue),
+      runNode: RunManager.getRunState()?.currentNode ?? null,
+    });
+
+    const selection: RewardSelection = {
+      goldClaimed: this.claimedGold,
+    };
+    if (this.selectedCardId && !this.cardSkipped) {
+      selection.cardId = this.selectedCardId;
+    }
+    if (this.selectedRelicId) {
+      selection.relicId = this.selectedRelicId;
+    }
+
+    if (this.onContinue) {
+      this.onContinue(selection);
+      return;
+    }
+
+    this.cameras.main.fadeOut(400, 0x000000);
+    this.time.delayedCall(400, () => {
+      trace('SCREEN', 'transition', {
+        from: 'RewardScene',
+        to: 'MapScene',
+        reason: 'reward_continue',
+      });
+      this.scene.start('MapScene', { promptNodeChoice: true });
+    });
+  }
