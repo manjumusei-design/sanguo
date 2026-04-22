@@ -119,3 +119,76 @@ export class LoreScene extends Phaser.Scene {
     this.createContinueButton();
     this.selectEvent(0);
   }
+
+//Event
+  private createEventBox(
+    event: LoreEvent,
+    x: number,
+    y: number,
+    index: number
+  ): Phaser.GameObjects.Container {
+    const container = this.add.container(x, y);
+    container.setSize(800, 110);
+    container.setInteractive({ useHandCursor: true });
+
+    // Background
+    const bg = this.add.rectangle(0, 0, 800, 110, 0x000000, 1)
+      .setStrokeStyle(2, 0x444455);
+    container.add(bg);
+
+    const yearBadge = this.add.text(-360, -35, event.year, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '13px',
+      color: '#f0c060',
+      backgroundColor: '#2a2040',
+      padding: { x: 8, y: 4 },
+    });
+    container.add(yearBadge);
+
+    // Title
+    const title = this.add.text(-360, -8, event.title, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '18px',
+      color: '#e0d6c8',
+    });
+    container.add(title);
+
+    // Description (truncated)
+    const text = this.add.text(-360, 18, event.text.substring(0, 100) + '...', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '13px',
+      color: '#a09080',
+      wordWrap: { width: 720 },
+    });
+    container.add(text);
+    container.setData({ index, event, bg, title, text, yearBadge });
+    container.on('pointerover', () => {
+      if (this.selectedEvent !== container) {
+        this.tweens.add({
+          targets: container,
+          scaleX: 1.02,
+          scaleY: 1.02,
+          duration: 100,
+          ease: 'Sine.easeOut',
+        });
+      }
+    });
+
+    container.on('pointerout', () => {
+      if (this.selectedEvent !== container) {
+        this.tweens.add({
+          targets: container,
+          scaleX: 1,
+          scaleY: 1,
+          duration: 100,
+          ease: 'Sine.easeOut',
+        });
+      }
+    });
+
+    container.on('pointerdown', () => {
+      this.selectEvent(index);
+    });
+
+    return container;
+  }
