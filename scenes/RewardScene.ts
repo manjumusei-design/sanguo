@@ -468,3 +468,33 @@ export class RewardScene extends Phaser.Scene {
     this.disableCardSection('Card skipped');
     this.refreshStateText();
   }
+
+  private disableCardSection(message: string): void {
+    this.cardButtons.forEach((entry) => entry.container.disableInteractive());
+    this.cardConfirmButton?.disableInteractive();
+    this.cardSkipButton?.disableInteractive();
+    this.tweens.add({
+      targets: [this.cardConfirmButton, this.cardSkipButton],
+      alpha: 0.35,
+      duration: 140,
+      ease: 'Sine.easeOut',
+    });
+
+    if (this.cardButtons.length > 0) {
+      const avgY = this.cardButtons.reduce((sum, entry) => sum + entry.container.y, 0) / this.cardButtons.length;
+      const avgX = this.cardButtons.reduce((sum, entry) => sum + entry.container.x, 0) / this.cardButtons.length;
+      this.add.text(avgX, avgY + 140, message, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '15px',
+        color: '#a09580',
+      }).setOrigin(0.5);
+    }
+  }
+
+  private refreshCardSelectionVisuals(): void {
+    this.cardButtons.forEach((entry) => {
+      const selected = this.selectedCardId === entry.id && !this.cardRewardResolved;
+      entry.bg.setFillStyle(selected ? 0x222222 : 0x000000, 1);
+      entry.bg.setStrokeStyle(2, selected ? 0xd8b06a : 0x444444, 1);
+    });
+  }
