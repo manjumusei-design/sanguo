@@ -43,3 +43,39 @@ export class DragDropSystem {
     this.zones = [];
     this.activeZone = null;
   }
+
+  startDrag(
+    container: Phaser.GameObjects.Container,
+    data: Card,
+    pointer: Phaser.Input.Pointer
+  ): void {
+    this.draggingContainer = container;
+    this.draggingData = data;
+
+    //Cache the original position if there is a failed drop
+    this.originalX = container.x;
+    this.originalY = container.y;
+    this.pointerOffsetX = container.x - pointer.x;
+    this.pointerOffsetY = container.y - pointer.y;
+    container.setDepth(200);
+    container.setScale(1.1);
+  }
+//Update the card position during the drag call 
+  updateDrag(pointer: Phaser.Input.Pointer): void {
+    if (!this.draggingContainer) return;
+
+    const newX = pointer.x + this.pointerOffsetX;
+    const newY = pointer.y + this.pointerOffsetY;
+    this.draggingContainer.setPosition(newX, newY);
+    this.checkZones(pointer);
+  }
+  //Zone validation for checkin and card compatibility then trigger a callback or bounce the card back to the ogirnal position in the hand
+  endDrag(
+    pointer: Phaser.Input.Pointer,
+    onPlay: (zone: DropZone) => void,
+    onReturn: () => void
+  ): void {
+    if (!this.draggingContainer || !this.draggingData) {
+      onReturn();
+      return;
+    }
