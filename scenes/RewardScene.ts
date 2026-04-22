@@ -161,3 +161,24 @@ export class RewardScene extends Phaser.Scene {
         this.openRelicModal('choice', relicOptions);
       });
     }
+
+    this.renderCardSection(cx, rowStartY + 210, panelW);
+    this.createRelicModal(cx, cy);
+
+    const buttonY = Math.min(panelTop + panelH - 48, h - 90);
+    this.continueButton = this.add.text(cx, buttonY, 'Continue', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '18px',
+      color: '#fff8ea',
+      backgroundColor: '#5a4a35',
+      padding: { x: 24, y: 12 },
+    })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerover', () => this.continueButton?.setScale(1.04))
+      .on('pointerout', () => this.continueButton?.setScale(1))
+      .on('pointerdown', () => this.finish());
+
+    this.refreshCardSelectionVisuals();
+    this.refreshStateText();
+  }
