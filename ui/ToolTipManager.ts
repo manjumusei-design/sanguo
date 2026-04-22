@@ -50,3 +50,22 @@ export class TooltipManager {
     el.style.top = `${screenY - el.offsetHeight - 10}px`;
     el.style.opacity = '1';
   }
+
+  showStatus(status: Status, screenX: number, screenY: number): void {
+    if (!this.tooltipEl) return;
+
+    const el = this.tooltipEl;
+    const durationText = status.duration == null ? 'Persistent' : `${status.duration} turn${status.duration === 1 ? '' : 's'}`;
+    el.innerHTML = `
+      <div style="margin-bottom: 4px; font-weight: 700; color: #f6d8a7;">
+        ${status.name}
+      </div>
+      <div style="font-size: 11px; color: #b8a88d; margin-bottom: 6px;">
+        Stacks: ${status.stacks} · ${durationText}
+      </div>
+      <div style="font-size: 12px; color: #ddd; line-height: 1.4;">
+        ${status.description}
+      </div>
+    `;
+    this.position(screenX, screenY);
+  }
