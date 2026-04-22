@@ -126,4 +126,43 @@ export class DragDropSystem {
   isDragging(): boolean {
     return this.draggingContainer !== null;
   }
-  
+
+//Zone logic
+  private checkZones(pointer: Phaser.Input.Pointer): void {
+    const zone = this.findValidZone(pointer);
+
+    if (zone !== this.activeZone) {
+      // Clear previous highlight
+      if (this.activeZone?.highlight) {
+        this.activeZone.highlight.clear();
+      }
+      this.activeZone = zone;
+      if (zone?.highlight) {
+        zone.highlight.clear();
+        const color = zone.type === 'enemy' ? 0xff6b6b : 0x4ade80;
+        zone.highlight.fillStyle(color, 0.12);
+        zone.highlight.fillRect(
+          zone.bounds.x,
+          zone.bounds.y,
+          zone.bounds.width,
+          zone.bounds.height
+        );
+        zone.highlight.lineStyle(3, color, 0.55);
+        zone.highlight.strokeRect(
+          zone.bounds.x,
+          zone.bounds.y,
+          zone.bounds.width,
+          zone.bounds.height
+        );
+      }
+    }
+  }
+
+    private findValidZone(pointer: Phaser.Input.Pointer): DropZone | null {
+    for (const zone of this.zones) {
+      if (Phaser.Geom.Rectangle.Contains(zone.bounds, pointer.x, pointer.y)) {
+        return zone;
+      }
+    }
+    return null;
+  }
