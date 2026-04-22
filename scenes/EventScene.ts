@@ -298,3 +298,47 @@ export class EventScene extends Phaser.Scene {
       enemyStartStatuses,
     });
   }
+
+    private applyEventSpecificStatusChoice(statusId?: StatusId): void {
+    if (!statusId) return;
+
+    if (this.event.id === 'broken_formation_drill') {
+      RunManager.prepareNextCombat({
+        startStatuses: [{
+          id: 'broken_formation',
+          name: 'broken_formation',
+          description: '',
+          stacks: 1,
+        }],
+      });
+    }
+  }
+
+  private pickCards(
+    rarity: 'COMMON' | 'UNCOMMON' | 'RARE',
+    count: number,
+    predicate?: (card: Card) => boolean
+  ): Card[] {
+    const run = RunManager.getRunState();
+    if (!run) return [];
+
+    const rng = getRNG(run.seed, `event-reward:${run.currentNode}:${this.event.id}:${rarity}`);
+    const cards = Array.from(allCards.values())
+      .filter((card) => card.id.startsWith(run.character))
+      .filter((card) => !card.upgraded)
+      .filter((card) => this.classifyCardRarity(card.id) === rarity)
+      .filter((card) => predicate ? predicate(card) : true);
+
+    return rng.shuffle(cards).slice(0, count).map((card) => getCard(card.id)!).filter(Boolean);
+  }
+
+  private classifyCardRarity(cardId: string): 'COMMON' | 'UNCOMMON' | 'RARE' {
+    if (cardId.includes('strike') || cardId.includes('defend') || cardId.includes('loyalty') || cardId.includes('command') || cardId.includes('admiral') || cardId.includes('influence') || cardId.includes('oath')) {
+      return 'COMMON';
+    }
+    if (cardId.includes('warlord') || cardId.includes('dominion') || cardId.includes('virtue') || cardId.includes('mandate') || cardId.includes('flame') || cardId.includes('naval') || cardId.includes('sovereign') || cardId.includes('rout') || cardId.includes('sweep') || cardId.includes('protect')) {
+      return 'RARE';
+    }
+    return 'UNCOMMON';
+  }
+}
