@@ -92,3 +92,45 @@ export class EventScene extends Phaser.Scene {
 
     this.renderEvent();
   }
+
+  private renderEvent(): void {
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cx = Math.round(w / 2);
+    const sy = h / 720;
+
+    this.add.text(cx, 120 * sy, this.event.title, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '32px',
+      color: '#f0c060',
+    }).setOrigin(0.5);
+
+    this.add.text(cx, 220 * sy, this.event.text, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '16px',
+      color: '#e0d6c8',
+      wordWrap: { width: 700 },
+      align: 'center',
+    }).setOrigin(0.5);
+
+    this.event.choices.forEach((choice, index) => {
+      const btn = this.add.container(cx, Math.round((340 + index * 80) * sy));
+      const bg = this.add.rectangle(0, 0, 600, 60, 0x000000, 1).setStrokeStyle(2, 0x333333, 1);
+      const label = this.add.text(0, 0, choice.text, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '15px',
+        color: '#ffffff',
+        wordWrap: { width: 560 },
+        align: 'center',
+      }).setOrigin(0.5);
+
+      btn.add([bg, label]);
+      btn.setSize(600, 60);
+      btn.setInteractive({ useHandCursor: true });
+      btn.on('pointerover', () => bg.setFillStyle(0x111111));
+      btn.on('pointerout', () => bg.setFillStyle(0x000000));
+      btn.on('pointerdown', () => {
+        this.applyOutcome(choice.outcome);
+      });
+    });
+  }
