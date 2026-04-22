@@ -81,3 +81,26 @@ export function serializePreludeState(state: PreludeState): SerializedPreludeSta
         completed: state.completed,
     };
 }
+
+export function getCurrentNode(state: PreludeState): PreludeNode | null {
+    return state.config.nodes[state.currentNodeIndex] ?? null;
+}
+
+export function advancePrelude(
+  state: PreludeState,
+  choiceIndex: number
+): { state: PreludeState; reward?: string } {
+  const node = getCurrentNode(state);
+  if (!node) return { state };
+
+  let reward: string | undefined;
+
+  if (node.type === 'event' && node.choices && node.choices[choiceIndex]) {
+    const choice = node.choices[choiceIndex];
+    for (const [axis, delta] of Object.entries(choice.axisChanges)) {
+      state.axes[axis] = (state.axes[axis] ?? 0) + delta;
+    }
+    if (choice.reward) {
+      reward = choice.reward;
+    }
+  }
