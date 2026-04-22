@@ -159,4 +159,19 @@ export class RestScene extends Phaser.Scene {
 
     this.optionContainers.push(this.createTextButton(640, 610, 'Back', () => this.renderRoot()));
   }
-  
+
+  private renderCardSelection(title: string, onSelect: (cardId: string, cardName: string) => void): void {
+    this.clearOptions();
+    const run = RunManager.getRunState();
+    if (!run) return;
+
+    this.addSectionTitle(title);
+    run.deck.slice(0, 7).forEach((card, index) => {
+      this.optionContainers.push(this.createButton(640, 180 + index * 58, `${card.name} (${card.type})`, () => onSelect(card.id, card.name)));
+    });
+    this.optionContainers.push(this.createTextButton(640, 610, 'Back', () => {
+      if (this.mode === 'meditate') this.renderMeditate();
+      else if (this.mode === 'drill') this.renderDrill();
+      else this.renderRoot();
+    }));
+  }
