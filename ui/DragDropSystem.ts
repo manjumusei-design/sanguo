@@ -27,3 +27,19 @@ export class DragDropSystem {
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
   }
+
+  addZone(id: string, type: DropZoneType, bounds: Phaser.Geom.Rectangle): void {
+    const visual = this.scene.add.graphics();
+    const highlight = this.scene.add.graphics();
+    const zone: DropZone = { id, type, bounds, visual, highlight };
+    this.zones.push(zone);
+  }
+
+  clearZones(): void {
+    for (const zone of this.zones) {
+      zone.highlight?.destroy();
+      zone.visual?.destroy();
+    }
+    this.zones = [];
+    this.activeZone = null;
+  }
