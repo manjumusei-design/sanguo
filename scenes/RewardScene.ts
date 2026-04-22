@@ -402,3 +402,69 @@ export class RewardScene extends Phaser.Scene {
     this.setBackgroundInteractives(false);
     this.relicModal.setVisible(true);
   }
+
+  private closeRelicModal(): void {
+    if (!this.relicModal) return;
+    this.relicModalRows.forEach((entry) => entry.row.destroy(true));
+    this.relicModalRows = [];
+    this.relicModalChoices = [];
+    this.selectedRelicModalId = undefined;
+    this.relicModal.setVisible(false);
+    this.relicModal.disableInteractive();
+    this.setBackgroundInteractives(true);
+  }
+
+  private refreshRelicModalRows(): void {
+    this.relicModalRows.forEach((entry) => {
+      const selected = this.selectedRelicModalId === entry.id;
+      entry.bg.setFillStyle(selected ? 0x3d2f1d : 0x000000, 1);
+      entry.bg.setStrokeStyle(1, selected ? 0xd8b06a : 0x444444, 1);
+    });
+    if (this.relicModalSelectText) {
+      this.relicModalSelectText.setColor(this.selectedRelicModalId ? '#fff3de' : '#6b5b45');
+    }
+  }
+
+  private confirmRelicModal(): void {
+    if (!this.selectedRelicModalId) return;
+    const selected = this.relicModalChoices.find((choice) => choice.id === this.selectedRelicModalId);
+    if (!selected) return;
+
+    RunManager.applyReward({ gold: 0, relicId: selected.id });
+    this.selectedRelicId = selected.id;
+
+    if (this.relicModalTarget === 'fixed') {
+      this.fixedRelicResolved = true;
+      this.hideClaimedRow(this.fixedRelicRow);
+      this.fixedRelicRow = null;
+    } else {
+      this.relicChoiceResolved = true;
+      this.hideClaimedRow(this.relicChoiceRow);
+      this.relicChoiceRow = null;
+    }
+
+    this.closeRelicModal();
+    this.refreshStateText();
+  }
+
+  private confirmCardReward(): void {
+    if (this.cardRewardResolved) return;
+    if (!this.selectedCardId) {
+      this.infoText?.setText('Select a card first, or skip.');
+      return;
+    }
+    RunManager.addCardToDeck(this.selectedCardId);
+    this.cardRewardResolved = true;
+    this.cardSkipped = false;
+    this.disableCardSection('Card taken');
+    this.refreshStateText();
+  }
+
+  private skipCardReward(): void {
+    if (this.cardRewardResolved) return;
+    this.cardRewardResolved = true;
+    this.cardSkipped = true;
+    this.selectedCardId = undefined;
+    this.disableCardSection('Card skipped');
+    this.refreshStateText();
+  }
