@@ -69,3 +69,65 @@ export class TooltipManager {
     `;
     this.position(screenX, screenY);
   }
+
+
+//Fade out immediately
+  hide(): void {
+    if (!this.tooltipEl) return;
+    this.tooltipEl.style.opacity = '0';
+  }
+
+  destroy(): void {
+    if (this.tooltipEl?.parentNode) {
+      this.tooltipEl.parentNode.removeChild(this.tooltipEl);
+    }
+    this.tooltipEl = null;
+  }
+
+  private getTypeColor(type: Card['type']): string { //For now, might want to swap colours in the future to red green and blue for caocao, liubei and sunquan 
+    switch (type) {
+      case 'ATTACK': return '#c0392b';
+      case 'SKILL': return '#2980b9';
+      case 'POWER': return '#27ae60';
+      case 'STATUS': return '#888888';
+      case 'CURSE': return '#666666';
+      default: return '#ffffff';
+    }
+  }
+
+  private position(screenX: number, screenY: number): void {
+    if (!this.tooltipEl) return;
+    const el = this.tooltipEl;
+    el.style.left = `${screenX - 120}px`;
+    el.style.top = `${screenY - el.offsetHeight - 12}px`;
+    el.style.opacity = '1';
+  }
+
+  private getEffectDescription(card: Card): string {
+    if (!card.effects || card.effects.length === 0) {
+      return 'No effect';
+    }
+
+    return card.effects
+      .map((e) => {
+        switch (e.type) {
+          case 'damage':
+            return `Deal ${e.value} damage`;
+          case 'block':
+            return `Gain ${e.value} block`;
+          case 'draw':
+            return `Draw ${e.value} cards`;
+          case 'energy':
+            return e.value > 0
+              ? `Gain ${e.value} energy`
+              : `Lose ${Math.abs(e.value)} energy`;
+          case 'apply_status':
+            return `Apply ${e.value} status`;
+          default:
+            return '';
+        }
+      })
+      .filter(Boolean)
+      .join(' → ');
+  }
+}
