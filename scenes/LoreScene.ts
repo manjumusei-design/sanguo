@@ -29,3 +29,93 @@ const LORE_EVENTS: LoreEvent[] = [
     text: 'The Han Dynasty ends. Cao Pi forces the last emperor to abdicate and founds Wei. Liu Bei declares himself emperor of Shu. Sun Quan crowns the Wu kingdom. Three crowns, one realm.',
   },
 ];
+
+export class LoreScene extends Phaser.Scene {
+  private currentIndex = 0;
+  private selectedEvent: Phaser.GameObjects.Container | null = null;
+  private eventBoxes: Phaser.GameObjects.Container[] = [];
+  private continueButton!: Phaser.GameObjects.Container;
+  private skipButton!: Phaser.GameObjects.Text;
+  private scrollY = 0;
+  private isDragging = false;
+  private dragStartY = 0;
+  private scrollStartY = 0;
+  private contentContainer!: Phaser.GameObjects.Container;
+  private maskContainer!: Phaser.GameObjects.Container;
+
+  constructor() {
+    super({ key: 'LoreScene' });
+  }
+
+  create(): void {
+    // Background
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cx = Math.round(w / 2);
+    const sy = h / 720;
+
+    this.add.rectangle(cx, Math.round(h / 2), w, h, 0x0d0d1a);
+
+    // Title
+    this.add.text(cx, 40 * sy, '三國 — Three Kingdoms Timeline', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '28px',
+      color: '#e0d6c8',
+    }).setOrigin(0.5);
+    this.add.text(cx, 75 * sy, 'Click events to read. Press Continue to advance.', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      color: '#888899',
+    }).setOrigin(0.5);
+
+    this.skipButton = this.add.text(Math.round(1200 * (w / 1280)), 40 * sy, '⏭ Skip', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '18px',
+      color: '#666677',
+      backgroundColor: '#000000',
+      padding: { x: 16, y: 8 },
+    })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerover', () => this.skipButton.setColor('#ffffff'))
+      .on('pointerout', () => this.skipButton.setColor('#666677'))
+      .on('pointerdown', () => this.skipToMenu());
+
+    this.contentContainer = this.add.container(0, 0);
+    this.contentContainer.setDepth(1);
+    const startY = Math.round(120 * sy);
+    const spacing = Math.round(130 * sy);
+
+    LORE_EVENTS.forEach((event, index) => {
+      const box = this.createEventBox(event, cx, startY + index * spacing, index);
+      this.contentContainer.add(box);
+      this.eventBoxes.push(box);
+    });
+    this.createMask();
+    this.input.on('wheel', (_pointer: unknown, _gameObjects: unknown, _deltaX: number, deltaY: number) => {
+      this.scrollBy(deltaY * 0.5);
+    });
+
+    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (pointer.y < 580 && pointer.y > 100) {
+        this.isDragging = true;
+        this.dragStartY = pointer.y;
+        this.scrollStartY = this.scrollY;
+      }
+    });
+
+    this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+      if (this.isDragging) {
+        const delta = this.dragStartY - pointer.y;
+        this.scrollY = this.scrollStartY + delta;
+        this.clampScroll();
+        this.contentContainer.setPosition(0, -this.scrollY);
+      }
+    });
+
+    this.input.on('pointerup', () => {
+      this.isDragging = false;
+    });
+    this.createContinueButton();
+    this.selectEvent(0);
+  }
