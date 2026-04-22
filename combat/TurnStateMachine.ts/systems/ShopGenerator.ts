@@ -162,3 +162,23 @@ function pickWeighted<T>(rng: RNG, items: T[], weightOf: (item: T) => number): T
   }
   return items[items.length - 1];
 }
+
+function generateCardStock(character: CharacterId, deck: Card[], rng: RNG): string[] {
+  const candidates = Array.from(allCards.values())
+    .filter((card) => !card.upgraded)
+    .filter((card) => card.id.startsWith(character));
+
+  const weights = CHARACTER_CARD_WEIGHTS[character];
+  const deckState = analyzeDeck(deck);
+  const byRarity = (rarity: CardRarity) => candidates.filter((card) => classifyCardRarity(card.id) === rarity);
+  const stock: string[] = [];
+  const weightCard = (card: Card) => {
+    let weight = 6;
+    weight += (weights[card.id] ?? 0) * 4;
+
+    if (deckState.defense < 3 && isDefensiveCard(card)) weight += 10;
+    if (deckState.consistency < 2 && isConsistencyCard(card)) weight += 8;
+    if (deckState.scaling < 2 && isScalingCard(card)) weight += 6;
+
+    return weight;
+  };
