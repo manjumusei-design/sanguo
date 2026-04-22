@@ -275,3 +275,77 @@ export class RewardScene extends Phaser.Scene {
 
       this.cardButtons.push({ id: card.id, container, bg });
     });
+
+    const btnY = y + cardH + 48;
+    this.cardConfirmButton = this.add.text(cx - 120, btnY, 'Take Card', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '16px',
+      color: '#fff8ea',
+      backgroundColor: '#5a4a35',
+      padding: { x: 20, y: 10 },
+    })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.confirmCardReward());
+
+    this.cardSkipButton = this.add.text(cx + 120, btnY, 'Skip Card', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '16px',
+      color: '#b5a89a',
+      backgroundColor: '#2e2620',
+      padding: { x: 24, y: 10 },
+    })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.skipCardReward());
+  }
+
+  private createRelicModal(cx: number, cy: number): void {
+    const modal = this.add.container(cx, cy);
+    modal.setDepth(2000);
+    modal.setVisible(false);
+
+    const backdrop = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.5).setInteractive();
+    const panel = this.add.rectangle(0, 0, 680, 480, 0x000000, 1).setStrokeStyle(2, 0x444444, 1);
+    const accentLine = this.add.rectangle(0, -238, 676, 3, 0x8f7647, 1);
+    const title = this.add.text(0, -210, 'Relic Selection', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '24px',
+      color: '#f0d5a3',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+    const body = this.add.text(0, -60, '', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      color: '#d8c8af',
+      lineSpacing: 5,
+      wordWrap: { width: 600 },
+      align: 'center',
+    }).setOrigin(0.5);
+
+    const selectBg = this.add.rectangle(-80, 200, 140, 40, 0x5a4a35, 1);
+    const selectText = this.add.text(-80, 200, 'Select', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '15px',
+      color: '#fff3de',
+    }).setOrigin(0.5);
+    const selectBtn = this.add.container(0, 0, [selectBg, selectText]).setSize(140, 40).setInteractive({ useHandCursor: true });
+
+    const closeBg = this.add.rectangle(80, 200, 140, 40, 0x111111, 1);
+    const closeText = this.add.text(80, 200, 'Close', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '15px',
+      color: '#b5a89a',
+    }).setOrigin(0.5);
+    const closeBtn = this.add.container(0, 0, [closeBg, closeText]).setSize(140, 40).setInteractive({ useHandCursor: true });
+
+    backdrop.on('pointerdown', () => this.closeRelicModal());
+    closeBtn.on('pointerdown', () => this.closeRelicModal());
+    selectBtn.on('pointerdown', () => this.confirmRelicModal());
+
+    modal.add([backdrop, panel, accentLine, title, body, selectBtn, closeBtn]);
+    this.relicModal = modal;
+    this.relicModalTitle = title;
+    this.relicModalBody = body;
+    this.relicModalSelectText = selectText;
+  }
