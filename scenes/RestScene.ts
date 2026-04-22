@@ -107,5 +107,56 @@ export class RestScene extends Phaser.Scene {
       }));
     });
 
+
     this.optionContainers.push(this.createTextButton(640, 610, 'Back', () => this.renderRoot()));
   }
+
+  private renderMeditate(): void {
+    this.mode = 'meditate';
+    this.clearOptions();
+
+    const run = RunManager.getRunState();
+    if (!run) return;
+    this.addSectionTitle('Meditate: choose a discipline option');
+
+    this.optionContainers.push(this.createButton(640, 190, 'Remove a card from the deck', () => {
+      this.renderCardSelection('Choose a card to remove', (cardId, cardName) => {
+        RunManager.removeCardFromDeck(cardId);
+        this.finish(`Removed ${cardName}`);
+      });
+    }));
+
+    this.optionContainers.push(this.createButton(640, 270, 'Exhaust one card for next combat only', () => {
+      this.renderCardSelection('Choose a card to exhaust next combat', (cardId, cardName) => {
+        RunManager.prepareNextCombat({ temporaryExhaustCardId: cardId });
+        this.finish(`${cardName} will be exhausted for the next combat`);
+      });
+    }));
+
+    this.optionContainers.push(this.createTextButton(640, 610, 'Back', () => this.renderRoot()));
+  }
+
+  private renderReorganize(): void {
+    this.mode = 'reorganize';
+    this.clearOptions();
+
+    this.addSectionTitle('Reorganize: choose a next-combat benefit');
+
+    this.optionContainers.push(this.createButton(640, 190, '+1 Energy per turn next combat', () => {
+      RunManager.prepareNextCombat({ energyPerTurnBonus: 1 });
+      this.finish('Prepared extra energy for the next combat');
+    }));
+
+    this.optionContainers.push(this.createButton(640, 270, 'Start next combat with +1 Command', () => {
+      RunManager.prepareNextCombat({ startStatuses: [createStatus('command', 1)] });
+      this.finish('Prepared starting Command for the next combat');
+    }));
+
+    this.optionContainers.push(this.createButton(640, 350, 'Start next combat Entrenched', () => {
+      RunManager.prepareNextCombat({ startStatuses: [createStatus('entrenched', 1)] });
+      this.finish('Prepared Entrenched for the next combat');
+    }));
+
+    this.optionContainers.push(this.createTextButton(640, 610, 'Back', () => this.renderRoot()));
+  }
+  
