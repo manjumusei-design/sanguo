@@ -124,3 +124,23 @@ const CHARACTER_CARD_WEIGHTS: Record<CharacterId, Partial<Record<string, number>
     sunquan_naval: 3,
   },
 };
+
+function classifyCardRarity(cardId: string): CardRarity {
+  return CARD_RARITY[cardId] ?? 'UNCOMMON';
+}
+
+function classifyRelicTier(relicId: string): RelicTier {
+  return RELIC_TIER[relicId] ?? 'STANDARD';
+}
+
+function isDefensiveCard(card: Card): boolean {
+  return card.effects.some((effect) => effect.type === 'block');
+}
+
+function isConsistencyCard(card: Card): boolean {
+  return card.effects.some((effect) => effect.type === 'draw') || Boolean(card.retain) || Boolean(card.fleeting);
+}
+
+function isScalingCard(card: Card): boolean {
+  return card.type === 'POWER' || card.effects.some((effect) => effect.statusId === 'valor' || effect.statusId === 'formation');
+}
