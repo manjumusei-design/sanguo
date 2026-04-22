@@ -51,3 +51,33 @@ export function initPreludeState(config: PreludeConfig): PreludeState {
     completed: false,
   };
 }
+
+export function hydratePreludeState(
+  config: PreludeConfig,
+  snapshot: SerializedPreludeState
+): PreludeState {
+  return {
+    config,
+    currentNodeIndex: snapshot.currentNodeIndex,
+    deck: snapshot.deckIds.map((id) => getCard(id)!).filter(Boolean),
+    relicIds: snapshot.relicIds.filter((id) => getRelic(id)),
+    gold: snapshot.gold ?? 0,
+    hp: snapshot.hp ?? (getCharacter(config.character)?.hp ?? 70),
+    maxHp: snapshot.maxHp ?? (getCharacter(config.character)?.hp ?? 70),
+    axes: { ...snapshot.axes },
+    completed: snapshot.completed,
+  };
+}
+
+export function serializePreludeState(state: PreludeState): SerializedPreludeState {
+    return {
+        currentNodeIndex: state.currentNodeIndex,
+        deckIds: state.deck.map((card) => card.id),
+        relicIds: [...state.relicIds],
+        gold: state.gold,
+        hp: state.hp,
+        maxHp: state.maxHp,
+        axes: { ...state.axes },
+        completed: state.completed,
+    };
+}
