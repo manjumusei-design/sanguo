@@ -134,3 +134,121 @@ export class EventScene extends Phaser.Scene {
       });
     });
   }
+
+  private applyOutcome(outcome: EventOutcome): void {
+    if (outcome.value && outcome.type === 'relic' && outcome.value < 0) {
+      RunManager.damage(Math.abs(outcome.value));
+    }
+
+    this.applyAttachedStatus(outcome);
+
+    switch (outcome.type) {
+      case 'hp':
+        if (outcome.value && outcome.value < 0) {
+          RunManager.damage(Math.abs(outcome.value));
+        } else if (outcome.value && outcome.value > 0) {
+          RunManager.heal(outcome.value);
+        }
+        break;
+      case 'gold':
+        if (outcome.value) {
+          RunManager.modifyGold(outcome.value);
+        }
+        break;
+      case 'card':
+        if (outcome.cardId === 'random_common') {
+          const char = RunManager.getRunState()!.character;
+          const attack = getStartingDeck(char).find((card) => card.type === 'ATTACK');
+          if (attack) RunManager.addCardToDeck(attack.id);
+        } else if (outcome.cardId === 'double_random_common') {
+          const picks = this.pickCards('COMMON', 2);
+          picks.forEach((card) => RunManager.addCardToDeck(card.id));
+        } else if (outcome.cardId === 'random_uncommon') {
+          const [pick] = this.pickCards('UNCOMMON', 1);
+          if (pick) RunManager.addCardToDeck(pick.id);
+        } else if (outcome.cardId === 'random_attack_uncommon') {
+          const [pick] = this.pickCards('UNCOMMON', 1, (card) => card.type === 'ATTACK');
+          if (pick) RunManager.addCardToDeck(pick.id);
+        } else if (outcome.cardId === 'random_uncommon_skill') {
+          const [pick] = this.pickCards('UNCOMMON', 1, (card) => card.type === 'SKILL');
+          if (pick) RunManager.addCardToDeck(pick.id);
+        } else if (outcome.cardId === 'random_rare') {
+          const [pick] = this.pickCards('RARE', 1);
+          if (pick) RunManager.addCardToDeck(pick.id);
+        } else if (outcome.cardId) {
+          RunManager.addCardToDeck(outcome.cardId);
+        }
+        if (outcome.value && outcome.value < 0) {
+          RunManager.damage(Math.abs(outcome.value));
+        }
+        break;
+      case 'relic':
+        if (outcome.relicId) {
+          RunManager.applyReward({ gold: 0, relicId: outcome.relicId });
+        }
+        break;
+      case 'remove_card': {
+        if (outcome.value) {
+          RunManager.modifyGold(outcome.value);
+        }
+        const run = RunManager.getRunState();
+        const removable = run?.deck.find((card) => !card.upgraded);
+        if (removable) {
+          RunManager.removeCardFromDeck(removable.id);
+        }
+        if (outcome.statusId) {
+          RunManager.prepareNextCombat({
+            startStatuses: [{
+              id: outcome.statusId,
+              name: outcome.statusId,
+              description: '',
+              stacks: outcome.statusStacks ?? 1,
+            }],
+          });
+        }
+        break;
+      }
+      case 'upgrade': {
+        const run = RunManager.getRunState();
+        const upgradable = run?.deck.find((card) => !card.upgraded);
+        if (upgradable) {
+          upgradable.upgraded = true;
+          RunManager.commitRunState();
+        }
+        break;
+      }
+      case 'status':
+        if (outcome.statusId) {
+          RunManager.addPendingStatus(outcome.statusId, outcome.statusStacks ?? 1);
+        }
+        this.applyEventSpecificStatusChoice(outcome.statusId);
+        break;
+      case 'combat':
+        if (outcome.enemyIds) {
+          this.cameras.main.fadeOut(400, 0x000000);
+          this.time.delayedCall(400, () => {
+            this.scene.start('CombatScene', {
+              runMode: true,
+              enemyIds: outcome.enemyIds,
+            });
+          });
+          return;
+        }
+        break;
+      case 'none':
+      default:
+        break;
+    }
+
+    this.applyCombatModifiers(outcome);
+
+    if (this.event.id === 'broken_formation_drill' && outcome.type === 'none' && this.event.choices[0]?.outcome === outcome) {
+      RunManager.prepareNextCombat({
+        startStatuses: [{
+          id: 'broken_formation',
+          name: 'broken_formation',
+          description: '',
+          stacks: 1,
+        }],
+      });
+    }
