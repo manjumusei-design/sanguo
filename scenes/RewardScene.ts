@@ -546,3 +546,20 @@ export class RewardScene extends Phaser.Scene {
       this.scene.start('MapScene', { promptNodeChoice: true });
     });
   }
+
+  private refreshStateText(): void {
+    const pending: string[] = [];
+    if (!this.cardRewardResolved) pending.push('card');
+    if (!this.fixedRelicResolved) pending.push('relic');
+    if (!this.relicChoiceResolved) pending.push('relic choice');
+    if (!this.claimedGold && this.rewardData.gold > 0) pending.push('gold');
+
+    if (pending.length === 0) {
+      this.infoText?.setText('All rewards claimed. Continue when ready.');
+      this.continueButton?.setAlpha(1);
+      this.continueButton?.setInteractive({ useHandCursor: true });
+    } else {
+      this.infoText?.setText(`Pending rewards: ${pending.join(', ')}`);
+      this.continueButton?.setAlpha(0.95);
+    }
+  }
