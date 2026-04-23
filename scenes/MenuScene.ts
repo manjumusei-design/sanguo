@@ -27,7 +27,12 @@ export class MenuScene extends Phaser.Scene {
 
   create(): void {
     const { w, h, cx, cy, sx, sy, s } = this.getLayout();
-
+    if (this.textures.exists('menu_lobby_bg')) {
+      this.add.image(cx, cy, 'menu_lobby_bg').setDisplaySize(w, h);
+      this.add.rectangle(cx, cy, w, h, 0x000000, 0.34);
+    } else {
+      this.add.rectangle(cx, cy, w, h, 0x000000);
+    }
     this.add.rectangle(cx, cy, w, h, 0x000000);
 
     const onResize = () => this.scene.restart();
