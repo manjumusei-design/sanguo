@@ -1063,12 +1063,16 @@ export class CombatScene extends Phaser.Scene {
   private resolvePendingEffects(onComplete?: () => void): void {
     const enemyCountBefore = this.combatState.enemies.length;
     this.isResolvingQueue = true;
+    const resolveEffect = createEffectResolver({
+      rng: this.combatRNG,
+      relicManager: this.relicManager,
+    });
     this.effectQueue.execute(
       this.combatState,
-      createEffectResolver({
-        rng: this.combatRNG,
-        relicManager: this.relicManager,
-      }),
+      (queuedEffect, combatState) => {
+        resolveEffect(queuedEffect, combatState);
+        this.refreshCombatantVisuals();
+      },
       () => {
         this.isResolvingQueue = false;
         if (this.combatState.enemies.length !== enemyCountBefore) {
