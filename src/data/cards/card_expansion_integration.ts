@@ -40,4 +40,24 @@ export const caoCaoCards: Card[] = [
     effects: [{ type: 'damage', value: 3, target: 'ENEMY' }],
 		fleeting: true,
 	},
+	{
+		id: 'caocao_sweep_plains',
+		name: 'Sweep the Plains',
+		type: 'ATTACK',
+		cost: 2,
+		target: 'ALL_ENEMIES',
+		value: 4,
+		effects: [{ type: 'damage', value: 4, target: 'ALL_ENEMIES' }],
+	},
+	{
+    id: 'caocao_retreat',
+    name: 'Tactical Retreat',
+    type: 'SKILL',
+    cost: 0,
+    target: 'SELF',
+    effects: [
+      { type: 'block', value: 4, target: 'SELF' },
+      { type: 'draw', value: 1, target: 'SELF' },
+    ],
+  },
 	
