@@ -29,7 +29,7 @@ export class EventScene extends Phaser.Scene {
     const h = this.scale.height;
     const cx = Math.round(w / 2);
 
-    this.add.rectangle(cx, Math.round(h / 2), w, h, 0x000000, 1);
+    this.add.rectangle(cx, Math.round(h / 2), w, h, 0x0d0d10, 1);
 
     const run = RunManager.getRunState();
     if (!run) {
@@ -99,36 +99,50 @@ export class EventScene extends Phaser.Scene {
     const cx = Math.round(w / 2);
     const sy = h / 720;
 
+    this.textures.exists('ui_dialogue_parchment')
+      ? this.add.image(cx, 188 * sy, 'ui_dialogue_parchment').setDisplaySize(760, 250 * sy).setAlpha(0.95)
+      : this.add.rectangle(cx, 188 * sy, 760, 250 * sy, 0xe2cfab, 0.95);
+    this.add.rectangle(cx, 188 * sy, 760, 250 * sy, 0x000000, 0.12).setStrokeStyle(2, 0x6a5534, 1);
+    this.add.rectangle(cx, 84 * sy, 760, 2, 0x8f7647, 1);
     this.add.text(cx, 120 * sy, this.event.title, {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '32px',
-      color: '#f0c060',
+      color: '#2c2015',
     }).setOrigin(0.5);
 
     this.add.text(cx, 220 * sy, this.event.text, {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '16px',
-      color: '#e0d6c8',
+      color: '#241a11',
       wordWrap: { width: 700 },
       align: 'center',
     }).setOrigin(0.5);
 
     this.event.choices.forEach((choice, index) => {
       const btn = this.add.container(cx, Math.round((340 + index * 80) * sy));
-      const bg = this.add.rectangle(0, 0, 600, 60, 0x000000, 1).setStrokeStyle(2, 0x333333, 1);
+      const bg = this.add.rectangle(0, 0, 600, 60, 0xe2cfab, 0.95);
+      const shade = this.add.rectangle(0, 0, 600, 60, 0x000000, 0.12).setStrokeStyle(2, 0x5f4b2f, 1);
       const label = this.add.text(0, 0, choice.text, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '15px',
-        color: '#ffffff',
+        color: '#271d13',
         wordWrap: { width: 560 },
         align: 'center',
       }).setOrigin(0.5);
 
-      btn.add([bg, label]);
+      btn.add([bg, shade, label]);
       btn.setSize(600, 60);
       btn.setInteractive({ useHandCursor: true });
-      btn.on('pointerover', () => bg.setFillStyle(0x111111));
-      btn.on('pointerout', () => bg.setFillStyle(0x000000));
+      btn.on('pointerover', () => {
+        bg.setFillStyle(0xe8d8b8, 0.98);
+        shade.setFillStyle(0x000000, 0.06);
+        shade.setStrokeStyle(2, 0xb39058, 1);
+      });
+      btn.on('pointerout', () => {
+        bg.setFillStyle(0xe2cfab, 0.95);
+        shade.setFillStyle(0x000000, 0.12);
+        shade.setStrokeStyle(2, 0x5f4b2f, 1);
+      });
       btn.on('pointerdown', () => {
         this.applyOutcome(choice.outcome);
       });
