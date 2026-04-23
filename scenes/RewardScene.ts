@@ -24,6 +24,7 @@ export class RewardScene extends Phaser.Scene {
   private claimedGold = false;
   private selectedCardId?: string;
   private selectedRelicId?: string;
+  private selectedRelicChoiceId?: string;
   private selectedRelicModalId?: string;
 
   private cardRewardResolved = false;
@@ -32,11 +33,15 @@ export class RewardScene extends Phaser.Scene {
   private cardSkipped = false;
 
   private cardButtons: Array<{ id: string; container: Phaser.GameObjects.Container; bg: Phaser.GameObjects.Rectangle }> = [];
+  private relicChoiceButtons: Array<{ id: string; container: Phaser.GameObjects.Container; bg: Phaser.GameObjects.Rectangle }> = [];
   private goldRow: Phaser.GameObjects.Container | null = null;
   private fixedRelicRow: Phaser.GameObjects.Container | null = null;
   private relicChoiceRow: Phaser.GameObjects.Container | null = null;
   private cardConfirmButton: Phaser.GameObjects.Text | null = null;
   private cardSkipButton: Phaser.GameObjects.Text | null = null;
+  private relicChoiceDescriptionText: Phaser.GameObjects.Text | null = null;
+  private relicTakeButton: Phaser.GameObjects.Text | null = null;
+  private relicSkipButton: Phaser.GameObjects.Text | null = null;
 
   private continueButton: Phaser.GameObjects.Text | null = null;
   private infoText: Phaser.GameObjects.Text | null = null;
@@ -60,6 +65,7 @@ export class RewardScene extends Phaser.Scene {
     this.claimedGold = false;
     this.selectedCardId = undefined;
     this.selectedRelicId = undefined;
+    this.selectedRelicChoiceId = undefined;
     this.selectedRelicModalId = undefined;
     this.cardSkipped = false;
 
@@ -68,11 +74,15 @@ export class RewardScene extends Phaser.Scene {
     this.fixedRelicResolved = !this.rewardData.relicId;
 
     this.cardButtons = [];
+    this.relicChoiceButtons = [];
     this.goldRow = null;
     this.fixedRelicRow = null;
     this.relicChoiceRow = null;
     this.cardConfirmButton = null;
     this.cardSkipButton = null;
+    this.relicChoiceDescriptionText = null;
+    this.relicTakeButton = null;
+    this.relicSkipButton = null;
     this.continueButton = null;
     this.infoText = null;
 
@@ -153,16 +163,16 @@ export class RewardScene extends Phaser.Scene {
       .map((id) => getRelic(id))
       .filter((relic): relic is NonNullable<typeof relic> => Boolean(relic))
       .map((relic) => ({ id: relic.id, name: relic.name, description: relic.description }));
+    let cardSectionY = rowStartY + 210;
     if ((this.rewardData.relicOptions?.length ?? 0) > 0 && relicOptions.length === 0) {
       // No valid relics after filtering: resolve this gate to avoid soft-lock.
       this.relicChoiceResolved = true;
     } else if (relicOptions.length > 0) {
-      this.relicChoiceRow = this.createRewardRow(cx, rowStartY + 128, rowWidth, 'Choose a Relic', '#c7a8ff', () => {
-        this.openRelicModal('choice', relicOptions);
-      });
+      this.renderRelicChoiceSection(cx, rowStartY + 128, rowWidth, relicOptions);
+      cardSectionY += 160;
     }
 
-    this.renderCardSection(cx, rowStartY + 210, panelW);
+    this.renderCardSection(cx, cardSectionY, panelW);
     this.createRelicModal(cx, cy);
 
     const buttonY = Math.min(panelTop + panelH - 48, h - 90);
@@ -499,6 +509,153 @@ export class RewardScene extends Phaser.Scene {
     });
   }
 
+
+
+
+  
+  private renderRelicChoiceSection(
+    cx: number,
+    y: number,
+    rowWidth: number,
+    choices: RelicChoice[]
+  ): void {
+    this.add.text(cx, y - 22, 'Choose a Relic', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '18px',
+      color: '#d8c8af',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+
+    this.relicChoiceButtons.forEach((entry) => entry.container.destroy(true));
+    this.relicChoiceButtons = [];
+
+    let selectedChoice = choices[0] ?? null;
+    this.selectedRelicChoiceId = selectedChoice?.id;
+
+    choices.forEach((choice, index) => {
+      const rowY = y + index * 56;
+      const container = this.add.container(cx, rowY);
+      const bg = this.add.rectangle(0, 0, rowWidth, 48, 0x000000, 1).setStrokeStyle(1, 0x444444, 1);
+      const icon = this.add.text(-rowWidth / 2 + 18, 0, '>', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '14px',
+        color: '#c7a8ff',
+      }).setOrigin(0, 0.5);
+      const text = this.add.text(-rowWidth / 2 + 38, 0, choice.name, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '15px',
+        color: '#e8dcc8',
+        wordWrap: { width: rowWidth - 64 },
+      }).setOrigin(0, 0.5);
+      container.add([bg, icon, text]);
+      container.setSize(rowWidth, 48);
+      container.setInteractive({ useHandCursor: true });
+      container.on('pointerover', () => {
+        if (this.relicChoiceResolved) return;
+        bg.setFillStyle(0x111111, 1);
+      });
+      container.on('pointerout', () => {
+        this.refreshRelicChoiceSelectionVisuals();
+      });
+      container.on('pointerdown', () => {
+        if (this.relicChoiceResolved) return;
+        this.selectedRelicChoiceId = choice.id;
+        selectedChoice = choice;
+        if (this.relicChoiceDescriptionText) {
+          this.relicChoiceDescriptionText.setText(choice.description);
+        }
+        this.refreshRelicChoiceSelectionVisuals();
+        this.refreshStateText();
+      });
+      this.relicChoiceButtons.push({ id: choice.id, container, bg });
+    });
+
+    const descBoxY = y + choices.length * 56 + 34;
+    const descBg = this.add.rectangle(cx, descBoxY, rowWidth, 78, 0x000000, 1).setStrokeStyle(1, 0x4a3f32, 1);
+    this.relicChoiceDescriptionText = this.add.text(cx, descBoxY, selectedChoice?.description ?? '', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '13px',
+      color: '#d8c8af',
+      align: 'center',
+      wordWrap: { width: rowWidth - 28 },
+      lineSpacing: 4,
+    }).setOrigin(0.5);
+
+    const btnY = descBoxY + 68;
+    this.relicTakeButton = this.add.text(cx - 120, btnY, 'Take Relic', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '16px',
+      color: '#fff8ea',
+      backgroundColor: '#5a4a35',
+      padding: { x: 20, y: 10 },
+    })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.confirmRelicChoice());
+
+    this.relicSkipButton = this.add.text(cx + 120, btnY, 'Skip Relic', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '16px',
+      color: '#b5a89a',
+      backgroundColor: '#2e2620',
+      padding: { x: 20, y: 10 },
+    })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.skipRelicChoice());
+
+    this.relicChoiceRow = this.add.container(cx, y);
+    this.refreshRelicChoiceSelectionVisuals();
+  }
+
+  private refreshRelicChoiceSelectionVisuals(): void {
+    this.relicChoiceButtons.forEach((entry) => {
+      const selected = this.selectedRelicChoiceId === entry.id && !this.relicChoiceResolved;
+      entry.bg.setFillStyle(selected ? 0x222222 : 0x000000, 1);
+      entry.bg.setStrokeStyle(1, selected ? 0xd8b06a : 0x444444, 1);
+    });
+  }
+
+  private confirmRelicChoice(): void {
+    if (this.relicChoiceResolved) return;
+    if (!this.selectedRelicChoiceId) {
+      this.infoText?.setText('Select a relic first, or skip.');
+      return;
+    }
+
+    RunManager.applyReward({ gold: 0, relicId: this.selectedRelicChoiceId });
+    this.selectedRelicId = this.selectedRelicChoiceId;
+    this.relicChoiceResolved = true;
+    this.disableRelicChoiceSection('Relic taken');
+    this.refreshStateText();
+  }
+
+  private skipRelicChoice(): void {
+    if (this.relicChoiceResolved) return;
+    this.relicChoiceResolved = true;
+    this.selectedRelicChoiceId = undefined;
+    this.disableRelicChoiceSection('Relic skipped');
+    this.refreshStateText();
+  }
+
+  private disableRelicChoiceSection(message: string): void {
+    this.relicChoiceButtons.forEach((entry) => entry.container.disableInteractive());
+    this.relicTakeButton?.disableInteractive();
+    this.relicSkipButton?.disableInteractive();
+    this.tweens.add({
+      targets: [this.relicTakeButton, this.relicSkipButton],
+      alpha: 0.35,
+      duration: 140,
+      ease: 'Sine.easeOut',
+    });
+    if (!this.relicChoiceRow) return;
+    this.add.text(this.relicChoiceRow.x, this.relicChoiceRow.y + 182, message, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '15px',
+      color: '#a09580',
+    }).setOrigin(0.5);
+  }
+
   private finish(): void {
     if (!this.cardRewardResolved) {
       this.infoText?.setText('Choose or skip the card reward first.');
@@ -626,11 +783,14 @@ export class RewardScene extends Phaser.Scene {
     };
 
     this.cardButtons.forEach((entry) => toggle(entry.container));
+    this.relicChoiceButtons.forEach((entry) => toggle(entry.container));
     toggle(this.goldRow);
     toggle(this.fixedRelicRow);
     toggle(this.relicChoiceRow);
     toggle(this.cardConfirmButton);
     toggle(this.cardSkipButton);
+    toggle(this.relicTakeButton);
+    toggle(this.relicSkipButton);
     toggle(this.continueButton);
   }
 
@@ -650,5 +810,50 @@ export class RewardScene extends Phaser.Scene {
       ease: 'Sine.easeOut',
       onComplete: () => burst.destroy(),
     });
+  }
+
+  private buildCardDescription(card: Card): string {
+    if (card.description && card.description.trim().length > 0) {
+      return card.description;
+    }
+
+    const lines = card.effects.map((effect) => {
+      switch (effect.type) {
+        case 'damage':
+          return `Deal ${effect.value} damage${this.describeTarget(effect.target)}.`;
+        case 'block':
+          return `Gain ${effect.value} Block${effect.target === 'SELF' ? '' : this.describeTarget(effect.target)}.`;
+        case 'draw':
+          return `Draw ${effect.value} cards.`;
+        case 'energy':
+          return `${effect.value >= 0 ? 'Gain' : 'Lose'} ${Math.abs(effect.value)} Energy.`;
+        case 'apply_status':
+          return `Apply ${effect.value} ${effect.statusId ?? 'status'}${this.describeTarget(effect.target)}.`;
+        case 'summon':
+          return `Summon ${effect.value} unit${effect.value === 1 ? '' : 's'}.`;
+        default:
+          return null;
+      }
+    }).filter((line): line is string => Boolean(line));
+
+    if (card.exhaust) lines.push('Exhaust.');
+    if (card.retain) lines.push('Retain.');
+    if (card.fleeting) lines.push('Fleeting.');
+    if (card.type === 'POWER') lines.push('Persists for the rest of combat.');
+
+    return lines.join('\n');
+  }
+
+  private describeTarget(target: 'SELF' | 'ENEMY' | 'ALL_ENEMIES' | 'ALL'): string {
+    switch (target) {
+      case 'ENEMY':
+        return ' to an enemy';
+      case 'ALL_ENEMIES':
+        return ' to all enemies';
+      case 'ALL':
+        return ' to all combatants';
+      default:
+        return '';
+    }
   }
 }
