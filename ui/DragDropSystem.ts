@@ -59,17 +59,17 @@ export class DragDropSystem {
     this.pointerOffsetY = container.y - pointer.y;
     container.setDepth(200);
     container.setScale(1.1);
+    this.renderZoneVisuals(true);
   }
-//Update the card position during the drag call 
   updateDrag(pointer: Phaser.Input.Pointer): void {
     if (!this.draggingContainer) return;
 
     const newX = pointer.x + this.pointerOffsetX;
     const newY = pointer.y + this.pointerOffsetY;
     this.draggingContainer.setPosition(newX, newY);
+    // Detect zone overlap for spell targeting feedback
     this.checkZones(pointer);
   }
-  //Zone validation for checkin and card compatibility then trigger a callback or bounce the card back to the ogirnal position in the hand
   endDrag(
     pointer: Phaser.Input.Pointer,
     onPlay: (zone: DropZone) => void,
@@ -85,10 +85,12 @@ export class DragDropSystem {
     if (validZone && this.isTargetCompatible(validZone.type, this.draggingData.target)) {
       // Valid target: trigger card play
       this.clearZoneHighlights();
+      this.renderZoneVisuals(false);
       onPlay(validZone);
     } else {
       // Invalid target: return card to hand with animation
       this.clearZoneHighlights();
+      this.renderZoneVisuals(false);
       this.returnToHand();
       this.timeDelayedCall(TWEEN.return.duration, () => onReturn());
     }
@@ -118,6 +120,7 @@ export class DragDropSystem {
 // Abort the drag without any callbacks 
   cancel(): void {
     this.clearZoneHighlights();
+    this.renderZoneVisuals(false);
     this.draggingContainer = null;
     this.draggingData = null;
     this.activeZone = null;
@@ -127,7 +130,7 @@ export class DragDropSystem {
     return this.draggingContainer !== null;
   }
 
-//Zone logic
+ //Zone logic
   private checkZones(pointer: Phaser.Input.Pointer): void {
     const zone = this.findValidZone(pointer);
 
@@ -139,7 +142,7 @@ export class DragDropSystem {
       this.activeZone = zone;
       if (zone?.highlight) {
         zone.highlight.clear();
-        const color = zone.type === 'enemy' ? 0xff6b6b : 0x4ade80;
+        const color = 0x4ade80;
         zone.highlight.fillStyle(color, 0.12);
         zone.highlight.fillRect(
           zone.bounds.x,
@@ -158,8 +161,7 @@ export class DragDropSystem {
     }
   }
 
-
-    private findValidZone(pointer: Phaser.Input.Pointer): DropZone | null {
+  private findValidZone(pointer: Phaser.Input.Pointer): DropZone | null {
     for (const zone of this.zones) {
       if (Phaser.Geom.Rectangle.Contains(zone.bounds, pointer.x, pointer.y)) {
         return zone;
@@ -191,6 +193,30 @@ export class DragDropSystem {
       zone.visual?.clear();
     }
     this.activeZone = null;
+  }
+
+  private renderZoneVisuals(visible: boolean): void {
+    for (const zone of this.zones) {
+      if (!zone.visual) continue;
+      zone.visual.clear();
+      if (!visible) continue;
+
+      const color = 0x4ade80;
+      zone.visual.fillStyle(color, 0.08);
+      zone.visual.fillRect(
+        zone.bounds.x,
+        zone.bounds.y,
+        zone.bounds.width,
+        zone.bounds.height
+      );
+      zone.visual.lineStyle(2, color, 0.28);
+      zone.visual.strokeRect(
+        zone.bounds.x,
+        zone.bounds.y,
+        zone.bounds.width,
+        zone.bounds.height
+      );
+    }
   }
 
   private timeDelayedCall(ms: number, callback: () => void): void {
