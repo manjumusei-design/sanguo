@@ -621,10 +621,6 @@ export class CombatScene extends Phaser.Scene {
 
     this.playerContainer = this.add.container(x, y);
 
-    const emojiText = this.add.text(0, -30, character ? (EMOJI[character.id as keyof typeof EMOJI] ?? EMOJI.player) : EMOJI.player, {
-      fontSize: '64px',
-    }).setOrigin(0.5);
-
     const body = this.add.rectangle(0, 20, 90, 70, 0x2563eb, 0.5)
       .setStrokeStyle(2, 0x93c5fd)
       .setOrigin(0.5);
@@ -711,7 +707,6 @@ export class CombatScene extends Phaser.Scene {
 
       container.add([
         emojiText,
-        body,
         nameText,
         healthBar.bg,
         healthBar.fill,
