@@ -40,7 +40,8 @@ export class BootScene extends Phaser.Scene {
     this.load.image('node_boss', 'assets/Node_Boss.png');
     this.load.image('token_player', 'assets/token_player.png');
     this.load.image('ui_dialogue_parchment', 'assets/Dialogue_background.png');
-    this.load.image('menu_lobby_bg', 'assets/MainLobbyArt2.png')
+    this.load.image('menu_lobby_bg', 'assets/MainLobbyArt2.png')\
+    this.load.image('node_map_bg', 'assets/Node.map.png');
 
     // ---- Spine 2D animation placeholders ----
     // Stage test assets are pointed to the dedicated caocao folder.
