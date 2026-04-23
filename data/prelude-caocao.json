@@ -39,4 +39,190 @@
       ]
     },
     {
-			
+			"id": "P1_BATTLE_VANGUARD",
+			"type": "battle",
+			"chapter": "Rise of the Warlords",
+			"enemy:": "yellow_turban_warband",
+			"reward": {
+				"type" : "card",
+        "options": ["caocao_suppress", "caocao_sweep", "caocao_fortify"]
+			},
+			"nextNodeId": "P2_BATTLE_PURSUIT"
+		},
+		{
+			"id": "P2_BATTLE_PURSUIT",
+			"type": "battle",
+			"chapter": "Rise of the Warlords",
+			"enemy:": "yellow_turban_fanatic",
+			"reward": {
+				"type" : "card",
+				"options": ["caocao_rout", "caocao_ambush", "caocao_influence"]
+			},
+			"nextNodeId": "P3_COUNCIL"
+		},
+		{
+			"id": "P3_COUNCIL",
+			"type": "event",
+			"chapter": "Strategic Dominance",
+			"title": "Council of Methods",
+			"body": [
+				"After two field actions, your officers demand direction: terror, doctrine or calculated patronage.",
+				"Your answer will determine where pressure will be applied to next"
+			],
+			"choices": [
+				{
+					"label": "Public Supression",
+					"subtext": "Break resistance openly to establish fear backed compliance.",
+					"preview": ["Control +1", "Split battle: Crackdown Line"],
+					"text": "Set an example.",
+					"axisChanges": { "control": 1},
+					"reward": null,
+					"nextNodeId": "P3_ROUTE_SUPPRESS"
+					},
+				{
+					"label": "Doctrine Enforcement",
+					"subtext": "Reform command ranks and force discipline through execution orders.",
+					"preview": ["Control +1", "Split battle: Palace Resistance"],
+					"text": "Enforce order by code.",
+					"axisChanges": { "legitimacy": 1},
+					"reward": null,
+					"nextNodeId": "P3_ROUTE_DOCTRINE"
+				},
+				{
+					"label": "Co-opt the Militias",
+					"subtext": "Absorb local captains under your banner while they still fear exposure",	
+					"preview": ["Momentum +1", "Split battle: Palace Resistance"],
+					"text": "Bind oppurtunists early.",
+					"axisChanges": { "momentum": 1},
+					"reward": "relic_supply_ledger",
+					"nextNodeId": "P3_ROUTE_COOPT"
+				}
+			]
+		},
+		{
+			"id": "P3_ROUTE_SUPPRESS",
+			"type": "event",
+			"chapter": "Strategic Dominance",
+			"title": "Order by Fear",
+			"body": [
+				"You order public punishments at road junctions and granary towns to make an example of dissenters.",
+				"Compliance rises quickly; resentment does too. You move before resentment can organize."
+			],
+			"choices": [
+				{
+					"label": "Lead the Crackdown",
+					"subtext": "Demonstrate command directly in the field",
+					"preview" : ["Enter split battle"],
+					"text": "Advance.",
+					"axisChanges": {},
+					"reward": null,
+          "nextNodeId": "P4_BATTLE_CRACKDOWN"
+        }
+      ]
+    },
+		{
+			"id": "P3_ROUTE_DOCTRINE",
+			"type": "event",
+			"chapter": "Strategic Dominance",
+			"title": "Rule by Code",
+			"body": [
+				"You restructure command with formal regulations, rotating officers before they form local factions",
+				"Discipline hardens, but every decree now requires enforcement under pressure."
+			],
+			"choices": [
+				{
+					"label": "Test the New Chain",
+					"subtext": "Execute doctrine under live resistance",
+					"preview" : ["Enter split battle"],
+					"text": "Advance.",
+					"axisChanges": {},
+					"reward": null,
+					"nextNodeId": "P4_BATTLE_PALACE"
+				}
+			 ]
+		},
+		{
+			"id": "P3_ROUTE_COOPT",
+			"type": "event",
+			"chapter":"Strategic Dominance",
+			"title": "Order by Absorption",
+			"body": [
+				"You asorb militia leaders with rank, pay and surveillance. Their men now march under your supply rules.",
+				"The arrangement is useful but unstable. You must act before they can leverage their local influence against you."
+			],
+			"choices": [
+				{
+					"label": "Press the Palace Line",
+					"subtext": "Convert fresh loyalties into operational pressure.",
+					"preview": ["Enter split battle"],
+					"text": "Advance.",
+					"axisChanges": {},
+					"reward": null,
+					"nextNodeId": "P4_BATTLE_PALACE"
+				}
+			]
+		},
+		{
+			"id": "P4_BATTLE_CRACKDOWN",
+			"type": "battle",
+			"chapter": "Strategic Dominance",
+			"enemy:": "imperial_guard",
+			"reward": {
+				"type": "relic",
+				"options": ["relic_field_rations", "relic_war_banner"]
+			},
+			"nextNodeId": "P5_THRONE_DEBATE"
+		},
+		{
+			"Id": "P4_BATTLE_PALACE",
+			"type": "battle",
+			"chapter": "Strategic Dominance",
+			"enemy:": "rogue_cavalry",
+			"reward": {
+				"type": "relic",
+				"options": ["relic_rebel_pact", "relic_command_baton"]
+			},
+			"nextNodeId": "P5_THRONE_DEBATE"
+		},
+		{
+			"id": "P5_THRONE_DEBATE",
+			"type": "event",
+			"chapter": "Dominance",
+			"title": "The Emperor's Shadow",
+			"body": [
+				"With regional resistance crushed, the final question is political lineage:fguard the throne, control it, or bypass it.",
+        "Each path carries a different war doctrine into Act I."
+			],
+      "choices": [
+        {
+          "label": "Protect the Emperor",
+          "subtext": "Claim authority through guardianship and formal legitimacy.",
+          "preview": ["Legitimacy +2", "Route battle: Court Assailants"],
+          "text": "Guard the throne.",
+          "axisChanges": { "legitimacy": 2 },
+          "reward": null,
+          "nextNodeId": "P5_ROUTE_PROTECT"
+        },
+        {
+          "label": "Control the Emperor",
+          "subtext": "Use the throne as instrument of command and legal cover.",
+          "preview": ["Control +2", "Route battle: Palace Resistance"],
+          "text": "Hold the imperial seal.",
+          "axisChanges": { "control": 2 },
+          "reward": null,
+          "nextNodeId": "P5_ROUTE_CONTROL"
+        },
+        {
+          "label": "Ignore the Throne",
+          "subtext": "Build extra-institutional authority through logistics and field coercion.",
+          "preview": ["Momentum +2", "Route dialogue: Warlord's Road"],
+          "text": "Rule without symbols.",
+          "axisChanges": { "momentum": 2 },
+          "reward": null,
+          "nextNodeId": "P5_ROUTE_IGNORE"
+        }
+      ]
+    },
+		{
+			"id": ""
+		}
