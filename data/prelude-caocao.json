@@ -1,0 +1,42 @@
+{
+  "character": "caocao",
+  "startingDeck": [
+    "caocao_strike",
+    "caocao_strike",
+    "caocao_strike",
+    "caocao_strike",
+    "caocao_defend",
+    "caocao_defend",
+    "caocao_defend",
+    "caocao_defend",
+    "caocao_influence"
+  ],
+  "axes": {
+    "axis1": "Legitimacy",
+    "axis2": "Control",
+    "axis3": "Momentum"
+  },
+  "nodes": [
+    {
+      "id": "P0",
+      "type": "event",
+      "chapter": "Collapse of Order",
+      "title": "Ashes Beneath Silk",
+      "body": [
+        "The Han court still stands, but authority has fractured into private armies and local granaries.",
+        "You decide to answer collapse with structure before rivals can define the north."
+      ],
+      "choices": [
+        {
+          "label": "Deploy Vanguard",
+          "subtext": "Secure initiative before the court can stall you.",
+          "preview": ["Begin prelude operations"],
+          "text": "March.",
+          "axisChanges": {},
+          "reward": null,
+          "nextNodeId": "P1_BATTLE_VANGUARD"
+        }
+      ]
+    },
+    {
+			
