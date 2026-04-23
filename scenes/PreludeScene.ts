@@ -23,6 +23,7 @@ export class PreludeScene extends Phaser.Scene {
   private contentContainer!: Phaser.GameObjects.Container;
   private finishPreludeOnCreate = false;
   private preludeActor: SpineGameObject | Phaser.GameObjects.Text | null = null;
+  private preludeBackgroundImage: Phaser.GameObjects.Image | null = null;
   private preludeBackgroundVideo: Phaser.GameObjects.Video | null = null;
 
   constructor() {
@@ -74,30 +75,42 @@ export class PreludeScene extends Phaser.Scene {
     }
   }
 
-  private getPreludeBackgroundVideoKey(): string {
+  private getPreludeBackgroundKey(): string {
     if (this.characterId === 'liubei') return 'prelude_bg_shu';
     if (this.characterId === 'sunquan') return 'prelude_bg_wu';
     return 'prelude_bg_wei';
   }
 
   private renderPreludeBackground(cx: number, cy: number, w: number, h: number): void {
-    const key = this.getPreludeBackgroundVideoKey();
-    const hasVideo = this.cache.video.exists(key);
-    if (!hasVideo) {
-      this.add.rectangle(cx, cy, w, h, 0x000000, 1);
+    const key = this.getPreludeBackgroundKey();
+    if (this.textures.exists(key)) {
+      const image = this.add.image(cx, cy, key);
+      image.setDepth(-100);
+      image.setDisplaySize(w, h);
+      this.preludeBackgroundImage = image;
       return;
     }
 
-    const video = this.add.video(cx, cy, key);
-    video.setDepth(-100);
-    video.setDisplaySize(w, h);
-    video.setMute(true);
-    video.setLoop(true);
-    video.play(true);
-    this.preludeBackgroundVideo = video;
+    const hasVideo = this.cache.video.exists(key);
+    if (hasVideo) {
+      const video = this.add.video(cx, cy, key);
+      video.setDepth(-100);
+      video.setDisplaySize(w, h);
+      video.setMute(true);
+      video.setLoop(true);
+      video.play(true);
+      this.preludeBackgroundVideo = video;
+      return;
+    }
+
+    this.add.rectangle(cx, cy, w, h, 0x000000, 1);
   }
 
   private destroyPreludeBackground(): void {
+    if (this.preludeBackgroundImage) {
+      this.preludeBackgroundImage.destroy();
+      this.preludeBackgroundImage = null;
+    }
     if (!this.preludeBackgroundVideo) return;
     this.preludeBackgroundVideo.stop();
     this.preludeBackgroundVideo.destroy();
@@ -120,7 +133,7 @@ export class PreludeScene extends Phaser.Scene {
       return;
     }
 
-    const fallback = this.add.text(x, y - 90, '🐉 曹操', {
+    const fallback = this.add.text(x, y - 90, 'CaoCao', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '32px',
       color: '#f0d5a3',
@@ -154,57 +167,80 @@ export class PreludeScene extends Phaser.Scene {
   }
 
   private renderEvent(node: PreludeNode & { type: 'event' }): void {
-    this.renderPreludeActor();
+    const w = this.scale.width;
+    const h = this.scale.height;
     const total = this.preludeState.config.nodes.length;
     const current = Math.min(this.preludeState.currentNodeIndex + 1, total);
     const chapter = node.chapter ?? `Chapter ${current}`;
+    const hudTopbarHeight = 44;
+    const secondaryTopbarHeight = 40;
+    const secondaryTopbarGap = 6;
+    const topBarY = -Math.round(h / 2) + hudTopbarHeight + secondaryTopbarGap + Math.round(secondaryTopbarHeight / 2) - Math.round(h * 0.0051);
+    const edgePad = 20;
 
-    const topBar = this.add.rectangle(0, -300, 860, 52, 0x000000, 1).setStrokeStyle(1, 0x333333, 1);
-    const charName = this.add.text(-400, -300, this.characterId.toUpperCase(), {
+    const topBar = this.add.rectangle(0, topBarY, w, secondaryTopbarHeight, 0x000000, 0.86)
+      .setStrokeStyle(1, 0x4a3a25, 1);
+    const charName = this.add.text(-Math.round(w / 2) + edgePad, topBarY, this.characterId.toUpperCase(), {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '14px',
       color: '#f8e7c0',
       fontStyle: 'bold',
     }).setOrigin(0, 0.5);
-    const progress = this.add.text(390, -300, `Prelude ${current}/${total}`, {
+    const progress = this.add.text(Math.round(w / 2) - edgePad, topBarY, `Prelude ${current}/${total}`, {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '14px',
       color: '#c5d0e0',
     }).setOrigin(1, 0.5);
-    const chapterText = this.add.text(0, -300, chapter, {
+    const chapterText = this.add.text(0, topBarY, chapter, {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '13px',
       color: '#9fb0c8',
     }).setOrigin(0.5);
 
-    const title = this.add.text(0, -230, node.title ?? 'Event', {
+    const storyPanel = this.textures.exists('ui_dialogue_parchment')
+      ? this.add.image(0, -128, 'ui_dialogue_parchment').setDisplaySize(900, 260).setAlpha(0.95)
+      : this.add.rectangle(0, -128, 900, 260, 0xe2cfab, 0.95);
+    const storyPanelShade = this.add.rectangle(0, -128, 900, 260, 0x000000, 0.14)
+      .setStrokeStyle(2, 0x6a5534, 1);
+    const storyPanelHeader = this.add.rectangle(0, -246, 900, 2, 0x8f7647, 1);
+    const title = this.add.text(0, -214, node.title ?? 'Event', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '30px',
-      color: '#f0c060',
+      color: '#2c2015',
       fontStyle: 'bold',
     }).setOrigin(0.5);
 
     const bodyText = (node.body?.length ? node.body.join('\n\n') : (node.text ?? '')).trim();
-    const text = this.add.text(0, -120, bodyText, {
+    const text = this.add.text(0, -126, bodyText, {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '18px',
-      color: '#e0d6c8',
-      wordWrap: { width: 860 },
+      color: '#241a11',
+      wordWrap: { width: 836 },
       align: 'center',
       lineSpacing: 4,
     }).setOrigin(0.5);
 
     const hintText = node.hint
-      ? this.add.text(0, -22, node.hint, {
+      ? this.add.text(0, -34, node.hint, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '13px',
-        color: '#8aa1bd',
+        color: '#3f3121',
         align: 'center',
-        wordWrap: { width: 840 },
+        wordWrap: { width: 808 },
       }).setOrigin(0.5)
       : null;
 
-    this.contentContainer.add([topBar, charName, progress, chapterText, title, text]);
+    this.contentContainer.add([
+      topBar,
+      charName,
+      progress,
+      chapterText,
+      storyPanel,
+      storyPanelShade,
+      storyPanelHeader,
+      title,
+      text,
+    ]);
     if (hintText) {
       this.contentContainer.add(hintText);
     }
@@ -212,38 +248,44 @@ export class PreludeScene extends Phaser.Scene {
     node.choices?.forEach((choice, index) => {
       const y = 80 + index * 120;
       const btn = this.add.container(0, y);
-      const bg = this.add.rectangle(0, 0, 760, 102, 0x000000, 1).setStrokeStyle(2, 0x333333, 1);
+      const bg = this.add.rectangle(0, 0, 760, 102, 0xe2cfab, 0.95);
+      const shade = this.add.rectangle(0, 0, 760, 102, 0x000000, 0.14).setStrokeStyle(2, 0x5f4b2f, 1);
+      const accent = this.add.rectangle(-378, 0, 6, 102, 0x8f7647, 1);
       const label = this.add.text(-350, -30, choice.label ?? choice.text, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '20px',
-        color: '#ffffff',
+        color: '#271d13',
         fontStyle: 'bold',
         wordWrap: { width: 700 },
       }).setOrigin(0, 0.5);
       const subtext = this.add.text(-350, -2, choice.subtext ?? choice.text, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '14px',
-        color: '#cdd8ea',
+        color: '#3b2f22',
         wordWrap: { width: 700 },
       }).setOrigin(0, 0.5);
       const previewLines = this.buildChoicePreview(choice);
-      const preview = this.add.text(-350, 26, previewLines.join('   •   '), {
+      const preview = this.add.text(-350, 26, previewLines.join(' | '), {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '13px',
-        color: '#98b6ff',
+        color: '#5a4a33',
         wordWrap: { width: 700 },
       }).setOrigin(0, 0.5);
 
-      btn.add([bg, label, subtext, preview]);
+      btn.add([bg, shade, accent, label, subtext, preview]);
       btn.setSize(760, 102);
       btn.setInteractive({ useHandCursor: true });
       btn.on('pointerover', () => {
-        bg.setFillStyle(0x111111, 1);
-        bg.setStrokeStyle(2, 0x777777);
+        bg.setFillStyle(0xe8d8b8, 0.98);
+        shade.setFillStyle(0x000000, 0.06);
+        shade.setStrokeStyle(2, 0xb39058, 1);
+        accent.setFillStyle(0xd0ab6a, 1);
       });
       btn.on('pointerout', () => {
-        bg.setFillStyle(0x000000, 1);
-        bg.setStrokeStyle(2, 0x333333);
+        bg.setFillStyle(0xe2cfab, 0.95);
+        shade.setFillStyle(0x000000, 0.14);
+        shade.setStrokeStyle(2, 0x5f4b2f, 1);
+        accent.setFillStyle(0x8f7647, 1);
       });
       btn.on('pointerdown', () => {
         const result = advancePrelude(this.preludeState, index);
@@ -290,7 +332,7 @@ export class PreludeScene extends Phaser.Scene {
   }
 
   private renderBossPreview(bossId: string): void {
-    const title = this.add.text(0, -120, 'âš”ï¸ Final Trial', {
+    const title = this.add.text(0, -120, 'Ã¢Å¡â€Ã¯Â¸Â Final Trial', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '32px',
       color: '#ff6b6b',
@@ -459,7 +501,7 @@ export class PreludeScene extends Phaser.Scene {
     const cx = Math.round(w / 2);
     const sy = this.scale.height / 720;
 
-    this.add.text(cx, 300 * sy, 'âœ¨ Prelude Complete', {
+    this.add.text(cx, 300 * sy, 'Ã¢Å“Â¨ Prelude Complete', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '36px',
       color: '#f0c060',
@@ -496,3 +538,4 @@ export class PreludeScene extends Phaser.Scene {
     }).setOrigin(0.5);
   }
 }
+
