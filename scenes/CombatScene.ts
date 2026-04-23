@@ -42,6 +42,7 @@ import {
 } from '../ui/CardContainer';
 
 const PLAYER_SPINE_SPEED_MULTIPLIER = 1.4;
+const END_DEATH_ANIMATION_DELAY_MS = 700;
 
 export class CombatScene extends Phaser.Scene {
   private combatState!: CombatState;
@@ -64,6 +65,7 @@ export class CombatScene extends Phaser.Scene {
 
   private playerContainer!: Phaser.GameObjects.Container;
   private playerSpine: SpineGameObject | null = null;
+  private enemySpines: Array<SpineGameObject | null> = [];
   private playerStatusContainer: Phaser.GameObjects.Container | null = null;
   private enemyContainers: Array<Phaser.GameObjects.Container | null> = [];
   private enemyStatusContainers: Array<Phaser.GameObjects.Container | null> = [];
@@ -85,6 +87,7 @@ export class CombatScene extends Phaser.Scene {
   private lastEnemyHpSnapshots: number[] = [];
   private lastEnemyBlockSnapshots: number[] = [];
   private lastEnemyStatusSnapshots: Array<Map<Status['id'], number>> = [];
+  private domPopups = new Set<HTMLDivElement>();
   private isResolvingQueue = false;
   private combatEnded = false;
 
@@ -235,6 +238,7 @@ export class CombatScene extends Phaser.Scene {
       relicManager: this.relicManager,
       enemyRNG: this.combatRNG,
       onCombatEnd: (result) => this.handleCombatEnd(result),
+      onEnemyActionStart: (enemyIndex) => this.playEnemyActionAnimation(enemyIndex),
     });
 
     if (import.meta.env.DEV) {
@@ -265,12 +269,13 @@ export class CombatScene extends Phaser.Scene {
     const py = (value: number) => Math.round(h * (1 - value));
     const cx = Math.round(w / 2);
 
-    this.add.rectangle(cx, Math.round(h / 2), w, h, 0x000000);
+    this.renderCombatBackground(this.combatState.player.id, cx, Math.round(h / 2), w, h);
 
     // Launch persistent HUD overlay
     this.scene.launch('HUDScene');
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.scene.stop('HUDScene');
+      this.clearDomPopups();
     });
 
     if (import.meta.env.DEV) {
@@ -361,7 +366,7 @@ export class CombatScene extends Phaser.Scene {
       clearHover();
     };
 
-    this.endTurnButton = this.add.text(px(0.92), py(0.45), `${EMOJI.end_turn} END TURN`, {
+    this.endTurnButton = this.add.text(px(0.92), py(0.45), 'END TURN', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '16px',
       color: '#ffffff',
@@ -396,6 +401,29 @@ export class CombatScene extends Phaser.Scene {
 
     this.turnStateMachine.startCombat((phase) => this.updatePhaseDisplay(phase));
     this.addLog('Combat started');
+  }
+
+  private getCombatBackgroundKey(characterId: string): string {
+    if (characterId === 'liubei') return 'prelude_bg_shu';
+    if (characterId === 'sunquan') return 'prelude_bg_wu';
+    return 'prelude_bg_wei';
+  }
+
+  private renderCombatBackground(
+    characterId: string,
+    cx: number,
+    cy: number,
+    w: number,
+    h: number
+  ): void {
+    const key = this.getCombatBackgroundKey(characterId);
+    if (this.textures.exists(key)) {
+      this.add.image(cx, cy, key)
+        .setDepth(-100)
+        .setDisplaySize(w, h);
+      return;
+    }
+    this.add.rectangle(cx, cy, w, h, 0x000000);
   }
 
   private createCombatState(
@@ -506,9 +534,35 @@ export class CombatScene extends Phaser.Scene {
       }),
       () => {
         this.isResolvingQueue = false;
-      this.finalizeCombatEnd(result, currentNodeType);
+        this.playEndDeathAnimations(() => {
+          this.finalizeCombatEnd(result, currentNodeType);
+        });
       }
     );
+  }
+
+  private playEndDeathAnimations(onComplete: () => void): void {
+    let playedAny = false;
+
+    if (this.combatState.player.hp <= 0 && this.playerSpine) {
+      SpineManager.play(this.playerSpine, 'dead', false);
+      playedAny = true;
+    }
+
+    this.combatState.enemies.forEach((enemy, index) => {
+      if (enemy.hp > 0) return;
+      const spine = this.enemySpines[index];
+      if (!spine) return;
+      SpineManager.play(spine, 'dead', false);
+      playedAny = true;
+    });
+
+    if (!playedAny) {
+      onComplete();
+      return;
+    }
+
+    this.time.delayedCall(END_DEATH_ANIMATION_DELAY_MS, onComplete);
   }
 
   private finalizeCombatEnd(result: 'victory' | 'defeat', currentNodeType: import('../types').NodeType | 'UNKNOWN'): void {
@@ -617,28 +671,30 @@ export class CombatScene extends Phaser.Scene {
     const player = this.combatState.player;
     const character = getCharacter(player.id as CharacterId);
     const x = Math.round(this.scale.width * 0.22);
-    const y = Math.round(this.scale.height * 0.52);
+    const y = Math.round(this.scale.height * 0.75);
 
     this.playerContainer = this.add.container(x, y);
 
-    const body = this.add.rectangle(0, 20, 90, 70, 0x2563eb, 0.5)
-      .setStrokeStyle(2, 0x93c5fd)
-      .setOrigin(0.5);
-    const nameText = this.add.text(0, -80, player.name, {
+    const emojiText = this.add.text(0, -30, character ? (EMOJI[character.id as keyof typeof EMOJI] ?? EMOJI.player) : EMOJI.player, {
+      fontSize: '64px',
+    }).setOrigin(0.5);
+
+    const nameText = this.add.text(0, 94, player.name, {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '16px',
       color: '#ffffff',
       fontStyle: 'bold',
     }).setOrigin(0.5);
-    const healthBar = this.createRoundedHealthBar(124, 16, -64, 68);
-    healthBar.bg.setPosition(0, -58);
-    healthBar.fill.setPosition(0, -58);
+    const healthBar = this.createRoundedHealthBar(124, 16, 74, 96);
+    healthBar.bg.setPosition(0, 52);
+    healthBar.fill.setPosition(0, 52);
+    // Move shield indicator beside status pills instead of under HP bar.
+    healthBar.block.setPosition(86, 124);
     // Status stack row anchored below the shield/block indicator.
-    const statusContainer = this.add.container(0, 98);
+    const statusContainer = this.add.container(0, 124);
 
     this.playerContainer.add([
       emojiText,
-      body,
       nameText,
       healthBar.bg,
       healthBar.fill,
@@ -675,8 +731,10 @@ export class CombatScene extends Phaser.Scene {
 
   private renderEnemies(): void {
     this.enemyContainers.forEach((container) => container?.destroy());
+    this.enemySpines.forEach((spine) => spine?.destroy());
     this.intentDisplays.forEach((display) => display?.destroy());
     this.enemyContainers = [];
+    this.enemySpines = [];
     this.enemyStatusContainers = [];
     this.intentDisplays = [];
 
@@ -694,19 +752,22 @@ export class CombatScene extends Phaser.Scene {
       const body = this.add.rectangle(0, 20, 70, 50, visuals.bodyColor, 0.6)
         .setStrokeStyle(2, visuals.strokeColor)
         .setOrigin(0.5);
-      const nameText = this.add.text(0, -70, enemy.name, {
+      const nameText = this.add.text(0, 82, enemy.name, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '14px',
         color: '#ffffff',
       }).setOrigin(0.5);
-      const healthBar = this.createRoundedHealthBar(96, 14, -47, 58);
-      healthBar.bg.setPosition(0, -50);
-      healthBar.fill.setPosition(0, -50);
+      const healthBar = this.createRoundedHealthBar(96, 14, 60, 80);
+      healthBar.bg.setPosition(0, 42);
+      healthBar.fill.setPosition(0, 42);
+      // Move shield indicator beside status pills instead of under HP bar.
+      healthBar.block.setPosition(74, 102);
       // Status stack row anchored below the shield/block indicator.
-      const statusContainer = this.add.container(0, 84);
+      const statusContainer = this.add.container(0, 102);
 
       container.add([
         emojiText,
+        body,
         nameText,
         healthBar.bg,
         healthBar.fill,
@@ -724,7 +785,26 @@ export class CombatScene extends Phaser.Scene {
       });
       this.enemyContainers[index] = container;
       this.enemyStatusContainers[index] = statusContainer;
-      this.intentDisplays[index] = new IntentDisplay(this, x, y - Math.round(this.scale.height * 0.12));
+      this.intentDisplays[index] = new IntentDisplay(this, x, y - Math.round(this.scale.height * 0.27));
+
+      const enemySpineKey = this.getEnemySpineKey(enemy.id);
+      if (enemySpineKey) {
+        const enemySpine = SpineManager.create(this, enemySpineKey, x, y + 12, {
+          scale: this.getEnemySpineScale(enemy.id),
+          initialAnimation: 'idle',
+        });
+        if (enemySpine) {
+          SpineManager.setFacing(enemySpine, 'left');
+          SpineManager.setSpeed(enemySpine, 1.25);
+          emojiText.setVisible(false);
+          body.setVisible(false);
+          this.enemySpines[index] = enemySpine;
+        } else {
+          this.enemySpines[index] = null;
+        }
+      } else {
+        this.enemySpines[index] = null;
+      }
     });
 
     this.refreshCombatantVisuals();
@@ -949,6 +1029,37 @@ export class CombatScene extends Phaser.Scene {
     }
   }
 
+  private getEnemyActionAnimation(enemyIndex: number): string {
+    const enemy = this.combatState.enemies[enemyIndex];
+    const primary = enemy?.intent?.effects?.[0];
+    if (!primary) {
+      return 'skill0';
+    }
+
+    switch (primary.type) {
+      case 'damage':
+        return 'skill0';
+      case 'block':
+      case 'apply_status':
+        return 'skill1';
+      case 'summon':
+        return 'skill2';
+      default:
+        return 'run';
+    }
+  }
+
+  private playEnemyActionAnimation(enemyIndex: number): void {
+    const enemySpine = this.enemySpines[enemyIndex];
+    if (!enemySpine) {
+      return;
+    }
+
+    const actionAnimation = this.getEnemyActionAnimation(enemyIndex);
+    SpineManager.play(enemySpine, actionAnimation, false);
+    SpineManager.queueAnimation(enemySpine, 'ready', true, 0);
+  }
+
   private resolvePendingEffects(onComplete?: () => void): void {
     const enemyCountBefore = this.combatState.enemies.length;
     this.isResolvingQueue = true;
@@ -1098,6 +1209,10 @@ export class CombatScene extends Phaser.Scene {
       data.blockText.setText(enemy.block > 0 ? `${EMOJI.block} ${enemy.block}` : '');
       data.blockText.setVisible(enemy.block > 0);
       container.setAlpha(enemy.hp > 0 ? 1 : 0.25);
+      const enemySpine = this.enemySpines[index];
+      if (enemySpine) {
+        enemySpine.alpha = enemy.hp > 0 ? 1 : 0.25;
+      }
       this.enemyStatusSignatures[index] = this.updateStatusPills(
         data.statusContainer ?? this.enemyStatusContainers[index],
         enemy.statuses,
@@ -1247,7 +1362,7 @@ export class CombatScene extends Phaser.Scene {
     const player = this.combatState.player;
     const world = this.playerContainer.getWorldTransformMatrix();
     const x = world.tx;
-    const y = world.ty - 86;
+    const y = this.playerSpine ? (world.ty - 210) : (world.ty - 86);
 
     if (this.lastPlayerHpSnapshot != null) {
       const hpDelta = player.hp - this.lastPlayerHpSnapshot;
@@ -1272,7 +1387,7 @@ export class CombatScene extends Phaser.Scene {
     if (!container) return;
     const world = container.getWorldTransformMatrix();
     const x = world.tx;
-    const y = world.ty - 78;
+    const y = this.enemySpines[index] ? (world.ty - 190) : (world.ty - 78);
 
     const prevHp = this.lastEnemyHpSnapshots[index];
     if (prevHp != null) {
@@ -1339,6 +1454,102 @@ export class CombatScene extends Phaser.Scene {
     kind: 'damage' | 'block' | 'status' | 'heal',
     magnitude: number
   ): void {
+    if (this.spawnNumberPopupDom(x, y, text, color, kind, magnitude)) {
+      return;
+    }
+
+    this.spawnNumberPopupPhaser(x, y, text, color, kind, magnitude);
+  }
+
+  private spawnNumberPopupDom(
+    x: number,
+    y: number,
+    text: string,
+    color: string,
+    kind: 'damage' | 'block' | 'status' | 'heal',
+    magnitude: number
+  ): boolean {
+    if (typeof document === 'undefined') {
+      return false;
+    }
+
+    const canvas = this.game.canvas as HTMLCanvasElement | null;
+    if (!canvas) {
+      return false;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) {
+      return false;
+    }
+
+    const sx = rect.width / canvas.width;
+    const sy = rect.height / canvas.height;
+    const randomX = x + Phaser.Math.Between(-10, 10);
+    const randomY = y + Phaser.Math.Between(-6, 6);
+    const screenX = rect.left + randomX * sx;
+    const screenY = rect.top + randomY * sy;
+    const baseSize = kind === 'damage' ? 56 : kind === 'block' ? 48 : 44;
+    const impactScale = kind === 'damage'
+      ? (magnitude >= 30 ? 1.75 : magnitude >= 15 ? 1.45 : 1.2)
+      : kind === 'block'
+        ? (magnitude >= 20 ? 1.45 : magnitude >= 10 ? 1.25 : 1.1)
+        : (magnitude >= 3 ? 1.2 : 1.06);
+    const riseDistance = (kind === 'damage' ? Phaser.Math.Between(32, 46) : Phaser.Math.Between(22, 34)) * sy;
+    const duration = kind === 'damage' ? 620 : 560;
+
+    const el = document.createElement('div');
+    el.textContent = text;
+    el.style.position = 'fixed';
+    el.style.left = `${screenX}px`;
+    el.style.top = `${screenY}px`;
+    el.style.transform = `translate(-50%, 0px) scale(${impactScale + 0.35})`;
+    el.style.fontFamily = 'system-ui, sans-serif';
+    el.style.fontWeight = '900';
+    el.style.fontSize = `${Math.max(16, Math.round(baseSize * sy))}px`;
+    el.style.lineHeight = '1';
+    el.style.color = color;
+    el.style.pointerEvents = 'none';
+    el.style.userSelect = 'none';
+    el.style.whiteSpace = 'pre';
+    el.style.zIndex = '2147483647';
+    el.style.textShadow = '0 4px 6px rgba(0,0,0,0.9), 0 0 2px #140f1f, 0 0 8px #140f1f';
+    document.body.appendChild(el);
+    this.domPopups.add(el);
+
+    const start = performance.now();
+    const animate = (now: number) => {
+      if (!this.domPopups.has(el)) {
+        return;
+      }
+
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - (1 - t) * (1 - t);
+      const scale = impactScale + 0.35 - (0.35 * eased);
+      const rise = -riseDistance * eased;
+      el.style.opacity = `${1 - t}`;
+      el.style.transform = `translate(-50%, ${rise}px) scale(${scale})`;
+
+      if (t < 1) {
+        requestAnimationFrame(animate);
+        return;
+      }
+
+      this.domPopups.delete(el);
+      el.remove();
+    };
+    requestAnimationFrame(animate);
+    return true;
+  }
+
+  private spawnNumberPopupPhaser(
+    x: number,
+    y: number,
+    text: string,
+    color: string,
+    kind: 'damage' | 'block' | 'status' | 'heal',
+    magnitude: number
+  ): void {
     const randomX = x + Phaser.Math.Between(-10, 10);
     const randomY = y + Phaser.Math.Between(-6, 6);
     const baseSize = kind === 'damage' ? 56 : kind === 'block' ? 48 : 44;
@@ -1364,7 +1575,7 @@ export class CombatScene extends Phaser.Scene {
         blur: 6,
         fill: true,
       },
-    }).setOrigin(0.5).setDepth(140);
+    }).setOrigin(0.5).setDepth(3000);
     popup.setPosition(randomX, randomY);
     popup.setScale(impactScale + 0.35);
 
@@ -1378,6 +1589,11 @@ export class CombatScene extends Phaser.Scene {
       ease: 'Sine.easeOut',
       onComplete: () => popup.destroy(),
     });
+  }
+
+  private clearDomPopups(): void {
+    this.domPopups.forEach((popup) => popup.remove());
+    this.domPopups.clear();
   }
 
   private addLog(message: string): void {
@@ -1677,7 +1893,7 @@ export class CombatScene extends Phaser.Scene {
     const maxRows = 16;
     const shown = [...this.combatState.drawPile].slice(-maxRows).reverse();
     shown.forEach((card, i) => {
-      const row = this.add.text(-w / 2 + 16, -h / 2 + 54 + i * 23, `${card.cost}${EMOJI.energy}  ${card.name}`, {
+      const row = this.add.text(-w / 2 + 16, -h / 2 + 54 + i * 23, `${card.cost}  ${card.name}`, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '13px',
         color: '#e2e8f0',
@@ -1749,6 +1965,36 @@ export class CombatScene extends Phaser.Scene {
     }
   }
 
+  private getEnemySpineKey(enemyId: string): string | null {
+    const baseId = getEnemyTemplateId(enemyId);
+    switch (baseId) {
+      case 'yellow_turban_warband':
+        return 'enemy_yellow_turban_warband';
+      case 'yellow_turban_fanatic':
+        return 'enemy_yellow_turban_fanatic';
+      case 'imperial_guard':
+        return 'enemy_imperial_guard';
+      case 'rogue_cavalry':
+        return 'enemy_rogue_cavalry';
+      case 'dong_zhuo_vanguard':
+        return 'enemy_dong_zhuo_vanguard';
+      default:
+        return null;
+    }
+  }
+
+  private getEnemySpineScale(enemyId: string): number {
+    const baseId = getEnemyTemplateId(enemyId);
+    const scaleByEnemy: Record<string, number> = {
+      yellow_turban_warband: Math.max(2.8, Math.min(this.scale.width / 1280, this.scale.height / 720) * 4.0),
+      yellow_turban_fanatic: Math.max(2.8, Math.min(this.scale.width / 1280, this.scale.height / 720) * 4.0),
+      imperial_guard: Math.max(2.8, Math.min(this.scale.width / 1280, this.scale.height / 720) * 4.1),
+      rogue_cavalry: Math.max(2.8, Math.min(this.scale.width / 1280, this.scale.height / 720) * 3.8),
+      dong_zhuo_vanguard: Math.max(2.8, Math.min(this.scale.width / 1280, this.scale.height / 720) * 4.0),
+    };
+    return scaleByEnemy[baseId] ?? Math.max(2.8, Math.min(this.scale.width / 1280, this.scale.height / 720) * 4.0);
+  }
+
   private createEncounterEnemies(enemyIds: string[], enemyRng: RNG, act: number): Enemy[] {
     const enemies: Enemy[] = [];
 
@@ -1788,20 +2034,20 @@ export class CombatScene extends Phaser.Scene {
 
   private getEnemyYPosition(index: number, total: number): number {
     const h = this.scale.height;
-    if (total <= 1) return Math.round(h * 0.52);
+    if (total <= 1) return Math.round(h * 0.75);
     if (total === 2) {
-      const ys = [0.40, 0.64];
+      const ys = [0.69, 0.79];
       return Math.round(h * ys[index]);
     }
     if (total === 3) {
-      const ys = [0.34, 0.52, 0.70];
+      const ys = [0.65, 0.75, 0.83];
       return Math.round(h * ys[index]);
     }
     if (total === 4) {
-      const ys = [0.30, 0.44, 0.60, 0.74];
+      const ys = [0.61, 0.69, 0.77, 0.85];
       return Math.round(h * ys[index]);
     }
-    const ys = [0.26, 0.40, 0.52, 0.64, 0.76];
+    const ys = [0.58, 0.65, 0.73, 0.81, 0.87];
     return Math.round(h * ys[Math.min(index, ys.length - 1)]);
   }
 
@@ -1835,6 +2081,9 @@ export class CombatScene extends Phaser.Scene {
   destroy(): void {
     this.playerSpine?.destroy();
     this.playerSpine = null;
+    this.enemySpines.forEach((spine) => spine?.destroy());
+    this.enemySpines = [];
+    this.clearDomPopups();
     this.tooltipManager.destroy();
   }
 }
