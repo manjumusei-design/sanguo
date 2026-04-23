@@ -187,3 +187,4 @@ export class BootScene extends Phaser.Scene {
     // Boot complete
   }
 }
+//THS IS AI GENERTED BOOTSCENE, NOT TOUCHED BY ME, PROBABLY NEEDS SOME TWEAKING
