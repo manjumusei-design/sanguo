@@ -1,4 +1,5 @@
 import type { Card} from '../../types' 
+import { allCards as expansionAllCards } from './card_expansion_integration';
 
 // Caocao deck
 
@@ -606,12 +607,41 @@ export const sunQuanCards: Card[] = [
     },
 ];
 
+
 // Card reg 
 
 export const allCards: ReadonlyMap<string, Card> = new Map([
   ...caoCaoCards.map((c) => [c.id, c] as const),
   ...liuBeiCards.map((c) => [c.id, c] as const),
   ...sunQuanCards.map((c) => [c.id, c] as const),
+]);
+
+const SUPPORTED_POWER_IDS = new Set([
+  'caocao_warlord',
+  'caocao_dominion',
+  'caocao_iron_wall',
+  'liubei_virtue',
+  'liubei_mandate',
+  'liubei_mandate_of_heaven',
+  'sunquan_sovereign',
+  'sunquan_naval',
+  'sunquan_naval_supremacy',
+]);
+
+function isRuntimeSupportedCard(card: Card): boolean {
+  if (card.type !== 'POWER') {
+    return true;
+  }
+  if (card.effects.length > 0) {
+    return true;
+  }
+  return SUPPORTED_POWER_IDS.has(card.id);
+}
+
+//Merge the expansion with current one 
+export const allCards: ReadonlyMap<string, Card> = new Map([
+  ...Array.from(expansionAllCards.entries()).filter(([, card]) => isRuntimeSupportedCard(card)),
+  ...Array.from(coreAllCards.entries()),
 ]);
 
 
@@ -621,9 +651,7 @@ export function getCard(id: string): Card | undefined {
     return JSON.parse(JSON.stringify(card));
 }
 
- 
- //Get starting deck for a character
- 
+  //Get starting deck for a character
 export function getStartingDeck(characterId: string): Card[] {
   const basicAttack = getCard(
     characterId === 'caocao'
