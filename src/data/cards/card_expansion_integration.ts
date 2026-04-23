@@ -72,3 +72,15 @@ export const caoCaoCards: Card[] = [
       { type: 'block', value: 3, target: 'SELF' },
     ],
   }
+  {
+    id: 'caocao_fortify',
+    name: 'Fortify',
+    type: 'SKILL',
+    cost: 2,
+    target: 'SELF',
+    value: 10,
+    effects: [
+      { type: 'block', value: 10, target: 'SELF' },
+      { type: 'apply_status', value: 2, target: 'SELF', statusId: 'formation' },
+    ],
+  },
