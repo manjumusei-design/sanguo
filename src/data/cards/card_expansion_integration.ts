@@ -60,4 +60,15 @@ export const caoCaoCards: Card[] = [
       { type: 'draw', value: 1, target: 'SELF' },
     ],
   },
-	
+  {
+    id: 'caocao_ambush',
+    name: 'Ambush',
+    type: 'SKILL',
+    cost: 1,
+    target: 'ENEMY',
+    value: 5,
+    effects: [
+      { type: 'damage', value: 5, target: 'ENEMY' },
+      { type: 'block', value: 3, target: 'SELF' },
+    ],
+  }
