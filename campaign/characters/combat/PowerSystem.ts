@@ -112,32 +112,42 @@ const POWER_DEFINITIONS: Record<string, PowerDefinition> = {
 	},
 };
 
-export function createPowerInstance(card: Card): PowerInstance | null {
-	const definition = POWER_DEFINITIONS[card.id];
-	if (!definition) {
-		return null;
-	}
+const POWER_ID_ALIASES: Record<string, string> = {
+  liubei_mandate_of_heaven: 'liubei_mandate',
+  sunquan_naval_supremacy: 'sunquan_naval',
+};
 
-	return {
-		id: definition.id,
-		cardId: card.id,
-		name: definition.name,
-		description: definition.description,
-	};
-} 
+function resolvePowerDefinitionId(cardOrPowerId: string): string {
+  return POWER_ID_ALIASES[cardOrPowerId] ?? cardOrPowerId;
+}
+
+export function createPowerInstance(card: Card): PowerInstance | null {
+  const resolvedId = resolvePowerDefinitionId(card.id);
+  const definition = POWER_DEFINITIONS[resolvedId];
+  if (!definition) {
+    return null;
+  }
+
+  return {
+    id: definition.id,
+    cardId: card.id,
+    name: definition.name,
+    description: definition.description,
+  };
+}
 
 export function getPowerDefinition(powerId: string): PowerDefinition | undefined {
-	return POWER_DEFINITIONS[powerId];
+  return POWER_DEFINITIONS[resolvePowerDefinitionId(powerId)];
 }
 
 export function forEachPlayerPower(
-	combatState: CombatState,
-	callback: (definition: PowerDefinition, power: PowerInstance) => void 
+  combatState: CombatState,
+  callback: (definition: PowerDefinition, power: PowerInstance) => void
 ): void {
-	for (const power of combatState.playerPowers) {
-		const definition = getPowerDefinition(power.id);
-		if (definition) {
-			callback(definition, power);
-		}
-	}
+  for (const power of combatState.playerPowers) {
+    const definition = getPowerDefinition(power.id);
+    if (definition) {
+      callback(definition, power);
+    }
+  }
 }
