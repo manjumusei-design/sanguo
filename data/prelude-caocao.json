@@ -23,13 +23,13 @@
       "chapter": "Collapse of Order",
       "title": "Ashes Beneath Silk",
       "body": [
-        "The Han court still stands, but authority has fractured into private armies and local granaries.",
-        "You decide to answer collapse with structure before rivals can define the north."
+        "The Han court still stands, but authority has begun to fracture into warlords, private armies and local granaries.",
+        "You decide to answer collapse with structure before your rivals can define the north."
       ],
       "choices": [
         {
           "label": "Deploy Vanguard",
-          "subtext": "Secure initiative before the court can stall you.",
+          "subtext": "Secure initiative before the court stalls you.",
           "preview": ["Begin prelude operations"],
           "text": "March.",
           "axisChanges": {},
@@ -66,31 +66,31 @@
 			"chapter": "Strategic Dominance",
 			"title": "Council of Methods",
 			"body": [
-				"After two field actions, your officers demand direction: terror, doctrine or calculated patronage.",
+				"After two deployments, your officers demand direction: terror, doctrine or calculated alliances.",
 				"Your answer will determine where pressure will be applied to next"
 			],
 			"choices": [
 				{
 					"label": "Public Supression",
-					"subtext": "Break resistance openly to establish fear backed compliance.",
+					"subtext": "Cull resistance openly to establish obedience.",
 					"preview": ["Control +1", "Split battle: Crackdown Line"],
-					"text": "Set an example.",
+					"text": "Make an example of them.",
 					"axisChanges": { "control": 1},
 					"reward": null,
 					"nextNodeId": "P3_ROUTE_SUPPRESS"
 					},
 				{
 					"label": "Doctrine Enforcement",
-					"subtext": "Reform command ranks and force discipline through execution orders.",
+					"subtext": "Reform command ranks and enforce discipline through execution orders.",
 					"preview": ["Control +1", "Split battle: Palace Resistance"],
-					"text": "Enforce order by code.",
+					"text": "Enforce order by fear.",
 					"axisChanges": { "legitimacy": 1},
 					"reward": null,
 					"nextNodeId": "P3_ROUTE_DOCTRINE"
 				},
 				{
 					"label": "Co-opt the Militias",
-					"subtext": "Absorb local captains under your banner while they still fear exposure",	
+					"subtext": "Absorb local cliques under your banner while they still fear exposure",	
 					"preview": ["Momentum +1", "Split battle: Palace Resistance"],
 					"text": "Bind oppurtunists early.",
 					"axisChanges": { "momentum": 1},
@@ -105,13 +105,13 @@
 			"chapter": "Strategic Dominance",
 			"title": "Order by Fear",
 			"body": [
-				"You order public punishments at road junctions and granary towns to make an example of dissenters.",
-				"Compliance rises quickly; resentment does too. You move before resentment can organize."
+				"You order searches at road junctions and executions at granary towns to make an example of dissenters.",
+				"Compliance rises quickly; as does resentment. Your forces are now feared, but also watched for signs of oppurtunity"
 			],
 			"choices": [
 				{
 					"label": "Lead the Crackdown",
-					"subtext": "Demonstrate command directly in the field",
+					"subtext": "Demonstrate command directly",
 					"preview" : ["Enter split battle"],
 					"text": "Advance.",
 					"axisChanges": {},
@@ -126,13 +126,13 @@
 			"chapter": "Strategic Dominance",
 			"title": "Rule by Code",
 			"body": [
-				"You restructure command with formal regulations, rotating officers before they form local factions",
-				"Discipline hardens, but every decree now requires enforcement under pressure."
+				"You restructure command with formal regulations, rotating officers before they form cliques and factions",
+				"Discipline hardens, but every decree now requires enforcement under heavy surveillance."
 			],
 			"choices": [
 				{
 					"label": "Test the New Chain",
-					"subtext": "Execute doctrine under live resistance",
+					"subtext": "Execute doctrine under resistance",
 					"preview" : ["Enter split battle"],
 					"text": "Advance.",
 					"axisChanges": {},
@@ -147,13 +147,13 @@
 			"chapter":"Strategic Dominance",
 			"title": "Order by Absorption",
 			"body": [
-				"You asorb militia leaders with rank, pay and surveillance. Their men now march under your supply rules.",
-				"The arrangement is useful but unstable. You must act before they can leverage their local influence against you."
+				"You asorb militia leaders with stable rank and pay. Their men now march ever stronger under supply rules you control.",
+				"The current arrangement is useful but unstable. You must act before they can leverage their local influence against you."
 			],
 			"choices": [
 				{
 					"label": "Press the Palace Line",
-					"subtext": "Convert fresh loyalties into operational pressure.",
+					"subtext": "Convert fresh loyalties into pure obedience.",
 					"preview": ["Enter split battle"],
 					"text": "Advance.",
 					"axisChanges": {},
@@ -190,8 +190,8 @@
 			"chapter": "Dominance",
 			"title": "The Emperor's Shadow",
 			"body": [
-				"With regional resistance crushed, the final question is political lineage:fguard the throne, control it, or bypass it.",
-        "Each path carries a different war doctrine into Act I."
+				"With regional resistance and warlords crushed, the final question is political lineage: guard the throne, control it, or seize your destiny as emperor.",
+        "(Each path carries a different war doctrine into Act I)."
 			],
       "choices": [
         {
@@ -205,7 +205,7 @@
         },
         {
           "label": "Control the Emperor",
-          "subtext": "Use the throne as instrument of command and legal cover.",
+          "subtext": "Use the throne to project command and authority.",
           "preview": ["Control +2", "Route battle: Palace Resistance"],
           "text": "Hold the imperial seal.",
           "axisChanges": { "control": 2 },
@@ -213,8 +213,8 @@
           "nextNodeId": "P5_ROUTE_CONTROL"
         },
         {
-          "label": "Ignore the Throne",
-          "subtext": "Build extra-institutional authority through logistics and field coercion.",
+          "label": "Seize the Throne",
+          "subtext": "Build extra-institutional authority outside the court via logistics and field coercion.",
           "preview": ["Momentum +2", "Route dialogue: Warlord's Road"],
           "text": "Rule without symbols.",
           "axisChanges": { "momentum": 2 },
@@ -263,4 +263,25 @@
 				}
 			]
 		},
-		
+		{
+			"id": "P5_ROUTE_IGNORE",
+			"type": "event",
+			"chapter": "Dominance",
+			"title": "Field Sovereignty",
+			"body": [
+				"You abandon court symbolism and tie rule directly to roads, grain and officer obedience. A new empire is in the making from the blood of the old."
+			],
+			"choices": [
+				{
+					"label": "Commit to Warlord Rule.",
+					"subtext": "Accept legitimacy through strength.",
+					"preview": ["Route dialogue"],
+					"text": "Proceed.",
+					"axisChanges": {},
+					"reward": null,
+					"nextNodeId": "P6_DIALOGUE_IGNORE"
+				}
+			]
+
+
+		}
