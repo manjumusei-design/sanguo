@@ -282,6 +282,79 @@
 					"nextNodeId": "P6_DIALOGUE_IGNORE"
 				}
 			]
-
+		},
+		{
+			"id": "P6_BATTLE_PROTECT",
+			"type":  "battle",
+			"chapter": "Dominance",
+			"enemy": "dong_zhuo_vanguard",
+			 "reward" : {
+				"type": "relic",
+				"options": ["caocao_seal", "caocao_heritage"]
+			},
+			"nextNodeId": "PRELUDE_SUMMARY"
+		},
+		{
+			"id": "P6_BATTLE_CONTROL",
+			"type": "battle",
+			"chapter": "Dominance",
+			"enemy": "imperial_guard",
+			"reward": {
+				"type": "relic",
+				"options": ["caocao_seal", "relic_imperial_edict"]
+			},
+			"nextNodeId": "PRELUDE_SUMMARY"
+			},
+		{
+			"id": "P6_DIALOGUE_IGNORE",
+			"type": "event",
+			"chapter": "Dominance",
+			"title": "Road to Power",
+			"body": [
+				"You leave imperial bureaucracy to rot and standardize command through supply routes and officer loyalty.",
+				"The state may call this a mutiny, but your generals know a new age has begun."
+			],
+			"choices": [
+				{
+					"label": "Consolidate the Warlord's Road",
+					"subtext": "Prioritize logistics and field command over petty court politics.",
+					"preview": ["Gain relic: Supply Ledger"],
+					"text": "Fortify and stablize your supply routes",
+					"axisChanges": {},
+					"reward": "relic_supply_ledger",
+					"nextNodeId": "PRELUDE_SUMMARY"	
+				}
+			]
+		},
+		{
+			"id": "PRELUDE_SUMMARY",
+			"type": "event",
+			"chapter": "Prelude Summary",
+			"title": "Ledger of Methods",
+			"body": [
+				"Your choices have established CaoCaos reputation and strategic position heading into Act I.",
+				"Review your ledger and prepare to face the chaos of the Yellow Turban Rebellion. Act I will test your chosen path and the strength of your forces."
+			],
+			"choices": [
+				{
+					"label": "Proceed to the Final Trial",
+					"subtext": "One last proving ground before the Nothern expansion.",
+					"preview": ["Start Act I"],
+					"text": "Advance.",
+					"axisChanges": {},
+					"reward": null,
+					"nextNodeId": "PRELUDE_BOSS_PREVIEW"
+				}
+			]
+		},
+		{
+			"id": "ACT1_START",
+			"type": "event",
+			"chapter": "Torwards the North",
+			"title": "Towards the North",
+			"body": [
+				"You have established your power base in the Central Plains, but the Yellow Turbans still threaten to overrun the north.",
+				"Your final trial is to defeat their charismatic leader, Zhang Jiao, and secure your position as the dominant power in the region."
+			],
 
 		}
