@@ -224,5 +224,21 @@
       ]
     },
 		{
-			"id": ""
-		}
+			"id": "P5_ROUTE_PROTECT",
+			"type": "event",
+			"Chapter": "Dominance",
+			"title": "Chancellor's Leverage",
+			"body": [
+				"You control petitions, appointments, and proclaimations. The opposition must now fight both armies and paperwork"
+			],
+			"choices": [
+				{
+					"label": "Crush Palace Resistance",
+					"subtext": "Secure control under open challenge",
+					"preview": ["Route battle : XXXX"],
+					"text": "Proceed."
+					"axisChanges": {},
+					"reward": null,
+					"nextNodeId": "P6_BATTLE_PROTECT"
+				}
+			]		}
