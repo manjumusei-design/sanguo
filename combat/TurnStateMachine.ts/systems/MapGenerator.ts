@@ -39,10 +39,44 @@ export interface MapGenOptions {
   seed: string;
   act: number;
   character?: CharacterId;
-  eventHistory: EventHistoryEntry[];
-  flags: ChronicleFlags;
+  eventHistory?: EventHistoryEntry[];
+  flags?: ChronicleFlags;
   ascensionLevel?: number;
 }
 
+export function generateMap(options: MapGenOptions): MapGraph {
+  const { seed, act, character, eventHistory, flags, ascensionLevel = 0 } = options;
+  const rng = new RNG(seed);
 
+  const paths = generatePaths(rng);
+  const templateNodes = buildTemplateGridNodes(act);
+  applyPathConnections(paths, templateNodes, act);
+  const nodes = removePathlessRooms(templateNodes);
+  const forcedNodeIds = new Set<string>();
+  const setPieceDebug: { sequence?: NodeType[]; startColumn: number | null } = { startColumn: null };
+  forceMandatoryTypes(nodes, act, rng, forcedNodeIds);
+  assignTypesFromBucket(nodes, act, rng, flags, forcedNodeIds, ascensionLevel);
+  for (const node of nodes) {
+    if (!node.data) {
+      node.data = buildNodeData(node.type, act, rng, undefined, character);
+    }
+  }
+
+
+  applyNodeJitter(nodes, rng);
+  computeBezierCurves(nodes);
+  reduceLineCrossings(nodes, rng);
+
+  return {
+    nodes,
+    seed,
+    act,
+    debug: {
+      appliedSetPiece: setPieceDebug.sequence,
+      setPieceStartColumn: setPieceDebug.startColumn,
+      appliedCampaignChainId: null,
+      appliedCampaignChainTitle: null,
+    },
+  };
+}
 
