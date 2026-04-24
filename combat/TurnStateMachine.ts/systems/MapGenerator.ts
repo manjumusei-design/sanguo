@@ -17,3 +17,32 @@ const ELITE_ASCENSION_MULTIPLER = 1.6;
 
 type PathBias = 'safe' | 'greedy' | 'aggressive';
 
+const SET_PIECES: Record<number, NodeType[][]> = {
+    1: [
+      ['EVENT', 'REST'],
+      ['BATTLE', 'MERCHANT'],
+      ['MYSTERY', 'EVENT'],
+    ],
+    2: [
+      ['BATTLE', 'MERCHANT', 'MERCHANT'],
+      ['BATTLE', 'REST', 'BATTLE'],
+      ['BATTLE', 'EVENT', 'REST'],
+    ],
+    3: [
+      ['ELITE', 'MYSTERY', 'ELITE'],
+      ['BATTLE', 'ELITE', 'MYSTERY'],
+      ['MYSTERY', 'EVENT', 'ELITE'],
+    ],
+};
+
+export interface MapGenOptions {
+  seed: string;
+  act: number;
+  character?: CharacterId;
+  eventHistory: EventHistoryEntry[];
+  flags: ChronicleFlags;
+  ascensionLevel?: number;
+}
+
+
+
