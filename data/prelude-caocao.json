@@ -229,16 +229,38 @@
 			"Chapter": "Dominance",
 			"title": "Chancellor's Leverage",
 			"body": [
-				"You control petitions, appointments, and proclaimations. The opposition must now fight both armies and paperwork"
+				"You declare protection of the throne as state doctrine, forcing rivals to challenge you as rebels, not peers."
 			],
 			"choices": [
+        {
+          "label": "Defend the Court",
+          "subtext": "Settle the claim by force.",
+          "preview": ["Route battle"],
+          "text": "Proceed.",
+          "axisChanges": {},
+          "reward": null,
+          "nextNodeId": "P6_BATTLE_PROTECT"
+        }
+      ]
+		},
+		{
+      "id": "P5_ROUTE_CONTROL",
+      "type": "event",
+      "chapter": "Dominance",
+      "title": "Chancellor's Leverage",
+      "body": [
+        "You control petitions, appointments, and proclamations. Opposition must now fight both armies and paperwork."
+      ],
+      "choices": [
 				{
 					"label": "Crush Palace Resistance",
 					"subtext": "Secure control under open challenge",
 					"preview": ["Route battle : XXXX"],
-					"text": "Proceed."
+					"text": "Proceed.",
 					"axisChanges": {},
 					"reward": null,
-					"nextNodeId": "P6_BATTLE_PROTECT"
+					"nextNodeId": "P6_BATTLE_CONTROL"
 				}
-			]		}
+			]
+		},
+		
