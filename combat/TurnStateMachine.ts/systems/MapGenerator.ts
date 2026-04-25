@@ -403,3 +403,119 @@ function enforceActPacing(nodes: MapNode[], act: number, rng: RNG, forcedNodeIds
 	}
 }
 
+
+function assignTypesFromBucket(
+	nodes: MapNode[],
+	_act: number,
+  rng: RNG,
+	flags: ChronicleFlags | undefined,
+	forcedNodeIds: Set<string>,
+	//ascensionLevel: number for later
+): void {
+	const connectedNodes = nodes.filter(n) => n.type !== 'BOSS');
+	if (!connectedNodes.length) return;
+
+//Future work 
+//const eliteRate = ascensionLevel >= 1 ? ELITE_RATE_BASE * ELITE_ASCENSION_MULTIPLIER : ELITE_RATE_BASE;
+//const percentMods = 
+//modPct 
+//const totalConnected = 
+
+  const baseBucket: Exclude<NodeType, 'BOSS'>[] = [];
+  const addToBucket = (type: Exclude<NodeType, 'BOSS'>, count: number): void => {
+    for (let i = 0; i < Math.max(0, count); i++) baseBucket.push(type);
+  };
+
+  addToBucket('MERCHANT', Math.round(totalConnected * Math.max(0, SHOP_RATE + modPct('MERCHANT'))));
+  addToBucket('REST', Math.round(totalConnected * Math.max(0, REST_RATE + modPct('REST'))));
+  addToBucket('EVENT', Math.round(totalConnected * Math.max(0, EVENT_RATE + modPct('EVENT'))));
+  addToBucket('ELITE', Math.round(totalConnected * Math.max(0, eliteRate + modPct('ELITE'))));
+
+  const assigned = new Map<string, NodeType>();
+  for (const node of nodes) {
+    if (node.type === 'BOSS') continue;
+    if (forcedNodeIds.has(node.id)) {
+      assigned.set(node.id, node.type);
+    }
+  }
+
+  const typelessNodes = connectedNodes.filter((n) => !assigned.has(n.id));
+  const bucket = [...baseBucket];
+  while (bucket.length < typelessNodes.length) {
+    bucket.push('BATTLE');
+  }
+  rng.shuffle(bucket);
+  const columns = Array.from(new Set(typelessNodes.map((node) => getCol(node)))).sort((a, b) => a - b);
+  for (const col of columns) {
+    const floorNodes = typelessNodes.filter((node) => getComputedStyle(node) === col);
+    const order = rng.shuffle([...floorNodes]);
+    for (const node of order) {
+      let matchedIndex = -1;
+      for (let i = 0; i < bucket.length; i++) {
+        const candidate = bucket[i];
+        if (!candidate) continue;
+        if (isTypeValid(node, candidate, nodes, assigned)) {
+          matchedIndex = i;
+          break;
+        }
+      }
+      if (matchedIndex === -1) continue;
+      const matchedType = bucket[matchedIndex];
+      if (!matchedType) continue;
+      node.type = matchedType;
+      assigned.set(node.id, matchedType);
+      bucket.splice(matchedIndex, 1);
+    }
+  }
+
+  for (const node of typelessNodes) {
+    if (assigned.has(node.id)) continue;
+    node.type = 'BATTLE';
+    assigned.set(node.id, 'BATTLE');
+  }
+}
+
+function rebalanceBranchVariety(nodes: MapNode[], rng: RNG, forcedNodeIds: Set<string>): void {
+  const nodeById = new Map(nodes.map((node) => [node.id, node]));
+  const assigned = new Map(nodes.map((node) => [node.id, node.type]));
+  const branchVarietyTypes: Exclude<NodeType, 'BOSS'>[] = ['BATTLE', 'EVENT', 'MYSTERY', 'REST', 'MERCHANT'];
+
+  for (const from of nodes) {
+    if (from.type === 'BOSS') continue;
+    if (!from.connections.length) continue;
+
+    const children = from.connections
+      .map((toId) => nodeById.get(toId))
+      .filter((node): node is MapNode => node !== undefined)
+      .filter((node) => node.type !== 'BOSS');
+    if (!children.length) continue;
+
+    // To ensure that for each choice at least 1 battle is walkable
+    const hasBattleChild = children.some((child) => child.type === 'BATTLE');
+    if (!hasBattleChild) {
+      const mutableChild = children.find((child) => !forcedNodeIds.has(child.id));
+      if (mutableChild && isTypeValid(mutableChild, 'BATTLE', nodes, assigned)) {
+        mutableChild.type = 'BATTLE';
+        assigned.set(mutableChild.id, 'BATTLE');
+      }
+    }
+
+    // Variety chouce to ensure there isnt paradise or misery allotments 
+    const uniqueTypes = new Set(children.map((child) => child.type));
+    if (children.length >= 2 && uniqueTypes.size === 1) {
+      const sharedType = children[0]?.type;
+      if (!sharedType) continue;
+      const mutableChildren = children.filter((child) => !forcedNodeIds.has(child.id));
+      if (!mutableChildren.length) continue;
+      const mutableChild = rng.pick(mutableChildren);
+      if (!mutableChild) continue;
+      const alternatives = branchVarietyTypes.filter((type) => type !== sharedType);
+      for (const candidate of alternatives) {
+        if (!isTypeValid(mutableChild, candidate, nodes, assigned)) continue;
+        mutableChild.type = candidate;
+        assigned.set(mutableChild.id, candidate);
+        break;
+      }
+    }
+  }
+}
