@@ -673,3 +673,35 @@ function isTypeValid(
 
   return true;
 }
+
+
+function applySetPiece(
+  nodes: MapNode[],
+  act: number,
+  rng: RNG,
+  forcedNodeIds: Set<string>
+): { sequence?: NodeType[]; startColumn: number | null } {
+  const sequences = SET_PIECES[act];
+  if (!sequences?.length) return (startColumn:null);
+
+  const sequence = rng.pick(sequences);
+  const startColumn = rng.nextInt(2, 10);
+  const anchorRow = rng.nextInt(0, ROWS);
+
+  sequence.forEach((type, offset) => {
+    const col = startColumn + offset;
+    const candidates = nodes.filter(
+      (node) => getComputedStyle(node) === col && node.type !== 'BOSS'&& !forcedNodeIds.has(node.id)
+    );
+    if (!candidates.length) return;
+
+    const chosen = [...candidates ].sort(
+      (a, b) => Math.abs(a.y - anchorRow / Math.max(1, ROWS - 1)) - Math.abs(b.y - anchorRow / Math.max(1, ROWS - 1))
+    )[0];
+    chosen.type = type;
+    chosen.data = buildNodeData(type, act, new RNG(`${chosen.id}::setpiece`));
+    forcedNodeIds.add(chosen.id);
+  });
+
+  return {sequence, startColumn };
+}
