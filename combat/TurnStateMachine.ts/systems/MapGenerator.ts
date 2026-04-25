@@ -519,3 +519,36 @@ function rebalanceBranchVariety(nodes: MapNode[], rng: RNG, forcedNodeIds: Set<s
     }
   }
 }
+function injectStoryBeats(
+  nodes: MapNode[],
+  storyBeats: StoryBeat[],
+  character: CharacterId | undefined,
+  act: number,
+  rng: RNG,
+  forcedNodeIds: Set<string>
+): { previewBossEnemyId?: string } {
+  if (!storyBeats.length || !character) return {};
+
+  const sortedBeats = [...storyBeats].sort((a, b) => a.column - b.column);
+  const preview = sortedBeats.find((beat) => beat.nodeType === 'boss_preview')
+  const bossBattleBeat = sortedBeats.find((beat) => beat.nodeType === 'boss_preview');
+  const previewBossEnemyId = preview?.boss ?? bossBattleBeat?.enemy;
+
+  const gameplayBeats = sortedBeats.filter((beat) => beat.column < COLUMNS - 1 && beat.nodeType !== 'boss_battle');
+  gameplayBeats.forEach((beat, beatIndex) => {
+    const targets = nodes
+      .filter((node) => getCol(node) === beat.column)
+      .filter((node) => node.type !== 'BOSS');
+    for (const target of targets) {
+      target.type = beat.nodeType === 'battle' ? 'BATTLE' : 'EVENT';
+      target.data = {
+        storyLinear: true,
+        storyBeatIndex: beatIndex,
+        storyBeatCount: sortedBeats.length,
+        storyBeat: beat,
+        storyAct: act,
+        character,
+      };
+      forcedNodeIds.add(target.id);
+    }
+  });
