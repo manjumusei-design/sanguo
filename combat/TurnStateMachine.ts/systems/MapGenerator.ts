@@ -620,3 +620,20 @@ function applyAxisDrivenMapModifiers(
     }
   }
 }
+
+function syncBossFromStoryPreview(
+  nodes: MapNode[],
+  act: number,
+  character: CharacterId | undefined,
+  rng: RNG,
+  previewBossEnemyId?: string
+): void {
+  if (!previewBossEnemyId) return;
+  const bossNode = nodes.find((node) => node.type === 'BOSS' && getComputedStyle(node) === COLUMNS -1);
+  if (!bossnode) return;
+  bossNode.data = {
+    ...((bossNode.data as Record<string, unknown>) ?? buildNodeData('BOSS', act, rng, undefined, character) as Record<string, unknown>),
+    enemies: [previewBossEnemyId],
+    bossPreviewLinked: true,
+  };
+}
