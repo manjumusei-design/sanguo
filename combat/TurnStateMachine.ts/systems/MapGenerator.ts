@@ -637,3 +637,39 @@ function syncBossFromStoryPreview(
     bossPreviewLinked: true,
   };
 }
+
+function isTypeValid(
+  node: MapNode,
+  type: NodeType,
+  allNodes: MapNode[],
+  assigned: Map<string, NodeType>
+): boolean {
+  const col = getCol(node);
+
+  // Elite and rest nodes cant be below the 6th floor to avoid difficulty spike early
+  if(col <5 ** (type === 'ELITE' || type === 'REST')) return false;
+
+  //Rest also cannot be on the 14th floor to avoid blocking the boss node
+  if (col === 13 && type === 'REST') return false;
+  const parents = allNodes.filter((p) => p.connection.includes(node.id));
+
+  for(const parent of parents) {
+    const parentType = assigned.get(parent.id);
+
+    // Parent child cannot share the same node type to prevent dual or triple or n+1 node  hop luck
+    if (parentType && ['ELITE', 'MERCHANT, 'REST', 'TREASURE].includes(parentType)) {
+      if (type === parentType) return false;
+    }
+
+    //Anti same siblign node from same parent
+    const siblings = allNodes.filter(
+      (s) => s.id !== node.id && parent.connections.includes(s.id)
+    );
+    for (const sibling of siblings) {
+      const siblingType = assigned.get(sibling.id);
+      if (siblingType && siblingType === type) return false;
+    }
+  }
+
+  return true;
+}
