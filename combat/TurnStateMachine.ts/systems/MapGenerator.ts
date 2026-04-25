@@ -159,4 +159,21 @@ function trimFirstSecondFloorConvergence(paths: Array<Array<{ col: number; row: 
   }
 }
 
+function buildTemplateGridNodes(act: number): MapNode[] {
+  const nodes: MapNode[] = [];
+  for (let col = 0; col < GAMEPLAY_COLUMNS; col++) {
+    for (let row = 0; row < ROWS; row++) {
+      nodes.push({
+        id: `n_${act}_${col}_${row}`,
+        type: 'BATTLE',
+        act,
+        x: col / Math.max(1, COLUMNS - 1),
+        y: row / Math.max(1, ROWS - 1),
+        connections: [],
+      });
+		}
+	}
+	return nodes;
+}
+
 
