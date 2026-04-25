@@ -80,3 +80,32 @@ export function generateMap(options: MapGenOptions): MapGraph {
   };
 }
 
+
+function generatePaths(rng: RNG): Array<Array<{ column: number; row: number }>> {
+  const edgesByColumn: Record<number, Array<{ column: number; row: number }>> = {};
+  const paths: Array<Array<{ column: number; row: number }>> = [];
+  for(let pathIndex = 0; pathIndex < PATH_COUNT; pathIndex++) {
+    let startRow = rng.nextInt(0, ROWS);
+    if (pathIndex === 1 && paths[0][0].row === startRow) {
+      const alternatives = Array.from({ length: ROWS }, (_, i) => i).filter(r => r !== startRow);
+      startRow = alternatives.length > 0 ? rng.pick(alternatives): startRow;
+    }
+
+    const path: Array<{ col: number; row: number }> = [{ col: 0, row: startRow }];
+    for(let col = 0; col < GAMEPLAY_COLUMNS -1; col++) {
+      const currentRow = path[path.length - 1].row;
+      const candidates = [currentRow - 1, currentRow, currentRow + 1].filter((r) => r >= 0 && r < ROWS);
+      const nonCrossing = candidates.filter((toRow) => !wouldCrossExistingEdges(edgesByColumn, col, currentRow, toRow));
+      const pool = nonCrossing.length ? nonCrossing : candidates;
+      const nextRow = rng.pick(pool);
+      path.push({ col: col + 1, row: nextRow });
+      const list = edgesByColumn.get(col) ?? [];
+      list.push({ fromRow: currentRow, toRow: nextRow });
+      edgesByColumn.set(col, list);
+    }
+        paths.push(path);
+  }
+
+  trimFirstSecondFloorConvergence(paths, rng);
+  return paths;
+    }
