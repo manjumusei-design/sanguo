@@ -238,3 +238,42 @@ private createHPBlock(): void {
     }
   }
 
+// Relic unfinished
+
+private createRelicRack(): void {
+  this.relicContainer = this.scene.add.container(0,0).setDepth(121).setVisible(false);
+  this.relicItems = [];
+}
+
+private createPowerDisplay(): void {
+  this.powerContainer = this.scene.add.container (0,0).setDepth(121).setVisible(false);
+  this.powerTexts = [];
+}
+
+updateRelics(relics: Relic[]): void {
+  void relics;
+  return;
+}
+
+updatePowers(powers: PowerInstance[]): void {
+  void powers;
+  return;
+}
+
+//Status
+  private createStatusDisplay(): void {
+    this.statusContainer = this.scene.add.container(0, 0).setDepth(121).setVisible(false);
+    this.statusText = this.scene.add.text(0, 0, '', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '12px',
+      color: '#ffdfdf',
+      wordWrap: { width: 300 },
+    });
+    this.statusContainer.add(this.statusText);
+  }
+
+  updateStatuses(statuses: Status[]): void {
+    void statuses;
+    return;
+  }
+}
