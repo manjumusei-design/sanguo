@@ -552,3 +552,19 @@ function injectStoryBeats(
       forcedNodeIds.add(target.id);
     }
   });
+
+  const bossNode = nodes.find((node) => node.type === 'BOSS' && getCol(node) === COLUMNS - 1);
+  if (bossNode && bossBattleBeat) {
+    bossNode.data = {
+      ...((bossNode.data as Record<string, unknown>) ?? {}),
+      storyLinear: true,
+      storyAct: act,
+      storyBeatIndex: sortedBeats.length - 1,
+      storyBeatCount: sortedBeats.length,
+      storyBeat: bossBattleBeat,
+      enemies: [bossBattleBeat.enemy ?? bossBattleBeat.boss ?? previewBossEnemyId].filter((id): id is string => Boolean(id)),
+    };
+    forcedNodeIds.add(bossNode.id);
+  }
+  return { previewBossEnemyId };
+}
