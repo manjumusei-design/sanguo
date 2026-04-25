@@ -705,3 +705,343 @@ function applySetPiece(
 
   return {sequence, startColumn };
 }
+
+function selectCampaignChain(
+  character: CharacterId,
+  act: number,
+  pathBias: PathBias,
+  eventHistory: EventHistoryEntry[],
+  rng: RNG
+): CampaignSetPieceChain | null {
+  const candidates = allCampaignChains.filter((chain) => chain.character === character && chain.act === act);
+  if (!candidates.length) return null;
+  
+  const weighted = candidates.map((chain) => {
+    let weight = 1;
+    if (chain.trigger.pathBias === pathBias) {
+      weight += 3;
+    }
+    if (chain.trigger.priorEventId && eventHistory.some((entry) => entry.id === chain.trigger.priorEventId)) {
+      weight += 2;
+    }
+    return { item: chain, weight };
+  });
+
+  return rng.pickWeighted(weighted);
+}
+
+function applyCampaignChain(
+  nodes: MapNode[],
+  act: number,
+  rng: RNG,
+  chain: CampaignSetPieceChain,
+  forcedNodeIds: Set<string>
+): void {
+  const middleColumns = Array.from(
+    new Set(nodes.map((node) => getCol(node)).filter((column) => column > 0 && column < COLUMNS - 1))
+  ).sort((a, b) => a - b);
+  const maxStartIndex = Math.max(0, middleColumns.length - chain.sequence.length);
+  const startIndex = rng.nextInt(0, maxStartIndex + 1);
+  const targetColumns = middleColumns.slice(startIndex, startIndex + chain.sequence.length);
+  const anchorRow = rng.nextInt(0, ROWS);
+
+  chain.sequence.forEach((step, index) => {
+    const col = targetColumns[index];
+    if (col === undefined) return;
+
+    const candidates = nodes.filter(
+      (node) => getCol(node) === col && node.type !== 'BOSS' && !forcedNodeIds.has(node.id)
+    );
+    if (!candidates.length) return;
+
+    const chosen = [...candidates].sort(
+      (a, b) => Math.abs(a.y - anchorRow / Math.max(1, ROWS - 1)) - Math.abs(b.y - anchorRow / Math.max(1, ROWS - 1))
+    )[0];
+    chosen.type = step.nodeType;
+
+    if (step.nodeType === 'EVENT') {
+      chosen.data = {
+        eventPool: 'general',
+        forcedEventId: step.forcedEventId,
+        campaignChainId: chain.id,
+      };
+      forcedNodeIds.add(chosen.id);
+      return;
+      }
+
+    if (step.nodeType === 'MYSTERY') {
+      chosen.data = 
+        step.mysteryType === 'event'
+          ? { mysteryType: 'event', forcedEventId: step.forcedEventId, campaignChainId: chain.id }
+          : buildMysteryData(act, new RNG(`${chosen.id}::campaign`), step.encounterFamilyId);
+    forcedNodeIds.add(chosen.id);
+      return;
+    }
+
+    chosen.data = {
+      ...((buildNodeData(step.nodeType, act, new RNG(`${chosen.id}::campaign`), step.encounterFamilyId, chain.character) as
+        Record<string, unknown>) ?? {}),
+      campaignChainId: chain.id,
+    };
+    forcedNodeIds.add(chosen.id);
+  });
+}
+
+//Preserved fallback AI GENERATED 
+
+function buildNodeData(
+  type: NodeType,
+  act: number,
+  rng: RNG,
+  encounterFamilyId?: string,
+  character?: CharacterId
+): unknown {
+  switch (type) {
+    case 'BATTLE':
+    case 'ELITE': {
+      if (type === 'ELITE') {
+        const authoredElite = maybePickEliteEncounter(act, rng, character);
+        if (authoredElite) {
+          return {
+            enemies: [...authoredElite.enemies],
+            encounterFamilyId: authoredElite.encounterFamilyId,
+            authoredEncounterId: authoredElite.id,
+            encounterLabel: authoredElite.label,
+            historicalBasis: authoredElite.historicalBasis,
+          };
+        }
+      }
+
+      const family = encounterFamilyId ? getEncounterFamily(encounterFamilyId) : maybePickEncounterFamily(act, type, rng);
+      if (family) {
+        return {
+          enemies: buildEncounterFromFamily(family.id, type, rng),
+          encounterFamilyId: family.id,
+        };
+      }
+
+      const pool = getEnemyIdsForNodeType(type, act);
+      const count = type === 'ELITE' ? rng.nextInt(1, 3) : rng.nextInt(1, 4);
+      const enemies: string[] = [];
+      for (let i = 0; i < count; i++) {
+        enemies.push(rng.pick(pool));
+      }
+      return { enemies };
+    }
+    case 'BOSS': {
+      const boss = getBossEncounterPreset(act, character);
+      if (boss) {
+        return {
+          enemies: [...boss.enemies],
+          encounterFamilyId: boss.encounterFamilyId,
+          authoredEncounterId: boss.id,
+          encounterLabel: boss.label,
+          historicalBasis: boss.historicalBasis,
+        };
+      }
+
+      const pool = getEnemyIdsForNodeType('BOSS', act);
+      return { enemies: [rng.pick(pool)] };
+    }
+    case 'EVENT':
+      return { eventPool: 'general' };
+    case 'REST':
+      return {};
+    case 'MERCHANT':
+      return {};
+    case 'MYSTERY':
+      return buildMysteryData(act, rng, encounterFamilyId);
+    case 'TREASURE':
+      return { gold: rng.nextInt(30, 80) };
+    default:
+      return {};
+  }
+}
+
+function buildMysteryData(act: number, rng: RNG, encounterFamilyId?: string): unknown {
+  const roll = rng.next();
+  if (roll < 0.5) {
+    return { mysteryType: 'event' };
+  }
+
+  if (roll < 0.75) {
+    const family = encounterFamilyId
+      ? getEncounterFamily(encounterFamilyId)
+      : maybePickEncounterFamily(act, 'BATTLE', rng);
+    const enemies = family
+      ? buildEncounterFromFamily(family.id, 'BATTLE', rng)
+      : [rng.pick(getEnemyIdsForNodeType('BATTLE', act))];
+    return {
+      mysteryType: 'ambush',
+      enemies,
+      encounterFamilyId: family?.id ?? encounterFamilyId,
+      combatModifiers: {
+        playerStatuses: [{ id: 'starving', stacks: 1 }],
+      },
+    };
+  }
+
+  return {
+    mysteryType: 'risk_reward',
+    rewardType: rng.pick(['gold_for_burning', 'remove_for_panic', 'rare_relic_for_hp']),
+  };
+}
+
+function maybePickEliteEncounter(act: number, rng: RNG, character?: CharacterId): (typeof eliteEncounterPresets)[number] | undefined {
+  const available = eliteEncounterPresets.filter((encounter) => encounter.act === act && (!encounter.character || encounter.character === character));
+  if (!available.length) {
+    return undefined;
+  }
+
+  return rng.pick(available);
+}
+
+function maybePickEncounterFamily(act: number, type: 'BATTLE' | 'ELITE', rng: RNG): EncounterFamilyDefinition | undefined {
+  if (act < 2) {
+    return undefined;
+  }
+
+  const familyChance = type === 'ELITE' ? 0.7 : 0.45;
+  if (rng.next() > familyChance) {
+    return undefined;
+  }
+
+  const available = encounterFamilies.filter((family) => family.acts.includes(act));
+  return available.length ? rng.pick(available) : undefined;
+}
+
+function buildEncounterFromFamily(encounterFamilyId: string, type: 'BATTLE' | 'ELITE', rng: RNG): string[] {
+  const family = getEncounterFamily(encounterFamilyId);
+  if (!family) {
+    return [];
+  }
+
+  const uniqueEnemies = Array.from(new Set(family.enemies));
+  const targetCount =
+    type === 'ELITE'
+      ? Math.min(uniqueEnemies.length, Math.max(2, Math.min(3, uniqueEnemies.length)))
+      : Math.min(uniqueEnemies.length, Math.max(2, Math.min(3, uniqueEnemies.length)));
+  const selected = rng.shuffle([...uniqueEnemies]).slice(0, targetCount);
+
+  if (selected.length >= 2) {
+    return selected;
+  }
+
+  return selected.length === 1 ? [selected[0], selected[0]] : [rng.pick(getEnemyIdsForNodeType(type, 2))];
+}
+
+// ============================================================
+// Reachability helpers
+// ============================================================
+
+export function getReachableNodes(map: MapGraph, currentNodeId: string | null): MapNode[] {
+  if (currentNodeId === null) {
+    return map.nodes.filter((node) => getCol(node) === 0);
+  }
+
+  const current = map.nodes.find((n) => n.id === currentNodeId);
+  if (!current) return [];
+  return map.nodes.filter((n) => current.connections.includes(n.id));
+}
+
+export function getStartNode(map: MapGraph): MapNode {
+  const firstCol = map.nodes.filter((n) => getCol(n) === 0);
+  return firstCol[0] || map.nodes[0];
+}
+
+// ============================================================
+// Post-processing
+// ============================================================
+
+function applyNodeJitter(nodes: MapNode[], rng: RNG): void {
+  for (const node of nodes) {
+    const jx = (rng.next() - 0.5) * 2 * JITTER;
+    const jy = (rng.next() - 0.5) * 2 * JITTER;
+    node.x = clamp(node.x + jx, 0, 1);
+    node.y = clamp(node.y + jy, 0, 1);
+  }
+}
+
+function computeBezierCurves(nodes: MapNode[]): void {
+  const nodeById = new Map(nodes.map((n) => [n.id, n]));
+  for (const from of nodes) {
+    from.curveData = {};
+    for (const toId of from.connections) {
+      const to = nodeById.get(toId);
+      if (!to) continue;
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const cp1x = from.x + dx * 0.25;
+      const cp1y = from.y + dy * 0.45 + (dy > 0 ? 0.06 : -0.06);
+      const cp2x = from.x + dx * 0.75;
+      const cp2y = to.y - dy * 0.45 + (dy > 0 ? -0.06 : 0.06);
+      from.curveData[toId] = {
+        cp1x: clamp(cp1x, 0, 1),
+        cp1y: clamp(cp1y, 0, 1),
+        cp2x: clamp(cp2x, 0, 1),
+        cp2y: clamp(cp2y, 0, 1),
+      };
+    }
+  }
+}
+
+function reduceLineCrossings(nodes: MapNode[], rng: RNG): void {
+  const nodeById = new Map(nodes.map((n) => [n.id, n]));
+  const NUDGE = 0.02;
+  const MAX_PASSES = 3;
+
+  for (let pass = 0; pass < MAX_PASSES; pass++) {
+    let improved = false;
+    for (const a of nodes) {
+      for (const bId of a.connections) {
+        const b = nodeById.get(bId);
+        if (!b) continue;
+        for (const c of nodes) {
+          if (c.id <= a.id) continue;
+          for (const dId of c.connections) {
+            const d = nodeById.get(dId);
+            if (!d) continue;
+            if (segmentsShareEndpoint(a, b, c, d)) continue;
+            if (!segmentsIntersect(a, b, c, d)) continue;
+            const nudgeA = (rng.next() - 0.5) * 2 * NUDGE;
+            a.y = clamp(a.y + nudgeA, 0.05, 0.95);
+            improved = true;
+          }
+        }
+      }
+    }
+    if (!improved) break;
+  }
+}
+
+function segmentsShareEndpoint(a: MapNode, b: MapNode, c: MapNode, d: MapNode): boolean {
+  return a.id === c.id || a.id === d.id || b.id === c.id || b.id === d.id;
+}
+
+function segmentsIntersect(a: MapNode, b: MapNode, c: MapNode, d: MapNode): boolean {
+  const ccw = (p1: MapNode, p2: MapNode, p3: MapNode) =>
+    (p3.y - p1.y) * (p2.x - p1.x) > (p2.y - p1.y) * (p3.x - p1.x);
+  return ccw(a, c, d) !== ccw(b, c, d) && ccw(a, b, c) !== ccw(a, b, d);
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+function derivePathBiasFromFlags(flags: ChronicleFlags | undefined): PathBias {
+  const mods = flags?.mapWeightModifiers ?? {};
+  const elite = mods.ELITE ?? 0;
+  const merchant = mods.MERCHANT ?? 0;
+  const rest = mods.REST ?? 0;
+  if (elite > 4 && merchant < 0) return 'aggressive';
+  if (merchant > 2 || rest > 2) return 'safe';
+  return 'greedy';
+}
+
+function getCol(node: MapNode): number {
+  return Number(node.id.split('_')[2]);
+}
+
+function getRow(node: MapNode): number {
+  return Number(node.id.split('_')[3]);
+}
