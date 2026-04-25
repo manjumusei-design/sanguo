@@ -109,3 +109,54 @@ function generatePaths(rng: RNG): Array<Array<{ column: number; row: number }>> 
   trimFirstSecondFloorConvergence(paths, rng);
   return paths;
     }
+
+function wouldCrossExistingEdges(
+  edgesByColumn: Map<number, Array<{ fromRow: number; toRow: number }>>,
+  col: number,
+  fromRow: number,
+  toRow: number
+): boolean {
+  const existing = edgesByColumn.get(col) ?? [];
+  for (const edge of existing) {
+    const crosses = (fromRow < edge.fromRow && toRow > edge.toRow) || (fromRow > edge.fromRow && toRow < edge.toRow);
+    if (crosses) return true;
+  }
+  return false;
+}
+
+function trimFirstSecondFloorConvergence(paths: Array<Array<{ col: number; row: number }>>, rng: RNG): void {
+  const pathsBySecondRow = new Map<number, number[]>();
+  paths.forEach((path, idx) => {
+		const secondRow = path[1];
+		if (!second) return;
+    const list = pathsBySecondRow.get(second.row) ?? [];
+		list.push(idx);
+		pathsBySecondRow.set(secondRow.row, list);
+	});
+
+	const usedSecondRows = new set<number>();
+	for (const [secondRow, indexes] of pathsBySecondRow.entries()) {
+		if (indexes.length > 1) {
+			usedSecondRows.add(secondRow);
+			continue;
+	}
+
+    const keep = rng.pick(indexes);
+    usedSecondRows.add(secondRow);
+    for (const idx of indexes) {
+      if (idx === keep) continue;
+      const startRow = paths[idx]?.[0]?.row;
+      if (startRow === undefined || !paths[idx]?.[1]) continue;
+      const candidates = [startRow - 1, startRow, startRow + 1]
+        .filter((row) => row >= 0 && row < ROWS)
+        .filter((row) => !usedSecondRows.has(row));
+      if (candidates.length) {
+        const reassigned = rng.pick(candidates);
+        paths[idx][1].row = reassigned;
+        usedSecondRows.add(reassigned);
+      }
+    }
+  }
+}
+
+
