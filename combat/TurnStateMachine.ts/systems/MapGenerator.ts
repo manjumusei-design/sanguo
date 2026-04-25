@@ -568,3 +568,55 @@ function injectStoryBeats(
   }
   return { previewBossEnemyId };
 }
+
+function applyAxisDrivenMapModifiers(
+  nodes: MapNode[],
+  rng: RNG,
+  axisSnapshot: AxisSnapshot | undefined,
+  forcedNodeIds: Set<string>,
+  storyBeatColumns: Set<number> = new Set()
+): void {
+  if (!axisSnapshot) return;
+  if (axisSnapshot.legitimacy >= 3) {
+    const target = nodes.find ((node) => node.type === 'MYSTERY' && !forcedNodeIds.has(node.id));
+    if (target) {
+      target.type = 'EVENT';
+      target.data = { ...(target.data as Record<string, unknown> ?? {}), eventPool: 'general', axisDriven: 'legitimacy_support' };
+      forcedNodeIds.add(target.id);
+    }
+  }
+
+  if (axisSnapshot.control >= 4) {
+    const target = nodes
+    .filter((node) => node.type === 'BATTLE' && !forcedNodeIds.has(node.id))
+    .sort((a, b) => Math.abs(getCol(a) - 9) - Math.abs(getCol(b) - 9))[0]);
+    if (target) {
+      target.type = 'ELITE';
+      target.data = { ...(target.data as Record<string, unknown> ?? {}), axisDriven: 'control_hunt' };
+      forcedNodeIds.add(target.id);
+    }
+  }
+
+  if (axisSnapshot.momentum >= 4) {
+    const byId = new Map(nodes.map((node) => [node.id, node]));
+    const candidates = nodes
+      .filter((node) => getCol(node) >= 3 && getCol(node) <= 10)
+      .filter((node) => node.connections.length > 0);
+    const source = candidates.length ? rng.pick(candidates) : undefined;
+    if (source) {
+      const next2 = nodes
+        .filter((node) => getCol(node) === getCol(source) + 2)
+        .sort((a, b) => Math.abs(getRow(a) - getRow(source)) - Math.abs(getRow(b) - getRow(source)))[0];
+      const wouldSkipStoryBeat = storyBeatColumns.has(getCol(source) + 1);
+      if (next2 && !wouldSkipStoryBeat && !source.connections.includes(next2.id)) {
+        source.connections.push(next2.id);
+      }
+      const sourceData = (source.data as Record<string, unknown> | undefined) ?? {};
+      source.data = { ...sourceData, axisDriven: 'momentum_shortcut' };
+      if (next2) {
+        const targetData = (byId.get(next2.id)?.data as Record<string, unknown> | undefined) ?? {};
+        next2.data = { ...targetData, axisDriven: 'momentum_shortcut_target' };
+      }
+    }
+  }
+}
