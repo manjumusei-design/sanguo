@@ -200,4 +200,16 @@ export class StoryDialogueScene extends Phaser.Scene {
 		}
 		this.resumeMap();
 	}
-	
+
+
+  private applyStoryFlagsForChoice(payload: Record<string, unknown>, choiceIndex: number): void {
+    const flags = this.beat?.flagsSetByChoice?.[choiceIndex];
+    if (!flags || typeof flags !== 'object') return;
+    const current = (payload.story_flags && typeof payload.story_flags === 'object')
+      ? { ...(payload.story_flags as Record<string, unknown>) }
+      : {};
+    for (const [key, value] of Object.entries(flags)) {
+      current[key] = Boolean(value);
+    }
+    payload.story_flags = current;
+  }
