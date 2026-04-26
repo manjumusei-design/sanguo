@@ -14,6 +14,8 @@ import {
 import { RunManager } from '../core/RunManager';
 import { GameSession } from '../core/GameSession';
 import { getRelic } from '../data/relics';
+import { getCharacter } from '../data/characters';
+import { EMOJI } from '../data/emoji';
 import { SpineManager, type SpineGameObject } from '../ui/SpineManager';
 
 export class PreludeScene extends Phaser.Scene {
@@ -76,9 +78,9 @@ export class PreludeScene extends Phaser.Scene {
   }
 
   private getPreludeBackgroundKey(): string {
-    if (this.characterId === 'liubei') return 'prelude_bg_shu';
-    if (this.characterId === 'sunquan') return 'prelude_bg_wu';
-    return 'prelude_bg_wei';
+    if (this.characterId === 'liubei') return this.textures.exists('bg_shu_still') ? 'bg_shu_still' : 'prelude_bg_shu';
+    if (this.characterId === 'sunquan') return this.textures.exists('bg_wu_still') ? 'bg_wu_still' : 'prelude_bg_wu';
+    return this.textures.exists('bg_wei_still') ? 'bg_wei_still' : 'prelude_bg_wei';
   }
 
   private renderPreludeBackground(cx: number, cy: number, w: number, h: number): void {
@@ -122,22 +124,35 @@ export class PreludeScene extends Phaser.Scene {
     const h = this.scale.height;
     const x = Math.round(w * 0.16);
     const y = Math.round(h * 0.84);
-    const spine = SpineManager.create(this, 'char_caocao', x, y, {
-      scale: Math.max(3.6, Math.min(this.scale.width / 1280, this.scale.height / 720) * 5.6),
-      initialAnimation: 'idle',
-    });
-    if (spine) {
-      SpineManager.setFacing(spine, 'right');
-      SpineManager.setSpeed(spine, 1.4);
-      this.preludeActor = spine;
-      return;
+    const spineKey = `char_${this.characterId}`;
+    const hasSpineAssets = this.cache.text.exists(`${spineKey}:atlas`)
+      && this.cache.text.exists(`${spineKey}:json`)
+      && this.textures.exists(`${spineKey}:skeleton.png`);
+    if (hasSpineAssets) {
+      const spine = SpineManager.create(this, spineKey, x, y, {
+        scale: Math.max(3.6, Math.min(this.scale.width / 1280, this.scale.height / 720) * 5.6),
+        initialAnimation: 'idle',
+      });
+      if (spine) {
+        SpineManager.setFacing(spine, 'right');
+        SpineManager.setSpeed(spine, 1.4);
+        this.preludeActor = spine;
+        return;
+      }
     }
 
-    const fallback = this.add.text(x, y - 90, 'CaoCao', {
+    const character = getCharacter(this.characterId);
+    const label = character?.name ?? this.characterId.toUpperCase();
+    const emoji = EMOJI[this.characterId as keyof typeof EMOJI] ?? '👤';
+    const fallback = this.add.text(x, y - 96, `${emoji}\n${label}`, {
       fontFamily: 'system-ui, sans-serif',
-      fontSize: '32px',
+      fontSize: '28px',
       color: '#f0d5a3',
       fontStyle: 'bold',
+      align: 'center',
+      lineSpacing: 8,
+      stroke: '#2a1c10',
+      strokeThickness: 4,
     }).setOrigin(0.5);
     this.preludeActor = fallback;
   }
@@ -198,37 +213,39 @@ export class PreludeScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     const storyPanel = this.textures.exists('ui_dialogue_parchment')
-      ? this.add.image(0, -128, 'ui_dialogue_parchment').setDisplaySize(900, 260).setAlpha(0.95)
-      : this.add.rectangle(0, -128, 900, 260, 0xe2cfab, 0.95);
-    const storyPanelShade = this.add.rectangle(0, -128, 900, 260, 0x000000, 0.14)
+      ? this.add.image(0, -118, 'ui_dialogue_parchment').setDisplaySize(780, 220).setAlpha(0.95)
+      : this.add.rectangle(0, -118, 780, 220, 0xe2cfab, 0.95);
+    const storyPanelShade = this.add.rectangle(0, -118, 780, 220, 0x000000, 0.14)
       .setStrokeStyle(2, 0x6a5534, 1);
-    const storyPanelHeader = this.add.rectangle(0, -246, 900, 2, 0x8f7647, 1);
-    const title = this.add.text(0, -214, node.title ?? 'Event', {
+    const storyPanelHeader = this.add.rectangle(0, -226, 780, 2, 0x8f7647, 1);
+    const title = this.add.text(0, -196, node.title ?? 'Event', {
       fontFamily: 'system-ui, sans-serif',
-      fontSize: '30px',
+      fontSize: '28px',
       color: '#2c2015',
       fontStyle: 'bold',
     }).setOrigin(0.5);
 
     const bodyText = (node.body?.length ? node.body.join('\n\n') : (node.text ?? '')).trim();
-    const text = this.add.text(0, -126, bodyText, {
+    const text = this.add.text(0, -118, bodyText, {
       fontFamily: 'system-ui, sans-serif',
-      fontSize: '18px',
+      fontSize: '17px',
       color: '#241a11',
-      wordWrap: { width: 836 },
+      wordWrap: { width: 740 },
       align: 'center',
       lineSpacing: 4,
     }).setOrigin(0.5);
 
     const hintText = node.hint
-      ? this.add.text(0, -34, node.hint, {
+      ? this.add.text(0, -42, node.hint, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '13px',
         color: '#3f3121',
         align: 'center',
-        wordWrap: { width: 808 },
+        wordWrap: { width: 720 },
       }).setOrigin(0.5)
       : null;
+
+    this.renderPreludeActor();
 
     this.contentContainer.add([
       topBar,
@@ -246,34 +263,34 @@ export class PreludeScene extends Phaser.Scene {
     }
 
     node.choices?.forEach((choice, index) => {
-      const y = 80 + index * 120;
+      const y = 65 + index * 100;
       const btn = this.add.container(0, y);
-      const bg = this.add.rectangle(0, 0, 760, 102, 0xe2cfab, 0.95);
-      const shade = this.add.rectangle(0, 0, 760, 102, 0x000000, 0.14).setStrokeStyle(2, 0x5f4b2f, 1);
-      const accent = this.add.rectangle(-378, 0, 6, 102, 0x8f7647, 1);
-      const label = this.add.text(-350, -30, choice.label ?? choice.text, {
+      const bg = this.add.rectangle(0, 0, 660, 80, 0xe2cfab, 0.95);
+      const shade = this.add.rectangle(0, 0, 660, 80, 0x000000, 0.14).setStrokeStyle(2, 0x5f4b2f, 1);
+      const accent = this.add.rectangle(-328, 0, 6, 80, 0x8f7647, 1);
+      const label = this.add.text(-310, -24, choice.label ?? choice.text, {
         fontFamily: 'system-ui, sans-serif',
-        fontSize: '20px',
+        fontSize: '18px',
         color: '#271d13',
         fontStyle: 'bold',
-        wordWrap: { width: 700 },
+        wordWrap: { width: 620 },
       }).setOrigin(0, 0.5);
-      const subtext = this.add.text(-350, -2, choice.subtext ?? choice.text, {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '14px',
-        color: '#3b2f22',
-        wordWrap: { width: 700 },
-      }).setOrigin(0, 0.5);
-      const previewLines = this.buildChoicePreview(choice);
-      const preview = this.add.text(-350, 26, previewLines.join(' | '), {
+      const subtext = this.add.text(-310, -2, choice.subtext ?? choice.text, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '13px',
+        color: '#3b2f22',
+        wordWrap: { width: 620 },
+      }).setOrigin(0, 0.5);
+      const previewLines = this.buildChoicePreview(choice);
+      const preview = this.add.text(-310, 20, previewLines.join(' | '), {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '12px',
         color: '#5a4a33',
-        wordWrap: { width: 700 },
+        wordWrap: { width: 620 },
       }).setOrigin(0, 0.5);
 
       btn.add([bg, shade, accent, label, subtext, preview]);
-      btn.setSize(760, 102);
+      btn.setSize(660, 80);
       btn.setInteractive({ useHandCursor: true });
       btn.on('pointerover', () => {
         bg.setFillStyle(0xe8d8b8, 0.98);
@@ -298,13 +315,6 @@ export class PreludeScene extends Phaser.Scene {
 
       this.contentContainer.add(btn);
     });
-
-    const footer = this.add.text(0, 340, 'Selection is permanent', {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '12px',
-      color: '#7d8aa0',
-    }).setOrigin(0.5);
-    this.contentContainer.add(footer);
   }
 
   private buildChoicePreview(choice: PreludeChoice): string[] {
@@ -538,4 +548,3 @@ export class PreludeScene extends Phaser.Scene {
     }).setOrigin(0.5);
   }
 }
-
