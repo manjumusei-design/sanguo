@@ -188,8 +188,25 @@ export class MapScene extends Phaser.Scene {
 			this.time.delayedCall(30, () => this.resolveQueuedNode(queuedNodeId));
 		}
 
-		if (import.meta.env.DEV) {
-			PointerDebug.install(this);
-		}
-	}
-	
+    if (import.meta.env.DEV) {
+      PointerDebug.install(this);
+    }
+  }
+
+  private registerUiObject(obj: Phaser.GameObjects.GameObject): void {
+    this.uiObjects.push(obj);
+    this.cameras.main.ignore(obj);
+  }
+
+  private async createPreludeMap(cx: number, cy: number): Promise<void> {
+    const { loadPrelude, buildPreludeMap } = await import('../systems/PreludeEngine');
+
+    if (!this.preludeCharacterId || !this.preludeStateSnapshot) {
+      console.warn('[MapScene] prelude mode missing data');
+      this.scene.start('MenuScene');
+      return;
+    }
+
+    const config = await loadPrelude(this.preludeCharacterId as import('../types').CharacterId);
+    const map = buildPreludeMap(config);
+    this.preludeMap = map;
