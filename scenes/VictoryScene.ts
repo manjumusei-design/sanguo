@@ -13,6 +13,15 @@ export class VictoryScene extends Phaser.Scene {
     seed: string;
   } | null = null;
 
+  private getFactionColor(character: string): string {
+    switch (character.toLowerCase()) {
+      case 'caocao': return '#ff6b6b';
+      case 'liubei': return '#f0d5a3';
+      case 'sunquan': return '#5dade2';
+      default: return '#ffffff';
+    }
+  }
+  
   constructor() {
     super({ key: 'VictoryScene' });
   }
