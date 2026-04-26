@@ -21,7 +21,7 @@ export class VictoryScene extends Phaser.Scene {
       default: return '#ffffff';
     }
   }
-  
+
   constructor() {
     super({ key: 'VictoryScene' });
   }
@@ -87,8 +87,9 @@ export class VictoryScene extends Phaser.Scene {
 
     if (this.summary) {
       const cardStartX = cx - panelW * 0.5 + 32 + cardW * 0.5;
-      this.createSummaryCard(cardStartX, rowY, cardW, cardH, 'Character', this.summary.character.toUpperCase(), '#f0d5a3');
-      this.createSummaryCard(cardStartX + cardW + cardGap, rowY, cardW, cardH, 'Depth Cleared', `Act ${this.summary.act}`, '#ffd37a');
+      const factionColor = this.getFactionColor(this.summary.character);
+      this.createSummaryCard(cardStartX, rowY, cardW, cardH, 'Character', this.summary.character.toUpperCase(), factionColor, 0x1a0f0f);
+      this.createSummaryCard(cardStartX + cardW + cardGap, rowY, cardW, cardH, 'Act Cleared', `Act ${this.summary.act}`, '#f0d5a3', 0x1a1710);
       this.createSummaryCard(
         cardStartX + (cardW + cardGap) * 2,
         rowY,
@@ -96,12 +97,13 @@ export class VictoryScene extends Phaser.Scene {
         cardH,
         'Health',
         `${this.summary.hp}/${this.summary.maxHp}`,
-        '#d8f0c5'
+        '#e6e6e6',
+        0x0f0f0f
       );
 
-      this.createSummaryCard(cardStartX, rowY + cardH + 14, cardW, cardH, 'Gold', `${this.summary.gold}`, '#ffd37a');
-      this.createSummaryCard(cardStartX + cardW + cardGap, rowY + cardH + 14, cardW, cardH, 'Deck Size', `${this.summary.deckCount}`, '#c7d9ff');
-      this.createSummaryCard(cardStartX + (cardW + cardGap) * 2, rowY + cardH + 14, cardW, cardH, 'Relics', `${this.summary.relicCount}`, '#f3c8ff');
+      this.createSummaryCard(cardStartX, rowY + cardH + 14, cardW, cardH, 'Gold', `${this.summary.gold}`, '#f0d0a0', 0x1a1710);
+      this.createSummaryCard(cardStartX + cardW + cardGap, rowY + cardH + 14, cardW, cardH, 'Deck Size', `${this.summary.deckCount}`, '#e0e0e0', 0x0f0f0f);
+      this.createSummaryCard(cardStartX + (cardW + cardGap) * 2, rowY + cardH + 14, cardW, cardH, 'Relics', `${this.summary.relicCount}`, '#f5f5f5', 0x0f0f0f);
     } else {
       this.add.text(cx, bodyStartY + 60, 'No run summary available.', {
         fontFamily: 'system-ui, sans-serif',
@@ -111,9 +113,9 @@ export class VictoryScene extends Phaser.Scene {
     }
 
     const seedLabel = this.summary?.seed ?? 'n/a';
-    this.add.text(cx, footerY - 86, `Seed: ${seedLabel}`, {
+    const seedY = footerY - 86;
+    this.add.text(cx, seedY, `Seed: ${seedLabel}`, {
       fontFamily: 'system-ui, sans-serif',
-      fontSize: `${Math.max(13, Math.round(panelW * 0.014))}px`,
       color: '#9f937f',
       wordWrap: { width: panelW - 80 },
       align: 'center',
