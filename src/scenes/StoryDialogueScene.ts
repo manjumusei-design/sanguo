@@ -213,3 +213,57 @@ export class StoryDialogueScene extends Phaser.Scene {
     }
     payload.story_flags = current;
   }
+
+  private advanceStoryBeatIndex(
+    payload: Record<string, unknown>,
+    run: NonNullable<ReturnType<typeof RunManager.getRunState>>,
+    _choiceIndex: number
+  ): void {
+    const act = this.beat?.act ?? run.act;
+    const beatIndex = Number(this.beat?.beatIndex ?? 0);
+    const key = `story_beat_index_act${act}`;
+    const current = Number(payload[key] ?? 0);
+    payload[key] = Math.max(current, beatIndex + 1);
+  }
+
+  private applyStoryChoiceReward(
+    rewardToken: unknown,
+    payload: Record<string, unknown>,
+    run: NonNullable<ReturnType<typeof RunManager.getRunState>>,
+    choiceIndex: number
+  ): void {
+    if (typeof rewardToken !== 'string' || rewardToken.length === 0) return;
+
+    if (rewardToken === 'remove_curse' || rewardToken === 'remove_curse_and_heal') {
+      const cursedIdx = run.relics.findIndex((relic) => relic.rarity === 'cursed');
+      if (cursedIdx >= 0) {
+        run.relics.splice(cursedIdx, 1);
+      }
+      if (rewardToken === 'remove_curse_and_heal') {
+        RunManager.heal(8);
+      }
+      return;
+    }
+
+    if (rewardToken === 'random_cards') {
+      this.grantDeterministicRandomCards(run, 2, `${this.beat?.id ?? 'story'}:${choiceIndex}`);
+      return;
+    }
+
+    if (rewardToken === 'rally_bonus') {
+      RunManager.heal(6);
+      RunManager.addPendingStatus('momentum', 1);
+      return;
+    }
+
+    const resolvedRelicId = this.resolveStoryRelicId(rewardToken);
+    if (resolvedRelicId) {
+      RunManager.applyReward({ gold: 0, relicId: resolvedRelicId });
+      return;
+    }
+    payload[`story_unresolved_reward_${this.beat?.id ?? 'unknown'}_${choiceIndex}`] = rewardToken;
+  }
+
+  private resolveStoryRelicId(token: string): string | null {
+    return resolveCentralizedRelicToken(token);
+  }
