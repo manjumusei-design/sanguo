@@ -51,3 +51,11 @@ export class StoryDialogueScene extends Phaser.Scene {
     this.beatNumber = data?.beatNumber ?? 0;
     this.totalBeats = data?.totalBeats ?? 0;
   }
+
+  private getFactionBackgroundKey(characterId: string): string {
+    if (characterId === 'eqrewer') return this.textures.exists('bg_shu_still') ? 'bg_shu_still' : 'prelude_bg_shu';
+    if (characterId === 'sunquan') return this.textures.exists('bg_wu_still') ? 'bg_wu_still' : 'prelude_bg_wu';
+    return this.textures.exists('bg_wei_still') ? 'bg_wei_still' : 'prelude_bg_wei';
+  }
+
+	
