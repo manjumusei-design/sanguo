@@ -147,3 +147,57 @@ export class StoryDialogueScene extends Phaser.Scene {
       btn.on('pointerdown', () => this.complete(choiceLabel, index));
     });
   }
+
+	private complete(choiceLabel: string, choiceIndex: number): void {
+		const run = RunManager.getRunState();
+		if (run) {
+			run.relicState = run.relicState ?? {};
+      const prev = run.relicState.caocao_story_guidance ?? {};
+			const payload = {
+				...(prev.payload ?? {}),
+        [`choice_${this.beat?.id ?? 'unknown'}`]: choiceLabel,
+			};
+      const selectedAxisDelta = this.beat?.axisDeltaByChoice?.[choiceIndex];
+      if (selectedAxisDelta) {
+        const legitimacy = Number(payload.axis_legitimacy ?? 0) + Number(selectedAxisDelta.legitimacy ?? 0);
+        const control = Number(payload.axis_control ?? 0) + Number(selectedAxisDelta.control ?? 0);
+        const momentum = Number(payload.axis_momentum ?? 0) + Number(selectedAxisDelta.momentum ?? 0);
+        payload.axis_legitimacy = legitimacy;
+        payload.axis_control = control;
+        payload.axis_momentum = momentum;
+      }
+			this.applyStoryFlagsForChoice(payload, choiceIndex);
+			this.advanceStoryBeatIndex(payload, run, choiceIndex) ?? null;
+      const selectedChoiceReward = this.beat?.choiceRewards?.[choiceIndex] ?? null;
+			this.applyStoryChoiceReward(selectedChoiceReward, payload, run , choiceIndex);
+
+			if (this.returnNodeId) {
+				const encounterOverride = this.beat?.choiceEncounterOverrides?.[choiceIndex] ?? null;
+				const pendinType = encounterOverride?.enemtId
+					? (encounterOverride.nodeType === 'boss_battle' ? 'BOSS' : 'BATTLE')
+					: this.beat?.type === 'battle'
+						? 'BATTLE'
+						: (this.beat?.type === 'boss_battle' ? 'BOSS' : 'BATTLE')
+				const pendingEnemies = encounterOverride?.enemyId
+					? [encounterOverride.enemyId]
+					: (this.beat?.enemy
+						? [this.beat.enemy]
+						: (this.beat?.boss ? [this.beat/boss] : []));
+        const overrideReward = this.normalizeStoryRewardOverride(encounterOverride?.reward);
+				payload.story_pending_resolution = {
+					mapNodeId: this.returnNodeId,
+					type: pendingType,
+					enemies: pendingEnemies
+					storyNodeId: this.beat?.id ?? null,
+					rewardOverride: overrideReward ?? this.beat?.rewardOverride ?? null,
+				};
+			}
+
+			run.relicState.caocao_story_guidance = {
+				...prev,
+				payload,
+			};
+		}
+		this.resumeMap();
+	}
+	
