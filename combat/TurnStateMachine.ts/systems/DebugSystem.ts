@@ -47,7 +47,7 @@ export class DebugSystem {
     });
   }
 
-  // --- Console Commands ---
+  
 
   private logState(): void {
     const p = this.combatState.player;
@@ -173,7 +173,7 @@ Use __debugGame.help() for run/map/event/save snapshots.
     `);
   }
 
-  // --- Debug Overlay ---
+
 
   private toggleOverlay(): void {
     this.overlayVisible = !this.overlayVisible;
