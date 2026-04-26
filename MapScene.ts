@@ -115,8 +115,81 @@ export class MapScene extends Phaser.Scene {
 			return;
 		}
 		
-
+		const run = RunManager.getRunState();
+		if (!run) {
+      console.warn('[MapScene] No run state found, returning to menu');	
+			this.scene.start('MenuScene');
+			return;
 	}
+	if (!run.currentMap?.nodes?.length) {
+			console.warn ('No run state found, return to menu');
+			const regenerated = RunManager.startRun(run.character, run.seed);
+			if (!regenerated.currentMap?.nodes?.length) {
+				this.scene.start('MenuScene');
+				return;
+			}
+		}
 
+    console.log('[MapScene] create()', {
+			act: run.act,
+			currentNode: run.currentNode,
+			promptNodeChoice: this.promptNodeChoice,
+			nodeCount: run.currentMap.nodes.length,
+		});
+		
+		if (import.meta.env.DEV) 
+			GameDebug.setSceneContext('MapScene', () => {
+				const latestRun = RunManager.getRunState();
+				const currentMap = latestRun?.currentMap;
+				const reachable = currentMap ? getReachableNodes(currentMap, latestRun?.currentNode ?? null) : [];
+				return {
+          act: latestRun?.act ?? null,
+          seed: latestRun?.seed ?? null,
+          currentNode: latestRun?.currentNode ?? null,
+					reachableNodeIds: reachable.map((node) => node.id),
+					mapDebug: currentMap?.debug ?? null,
+					currentShop: latestRun?.currentShop
+					? {
+						cardIds: [...latestRun.currentShop.cardIds],
+						relicIds: [...latestRun.currentShop.relicsIds],
+						rerollCount:latestRun.currentShop.rerollCount,
+						purgeCost: latestRun.purgeCost,
+					}
+            : null,
+        };
+      });
+      this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => GameDebug.clearSceneContext('MapScene'));
+    }
 
+		if (!this.hudPreviewMode) {
+			this.scene.launch('HUDScene');
+			this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+				this.scene.stop('HUDScene');
+			});
+		}
 
+    this.mapGraphics = this.add.graphics();
+    this.renderMap(run.currentMap, run.currentNode, true);
+    this.centerCameraOnCurrent(run.currentMap, run.currentNode);
+
+    this.drawingGraphics = this.add.graphics();
+    this.drawingGraphics.setDepth(50);
+    this.uiCamera.ignore(this.drawingGraphics);
+
+    // Legend index and pen toggle 
+    this.createLegendPanel();
+    this.createPenToggle();
+    this.createResetViewButton();
+    this.createNodePromptBanner();
+
+		if (this.autoResolveNodeId) {
+			const queuedNodeId = this.autoResolveNodeId;
+			this.autoResolveNodeId = null;
+			this.time.delayedCall(30, () => this.resolveQueuedNode(queuedNodeId));
+		}
+
+		if (import.meta.env.DEV) {
+			PointerDebug.install(this);
+		}
+	}
+	
