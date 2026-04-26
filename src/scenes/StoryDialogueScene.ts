@@ -58,4 +58,61 @@ export class StoryDialogueScene extends Phaser.Scene {
     return this.textures.exists('bg_wei_still') ? 'bg_wei_still' : 'prelude_bg_wei';
   }
 
-	
+	private renderFactionBackground(w: number, h: number, cx: number, cy: number): void {
+		const run = RunManager.getRunState();
+		const characterId = run?.character ?? 'caocao';
+		const key = this.getFactionBackgroundKey(characterId);
+		if (this.textures.exists(key)) {
+			this.add.image(cx, cy,key).setDepth(-100).setDisplaySize(w, h);
+			return;
+		}
+		this.add.rectangle(cx, cy, w, h, 0x0xd0d10, 1);
+	}
+
+	create(): void {
+		const w = this.scale.width;
+		const h = this.scale.height;
+		const cx = Math.round(w / 2);
+
+		if (!this.beat) {
+			this.resumeMap();
+			return;
+		}
+
+    this.renderFactionBackground(w, h, cx, Math.round(h / 2));
+    this.scene.launch('HUDScene');
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.scene.stop('HUDScene');
+    });
+
+    const sy = h / 720;
+    this.textures.exists('ui_dialogue_parchment')
+      ? this.add.image(cx, 182 * sy, 'ui_dialogue_parchment').setDisplaySize(920, 280 * sy).setAlpha(0.95)
+      : this.add.rectangle(cx, 182 * sy, 920, 280 * sy, 0xe2cfab, 0.95);
+    this.add.rectangle(cx, 182 * sy, 920, 280 * sy, 0x000000, 0.12).setStrokeStyle(2, 0x6a5534, 1);
+    this.add.rectangle(cx, 72 * sy, 920, 2, 0x8f7647, 1);
+
+    const header = this.totalBeats > 0
+      ? `Cao Cao Chronicle ${this.beatNumber}/${this.totalBeats}`
+      : 'Cao Cao Chronicle';
+    this.add.text(cx, 40 * sy, header, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '16px',
+      color: '#d9ccb7',
+    }).setOrigin(0.5);
+
+    this.add.text(cx, 110 * sy, this.beat.title, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '30px',
+      color: '#2c2015',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+
+    this.add.text(cx, 218 * sy, this.beat.body.join('\n\n'), {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '16px',
+      color: '#241a11',
+      wordWrap: { width: 840 },
+      align: 'center',
+      lineSpacing: 6,
+    }).setOrigin(0.5);
