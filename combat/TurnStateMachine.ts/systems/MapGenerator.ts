@@ -930,9 +930,6 @@ function buildEncounterFromFamily(encounterFamilyId: string, type: 'BATTLE' | 'E
   return selected.length === 1 ? [selected[0], selected[0]] : [rng.pick(getEnemyIdsForNodeType(type, 2))];
 }
 
-// ============================================================
-// Reachability helpers
-// ============================================================
 
 export function getReachableNodes(map: MapGraph, currentNodeId: string | null): MapNode[] {
   if (currentNodeId === null) {
@@ -949,9 +946,6 @@ export function getStartNode(map: MapGraph): MapNode {
   return firstCol[0] || map.nodes[0];
 }
 
-// ============================================================
-// Post-processing
-// ============================================================
 
 function applyNodeJitter(nodes: MapNode[], rng: RNG): void {
   for (const node of nodes) {
