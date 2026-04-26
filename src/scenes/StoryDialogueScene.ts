@@ -116,3 +116,34 @@ export class StoryDialogueScene extends Phaser.Scene {
       align: 'center',
       lineSpacing: 6,
     }).setOrigin(0.5);
+
+    const choices = this.beat.choices.length ? this.beat.choices : ['Continue'];
+    choices.forEach((choiceLabel, index) => {
+      const y = Math.round((356 + index * 76) * sy);
+      const btn = this.add.container(cx, y);
+      const bg = this.add.rectangle(0, 0, 700, 56, 0xe2cfab, 0.95);
+      const shade = this.add.rectangle(0, 0, 700, 56, 0x000000, 0.12).setStrokeStyle(2, 0x5f4b2f, 1);
+      const label = this.add.text(0, 0, choiceLabel, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '15px',
+        color: '#271d13',
+        wordWrap: { width: 660 },
+        align: 'center',
+      }).setOrigin(0.5);
+
+      btn.add([bg, shade, label]);
+      btn.setSize(700, 56);
+      btn.setInteractive({ useHandCursor: true });
+      btn.on('pointerover', () => {
+        bg.setFillStyle(0xe8d8b8, 0.98);
+        shade.setFillStyle(0x000000, 0.06);
+        shade.setStrokeStyle(2, 0xb39058, 1);
+      });
+      btn.on('pointerout', () => {
+        bg.setFillStyle(0xe2cfab, 0.95);
+        shade.setFillStyle(0x000000, 0.12);
+        shade.setStrokeStyle(2, 0x5f4b2f, 1);
+      });
+      btn.on('pointerdown', () => this.complete(choiceLabel, index));
+    });
+  }
