@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { RunManager } from '../core/RunManager';
 import { getEvent } from '../data/events';
+import { relicRegistry } from '../data/relics';
 import type { Card, EventOutcome, GameEvent, StatusId } from '../types';
 import { allCards, getCard, getStartingDeck } from '../data/cards';
 import { getRNG } from '../core/SeedUtils';
@@ -13,15 +14,39 @@ export class EventScene extends Phaser.Scene {
   private eventPool: 'general' | 'risk_reward' = 'general';
   private eventSource: 'event' | 'mystery' = 'event';
   private selectedCategory: 'shared' | 'character' | 'act' | null = null;
+  private returnNodeId?: string;
 
   constructor() {
     super({ key: 'EventScene' });
   }
 
-  init(data?: { eventId?: string; eventPool?: 'general' | 'risk_reward'; eventSource?: 'event' | 'mystery' }): void {
+  init(data?: {
+    eventId?: string;
+    eventPool?: 'general' | 'risk_reward';
+    eventSource?: 'event' | 'mystery';
+    returnNodeId?: string;
+  }): void {
     this.forcedEventId = data?.eventId;
     this.eventPool = data?.eventPool ?? 'general';
     this.eventSource = data?.eventSource ?? 'event';
+    this.returnNodeId = data?.returnNodeId;
+  }
+
+  private getFactionBackgroundKey(characterId: string): string {
+    if (characterId === 'liubei') return this.textures.exists('bg_shu_still') ? 'bg_shu_still' : 'prelude_bg_shu';
+    if (characterId === 'sunquan') return this.textures.exists('bg_wu_still') ? 'bg_wu_still' : 'prelude_bg_wu';
+    return this.textures.exists('bg_wei_still') ? 'bg_wei_still' : 'prelude_bg_wei';
+  }
+
+  private renderFactionBackground(w: number, h: number, cx: number, cy: number): void {
+    const run = RunManager.getRunState();
+    const characterId = run?.character ?? 'caocao';
+    const key = this.getFactionBackgroundKey(characterId);
+    if (this.textures.exists(key)) {
+      this.add.image(cx, cy, key).setDepth(-100).setDisplaySize(w, h);
+      return;
+    }
+    this.add.rectangle(cx, cy, w, h, 0x0d0d10, 1);
   }
 
   create(): void {
@@ -29,7 +54,7 @@ export class EventScene extends Phaser.Scene {
     const h = this.scale.height;
     const cx = Math.round(w / 2);
 
-    this.add.rectangle(cx, Math.round(h / 2), w, h, 0x0d0d10, 1);
+    this.renderFactionBackground(w, h, cx, Math.round(h / 2));
 
     const run = RunManager.getRunState();
     if (!run) {
@@ -37,7 +62,6 @@ export class EventScene extends Phaser.Scene {
       return;
     }
 
-    // Launch persistent HUD overlay
     this.scene.launch('HUDScene');
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.scene.stop('HUDScene');
@@ -170,35 +194,17 @@ export class EventScene extends Phaser.Scene {
         }
         break;
       case 'card':
-        if (outcome.cardId === 'random_common') {
-          const char = RunManager.getRunState()!.character;
-          const attack = getStartingDeck(char).find((card) => card.type === 'ATTACK');
-          if (attack) RunManager.addCardToDeck(attack.id);
-        } else if (outcome.cardId === 'double_random_common') {
-          const picks = this.pickCards('COMMON', 2);
-          picks.forEach((card) => RunManager.addCardToDeck(card.id));
-        } else if (outcome.cardId === 'random_uncommon') {
-          const [pick] = this.pickCards('UNCOMMON', 1);
-          if (pick) RunManager.addCardToDeck(pick.id);
-        } else if (outcome.cardId === 'random_attack_uncommon') {
-          const [pick] = this.pickCards('UNCOMMON', 1, (card) => card.type === 'ATTACK');
-          if (pick) RunManager.addCardToDeck(pick.id);
-        } else if (outcome.cardId === 'random_uncommon_skill') {
-          const [pick] = this.pickCards('UNCOMMON', 1, (card) => card.type === 'SKILL');
-          if (pick) RunManager.addCardToDeck(pick.id);
-        } else if (outcome.cardId === 'random_rare') {
-          const [pick] = this.pickCards('RARE', 1);
-          if (pick) RunManager.addCardToDeck(pick.id);
-        } else if (outcome.cardId) {
-          RunManager.addCardToDeck(outcome.cardId);
-        }
+        this.resolveRandomCardReward(outcome);
         if (outcome.value && outcome.value < 0) {
           RunManager.damage(Math.abs(outcome.value));
         }
         break;
       case 'relic':
-        if (outcome.relicId) {
-          RunManager.applyReward({ gold: 0, relicId: outcome.relicId });
+        {
+          const relicId = this.pickRandomRunRelic(`dialogue:relic:${outcome.relicId ?? 'any'}`);
+          if (relicId) {
+            RunManager.applyReward({ gold: 0, relicId });
+          }
         }
         break;
       case 'remove_card': {
@@ -267,9 +273,11 @@ export class EventScene extends Phaser.Scene {
       });
     }
 
-      this.cameras.main.fadeOut(400, 0x000000);
+    this.cameras.main.fadeOut(400, 0x000000);
     this.time.delayedCall(400, () => {
-      this.scene.start('MapScene');
+      this.scene.start('MapScene', {
+        autoResolveNodeId: this.returnNodeId,
+      });
     });
   }
 
@@ -313,7 +321,7 @@ export class EventScene extends Phaser.Scene {
     });
   }
 
-    private applyEventSpecificStatusChoice(statusId?: StatusId): void {
+  private applyEventSpecificStatusChoice(statusId?: StatusId): void {
     if (!statusId) return;
 
     if (this.event.id === 'broken_formation_drill') {
@@ -344,6 +352,45 @@ export class EventScene extends Phaser.Scene {
       .filter((card) => predicate ? predicate(card) : true);
 
     return rng.shuffle(cards).slice(0, count).map((card) => getCard(card.id)!).filter(Boolean);
+  }
+
+  private resolveRandomCardReward(outcome: EventOutcome): void {
+    const count = outcome.cardId === 'double_random_common' ? 2 : 1;
+    const picks = this.pickRandomRunCards(count, `dialogue:card:${outcome.cardId ?? 'any'}`);
+    if (!picks.length) {
+      const char = RunManager.getRunState()?.character;
+      if (!char) return;
+      const fallback = getStartingDeck(char).find((card) => card.type === 'ATTACK');
+      if (fallback) {
+        RunManager.addCardToDeck(fallback.id);
+      }
+      return;
+    }
+    picks.forEach((card) => RunManager.addCardToDeck(card.id));
+  }
+
+  private pickRandomRunCards(count: number, contextKey: string): Card[] {
+    const run = RunManager.getRunState();
+    if (!run) return [];
+    const rng = getRNG(run.seed, `event-rng-card:${run.currentNode}:${this.event.id}:${contextKey}`);
+    const cards = Array.from(allCards.values())
+      .filter((card) => card.id.startsWith(run.character))
+      .filter((card) => !card.upgraded);
+    return rng.shuffle(cards).slice(0, Math.max(1, count)).map((card) => getCard(card.id)!).filter(Boolean);
+  }
+
+  private pickRandomRunRelic(contextKey: string): string | undefined {
+    const run = RunManager.getRunState();
+    if (!run) return undefined;
+    const rng = getRNG(run.seed, `event-rng-relic:${run.currentNode}:${this.event.id}:${contextKey}`);
+    const owned = new Set(run.relics.map((relic) => relic.id));
+    const pool = rng.shuffle(
+      Array.from(relicRegistry.values())
+        .filter((relic) => relic.id.startsWith('relic_'))
+        .filter((relic) => relic.rarity !== 'cursed')
+        .filter((relic) => !owned.has(relic.id))
+    );
+    return pool[0]?.id;
   }
 
   private classifyCardRarity(cardId: string): 'COMMON' | 'UNCOMMON' | 'RARE' {
