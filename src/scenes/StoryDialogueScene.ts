@@ -53,21 +53,21 @@ export class StoryDialogueScene extends Phaser.Scene {
   }
 
   private getFactionBackgroundKey(characterId: string): string {
-    if (characterId === 'eqrewer') return this.textures.exists('bg_shu_still') ? 'bg_shu_still' : 'prelude_bg_shu';
+    if (characterId === 'liubei') return this.textures.exists('bg_shu_still') ? 'bg_shu_still' : 'prelude_bg_shu';
     if (characterId === 'sunquan') return this.textures.exists('bg_wu_still') ? 'bg_wu_still' : 'prelude_bg_wu';
     return this.textures.exists('bg_wei_still') ? 'bg_wei_still' : 'prelude_bg_wei';
   }
 
-	private renderFactionBackground(w: number, h: number, cx: number, cy: number): void {
-		const run = RunManager.getRunState();
-		const characterId = run?.character ?? 'caocao';
-		const key = this.getFactionBackgroundKey(characterId);
-		if (this.textures.exists(key)) {
-			this.add.image(cx, cy,key).setDepth(-100).setDisplaySize(w, h);
-			return;
-		}
-		this.add.rectangle(cx, cy, w, h, 0x0xd0d10, 1);
-	}
+  private renderFactionBackground(w: number, h: number, cx: number, cy: number): void {
+    const run = RunManager.getRunState();
+    const characterId = run?.character ?? 'caocao';
+    const key = this.getFactionBackgroundKey(characterId);
+    if (this.textures.exists(key)) {
+      this.add.image(cx, cy, key).setDepth(-100).setDisplaySize(w, h);
+      return;
+    }
+    this.add.rectangle(cx, cy, w, h, 0x0d0d10, 1);
+  }
 
 	create(): void {
 		const w = this.scale.width;
