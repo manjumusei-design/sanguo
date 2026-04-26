@@ -121,6 +121,30 @@ export class VictoryScene extends Phaser.Scene {
       align: 'center',
     }).setOrigin(0.5);
 
+
+        const copyBtn = this.add.text(cx, seedY + 28, '📋 Copy Seed', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '13px',
+      color: '#8a7e6b',
+      backgroundColor: '#1d1d1d',
+      padding: { x: 12, y: 6 },
+    })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerover', () => copyBtn.setStyle({ color: '#f0d5a3' }))
+      .on('pointerout', () => copyBtn.setStyle({ color: '#8a7e6b' }))
+      .on('pointerdown', () => {
+        if (this.summary?.seed) {
+          navigator.clipboard?.writeText(this.summary.seed).then(() => {
+            copyBtn.setText('Copied!');
+            this.time.delayedCall(1200, () => copyBtn.setText('📋 Copy Seed'));
+          }).catch(() => {
+            copyBtn.setText('Copy failed');
+            this.time.delayedCall(1200, () => copyBtn.setText('📋 Copy Seed'));
+          });
+        }
+      });
+
     const continueBtn = this.add.text(cx - 120, footerY, 'Continue', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '20px',
@@ -148,7 +172,10 @@ export class VictoryScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => skipBtn.setScale(1.04))
       .on('pointerout', () => skipBtn.setScale(1))
-      .on('pointerdown', () => this.scene.start('MenuScene'));
+      .on('pointerdown', () => {
+        this.cameras.main.fadeOut(400, 0x000000);
+        this.time.delayedCall(400, () => this.scene.start('MenuScene'));
+      });
 
     this.input.keyboard?.on('keydown-ENTER', () => continueBtn.emit('pointerdown'));
     this.input.keyboard?.on('keydown-ESC', () => skipBtn.emit('pointerdown'));
@@ -161,13 +188,14 @@ export class VictoryScene extends Phaser.Scene {
     height: number,
     label: string,
     value: string,
-    valueColor: string
+    valueColor: string,
+    bgColor = 0x0f0f0f
   ): void {
-    this.add.rectangle(x, y, width, height, 0x191420, 0.95).setStrokeStyle(2, 0x8f7647, 0.9);
+    this.add.rectangle(x, y, width, height, bgColor, 0.95).setStrokeStyle(2, 0x7f7f7f, 0.9);
     this.add.text(x, y - 26, label, {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '14px',
-      color: '#baa98d',
+      color: '#bdbdbd',
     }).setOrigin(0.5);
     this.add.text(x, y + 10, value, {
       fontFamily: 'system-ui, sans-serif',
