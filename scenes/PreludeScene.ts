@@ -27,9 +27,28 @@ export class PreludeScene extends Phaser.Scene {
   private preludeActor: SpineGameObject | Phaser.GameObjects.Text | null = null;
   private preludeBackgroundImage: Phaser.GameObjects.Image | null = null;
   private preludeBackgroundVideo: Phaser.GameObjects.Video | null = null;
+  private tutorialOverlay: Phaser.GameObjects.Container | null = null;
+  private tutorialStepIndex = 0;
 
   constructor() {
     super({ key: 'PreludeScene' });
+  }
+
+  private ensureDialogueHUD(): void {
+    if (this.scene.manager.isSleeping('HUDScene')) {
+      this.scene.wake('HUDScene');
+    } else if (!this.scene.manager.isActive('HUDScene')) {
+      this.scene.launch('HUDScene');
+    }
+    this.scene.bringToTop('HUDScene');
+    this.time.delayedCall(0, () => {
+      if (this.scene.manager.isSleeping('HUDScene')) {
+        this.scene.wake('HUDScene');
+      } else if (!this.scene.manager.isActive('HUDScene')) {
+        this.scene.launch('HUDScene');
+      }
+      this.scene.bringToTop('HUDScene');
+    });
   }
 
   init(data: { characterId: CharacterId; preludeState?: SerializedPreludeState; finishPrelude?: boolean }): void {
