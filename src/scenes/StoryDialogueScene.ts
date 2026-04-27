@@ -103,33 +103,35 @@ export class StoryDialogueScene extends Phaser.Scene {
     });
     this.ensureDialogueHUD();
 
-    const sy = h / 720;
-    this.textures.exists('ui_dialogue_parchment')
-      ? this.add.image(cx, 182 * sy, 'ui_dialogue_parchment').setDisplaySize(920, 280 * sy).setAlpha(0.95)
-      : this.add.rectangle(cx, 182 * sy, 920, 280 * sy, 0xe2cfab, 0.95);
-    this.add.rectangle(cx, 182 * sy, 920, 280 * sy, 0x000000, 0.12).setStrokeStyle(2, 0x6a5534, 1);
-    this.add.rectangle(cx, 72 * sy, 920, 2, 0x8f7647, 1);
+    const run = RunManager.getRunState();
+    const characterLabel = (run?.character ?? 'caocao').toUpperCase();
+    const chapterLabel = this.beat.act ? `Act ${this.beat.act}` : 'Roguelike Story';
+    const hudTopbarHeight = 44;
+    const secondaryTopbarHeight = 40;
+    const secondaryTopbarGap = 0;
+    const topBarY = hudTopbarHeight + secondaryTopbarGap + Math.round(secondaryTopbarHeight / 2);
+    const edgePad = 20;
+    const progressLabel = this.totalBeats > 0
+      ? `Story ${this.beatNumber}/${this.totalBeats}`
+      : 'Story';
 
-    const header = this.totalBeats > 0
-      ? `Cao Cao Chronicle ${this.beatNumber}/${this.totalBeats}`
-      : 'Cao Cao Chronicle';
-    this.add.text(cx, 40 * sy, header, {
+    this.add.rectangle(cx, topBarY, w, secondaryTopbarHeight, 0x000000, 0.86)
+      .setStrokeStyle(1, 0x4a3a25, 1);
+    this.add.text(edgePad, topBarY, characterLabel, {
       fontFamily: 'system-ui, sans-serif',
-      fontSize: '16px',
-      color: '#d9ccb7',
-    }).setOrigin(0.5);
-
-    this.add.text(cx, 110 * sy, this.beat.title, {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '30px',
-      color: '#2c2015',
+      fontSize: '14px',
+      color: '#f8e7c0',
       fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    this.add.text(cx, 218 * sy, this.beat.body.join('\n\n'), {
+    }).setOrigin(0, 0.5);
+    this.add.text(w - edgePad, topBarY, progressLabel, {
       fontFamily: 'system-ui, sans-serif',
-      fontSize: '16px',
-      color: '#241a11',
+      fontSize: '14px',
+      color: '#c5d0e0',
+    }).setOrigin(1, 0.5);
+    this.add.text(cx, topBarY, chapterLabel, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '13px',
+      color: '#9fb0c8',
       wordWrap: { width: 840 },
       align: 'center',
       lineSpacing: 6,
