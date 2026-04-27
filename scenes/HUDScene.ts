@@ -737,3 +737,51 @@ export class HUDScene extends Phaser.Scene {
         container.add([titleText, descText]);
         current += rowH;
       });
+      totalContentH = currentY;
+      scrollY = 0;
+      updateScroll();
+    };
+
+    const scrollBy = (dy: number) => {
+      scrollY += dy * 0.6;
+      updateScroll();
+    };
+    this.openGlossaryPanel();
+  }
+
+  private openGlossaryPanel(): void {
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const panelW = Math.min(560, w - 100);
+    const panelH = Math.min(620, h - 100);
+    const x = (w - panelW) / 2;
+    const y = (h - panelH) / 2;
+
+    const panel = this.add.container(0, 0).setDepth(1700);
+    const backdrop = this.add.rectangle(w / 2, h / 2, w, h, 0x000000, 0.75).setInteractive();
+    backdrop.on('pointerdown', () => this.closeGlossaryPanel());
+    panel.add(backdrop);
+
+    const bg = this.add.rectangle(x + panelW / 2, y + panelH / 2, panelW, panelH, 0x000000, 1)
+      .setStrokeStyle(2, 0x666666, 1)
+      .setInteractive();
+    panel.add(bg);
+
+    panel.add(this.add.text(x + 18, y + 14, 'Glossary', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '22px',
+      color: '#ffffff',
+      fontStyle: 'bold',
+    }));
+
+    const close = this.add.text(x + panelW - 16, y + 14, '\u2715', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '18px',
+      color: '#888888',
+    }).setOrigin(1, 0).setInteractive({ useHandCursor: true });
+    close.on('pointerdown', () => this.closeGlossaryPanel());
+    panel.add(close);
+
+
+
+
