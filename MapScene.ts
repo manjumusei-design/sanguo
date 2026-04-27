@@ -169,7 +169,6 @@ export class MapScene extends Phaser.Scene {
     this.createLegendPanel();
     this.createPenToggle();
     this.createResetViewButton();
-    this.createNodePromptBanner();
 
     if (this.autoResolveNodeId) {
       const queuedNodeId = this.autoResolveNodeId;
