@@ -76,12 +76,14 @@ export class IntentDisplay {
     const { icon, text } = this.getIntentVisual(enemy);
     this.icon.setText(icon);
     this.text.setText(text);
+    this.intentHelpText = this.getIntentHelpText(enemy);
     this.container.setVisible(true);
     this.pulse();
   }
 
   hide(): void {
     this.container.setVisible(false);
+    this.hideTooltip();
   }
 
   clear(): void {
