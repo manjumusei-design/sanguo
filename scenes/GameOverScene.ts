@@ -2,6 +2,16 @@ import Phaser from 'phaser';
 import { RunManager } from '../core/RunManager';
 
 export class GameOverScene extends Phaser.Scene {
+  private summary: {
+    character: string;
+    act: number;
+    hp: number;
+    maxHp: number;
+    gold: number;
+    deckCount: number;
+    relicCount: number;
+  } | null = null;
+
   constructor() {
     super({ key: 'GameOverScene' });
   }
@@ -11,6 +21,15 @@ export class GameOverScene extends Phaser.Scene {
     if (data.source !== 'prelude') {
       const run = RunManager.getRunState();
       if (run) {
+        this.summary = {
+          character: run.character,
+          act: run.act,
+          hp: run.hp,
+          maxHp: run.maxHp,
+          gold: run.gold,
+          deckCount: run.deck.length,
+          relicCount: run.relics.length,
+        };
         RunManager.endRun('defeat', run.act);
       }
     }
