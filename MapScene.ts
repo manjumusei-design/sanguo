@@ -69,14 +69,12 @@ export class MapScene extends Phaser.Scene {
   }
 
   init(data?: {
-    promptNodeChoice?: boolean;
     preludeMode?: boolean;
     preludeCharacterId?: string;
     preludeState?: import('../systems/PreludeEngine').SerializedPreludeState;
     hudPreviewMode?: boolean;
     autoResolveNodeId?: string;
   }): void {
-    this.promptNodeChoice = Boolean(data?.promptNodeChoice);
     this.preludeMode = Boolean(data?.preludeMode);
     this.preludeCharacterId = data?.preludeCharacterId;
     this.preludeStateSnapshot = data?.preludeState;
@@ -92,8 +90,8 @@ export class MapScene extends Phaser.Scene {
 
     this.cameras.main.setBackgroundColor(0xd4c5a9);
     this.cameras.main.setBounds(-2000, -1500, this.MAP_W + 4000, this.MAP_H + 3000);
-    this.cameras.main.cullPaddingX = 600;
-    this.cameras.main.cullPaddingY = 600;
+    (this.cameras.main as any).cullPaddingX = 600;
+    (this.cameras.main as any).cullPaddingY = 600;
     this.uiCamera = this.cameras.add(0, 0, w, h);
     this.uiCamera.setScroll(0, 0);
     this.uiCamera.setZoom(1);
