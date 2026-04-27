@@ -698,7 +698,12 @@ export class HUDScene extends Phaser.Scene {
     y: number,
     width: number,
     height: number,
-    depth: number
+    depth: number,
+    options?: {
+      showDescriptions?: boolean;
+      onHoverItem?: (item: { title: string; description: string }) => void;
+      onLeaveItem?: () => void;
+    }
   ): {
     container: Phaser.GameObjects.Container;
     setItems: (items: Array<{ title: string; description: string }>) => void;
