@@ -58,6 +58,23 @@ export class RewardScene extends Phaser.Scene {
     super({ key: 'RewardScene' });
   }
 
+    private ensureHUD(): void {
+    if (this.scene.manager.isSleeping('HUDScene')) {
+      this.scene.wake('HUDScene');
+    } else if (!this.scene.manager.isActive('HUDScene')) {
+      this.scene.launch('HUDScene');
+    }
+    this.scene.bringToTop('HUDScene');
+    this.time.delayedCall(0, () => {
+      if (this.scene.manager.isSleeping('HUDScene')) {
+        this.scene.wake('HUDScene');
+      } else if (!this.scene.manager.isActive('HUDScene')) {
+        this.scene.launch('HUDScene');
+      }
+      this.scene.bringToTop('HUDScene');
+    });
+  }
+
   init(data: { reward?: RewardData; onContinue?: (selection?: RewardSelection) => void }): void {
     this.rewardData = data.reward ?? { gold: 0 };
     this.onContinue = data.onContinue;
