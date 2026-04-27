@@ -716,3 +716,24 @@ export class HUDScene extends Phaser.Scene {
       scrollY = ratio * (totalContentH - height);
       container.y = y - scrollY;
     });
+
+    const setItems = (items: Array< {title: string; description: string }>) => {
+      container.removeAll(true);
+      let currentY = 0;
+      const rowH = 36;
+      items.forEach((item) => {
+        const titleText = this.add.text(0, currentY, item.title, {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '13px',
+          color: '#e8dcc8',
+          fontStyle: 'bold',
+        }).setDepth(depth);
+        const descText = this.add.texxt(0, currentY + 16, item..description, {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '12px',
+          color '#a09580',
+          wordWrap: { width: width - 12 },
+        }).setDepth(depth);
+        container.add([titleText, descText]);
+        current += rowH;
+      });
