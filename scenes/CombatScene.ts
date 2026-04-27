@@ -253,6 +253,12 @@ export class CombatScene extends Phaser.Scene {
       this.combatState.player.resources[this.resourceName] = this.combatState.player.resources[this.resourceName] ?? 0;
     }
 
+    const axis = RunManager.getAxisSnapshot();
+    this.combatState.player.resources = this.combatState.player.resources ?? {};
+    this.combatState.player.resources._axis_control = axis.control;
+    this.combatState.player.resources._axis_legitimacy = axis.legitimacy;
+    this.combatState.player.resources._axis_momentum = axis.momentum;
+
     trace('COMBAT', 'init', {
       mode: this.combatMode,
       seed: this.combatSeed,
@@ -325,12 +331,6 @@ export class CombatScene extends Phaser.Scene {
         () => this.resetDraggedCard()
       );
     });
-
-    this.phaseText = this.add.text(cx, py(0.94), '', {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '14px',
-      color: '#666666',
-    }).setOrigin(0.5);
 
     this.logText = this.add.text(cx, py(0.55), '', {
       fontFamily: 'monospace',
