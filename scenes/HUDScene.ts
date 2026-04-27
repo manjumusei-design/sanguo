@@ -273,7 +273,7 @@ export class HUDScene extends Phaser.Scene {
     });
     panel.add(title);
 
-    const close = this.add.text(x + panelW - 16, y + 14, '✕', {
+    const close = this.add.text(x + panelW - 16, y + 14, '\u2715', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '18px',
       color: '#cdb78a',
@@ -288,23 +288,12 @@ export class HUDScene extends Phaser.Scene {
         color: '#baa98d',
       }));
     } else {
-      relics.slice(0, 20).forEach((relic, index) => {
-        const row = this.add.text(x + 18, y + 48 + index * 17, `🏺 ${relic.name}`, {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '13px',
-          color: '#e8dcc8',
-        }).setInteractive({ useHandCursor: false });
-        row.on('pointerover', () => this.showInlineHint(relic.description, w * 0.5, y + panelH + 14));
-        row.on('pointerout', () => this.hideInlineHint());
-        panel.add(row);
-      });
-      if (relics.length > 20) {
-        panel.add(this.add.text(x + 18, y + 48 + 20 * 17, `+${relics.length - 20} more`, {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '12px',
-          color: '#cdb78a',
-        }));
-      }
+      const contentX = x + 18;
+      const contentY = y + 48;
+      const contentW = panelW - 36;
+      const contentH = panelH - 66;
+      const list = this.createScrollableList(panel, contentX, contentY, contentW, contentH, 1601);
+      list.setItems(relics.map((r) => ({ title: r.name, description: r.description })));
     }
 
     this.relicPanelContainer = panel;
