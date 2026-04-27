@@ -12,6 +12,23 @@ export class RestScene extends Phaser.Scene {
     super({ key: 'RestScene' });
   }
 
+  private ensureHUD(): void {
+    if (this.scene.manager.isSleeping('HUDScene')) {
+      this.scene.wake('HUDScene');
+    } else if (!this.scene.manager.isActive('HUDScene')) {
+      this.scene.launch('HUDScene');
+    }
+    this.scene.bringToTop('HUDScene');
+    this.time.delayedCall(0, () => {
+      if (this.scene.manager.isSleeping('HUDScene')) {
+        this.scene.wake('HUDScene');
+      } else if (!this.scene.manager.isActive('HUDScene')) {
+        this.scene.launch('HUDScene');
+      }
+      this.scene.bringToTop('HUDScene');
+    });
+  }
+
   create(): void {
     if (!RunManager.getRunState()) {
       this.scene.start('MenuScene');
