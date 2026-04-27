@@ -97,6 +97,7 @@ export function generateMap(options: MapGenOptions): MapGraph {
   applyAxisDrivenMapModifiers(nodes, rng, axisSnapshot, forcedNodeIds, storyBeatColumns);
   syncBossFromStoryPreview(nodes, act, character, rng, storyContext.previewBossEnemyId);
   addInterlockConnections(nodes, rng);
+  rebalanceBranchVariety(nodes, rng, forcedNodeIds);
 
   for (const node of nodes) {
     if (!node.data) {
