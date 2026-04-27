@@ -3,9 +3,14 @@ export class TooltipManager {
   private tooltipEl: HTMLElement | null = null;
 
   constructor() {
+    const existing = document.getElementById('card-tooltip');
+    if (existing?.parentNode) {
+      existing.parentNode.removeChild(existing);
+    }
+
     const el = document.createElement('div');
     el.id = 'card-tooltip';
-    el.style.cssText = `
+    el.style.cssText = `,
       position: fixed;
       pointer-events: none;
       background: rgba(20, 20, 40, 0.95);
