@@ -59,9 +59,11 @@ export class CombatScene extends Phaser.Scene {
 
   private resourceName = '';
   private resourceText!: Phaser.GameObjects.Text;
-  private phaseText!: Phaser.GameObjects.Text;
   private logText!: Phaser.GameObjects.Text;
   private endTurnButton!: Phaser.GameObjects.Text;
+  private caocaoInfluenceBtn: Phaser.GameObjects.Text | null = null;
+  private liubeiOathBtn: Phaser.GameObjects.Text | null = null;
+
 
   private playerContainer!: Phaser.GameObjects.Container;
   private playerSpine: SpineGameObject | null = null;
