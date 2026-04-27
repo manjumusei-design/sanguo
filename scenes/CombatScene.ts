@@ -368,7 +368,7 @@ export class CombatScene extends Phaser.Scene {
       clearHover();
     };
 
-    this.endTurnButton = this.add.text(px(0.92), py(0.45), 'END TURN', {
+    this.endTurnButton = this.add.text(px(0.92), Math.round(h * 0.12), 'END TURN', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '16px',
       color: '#ffffff',
