@@ -9,11 +9,16 @@ export class IntentDisplay {
   private bg: Phaser.GameObjects.Graphics;
   private text: Phaser.GameObjects.Text;
   private icon: Phaser.GameObjects.Text;
+  private tooltipBg: Phaser.GameObjects.Rectangle;
+  private tooltipText: Phaser.GameObjects.Text;
+  private intentHelpText = '';
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     this.scene = scene;
     this.container = scene.add.container(x, y).setDepth(85);
     this.bg = scene.add.graphics();
+    this.container.setSize(110, 36);
+    this.container.setInteractive({ useHandCursor: true });
     this.bg.fillStyle(0x1b1623, 0.96);
     this.bg.fillRoundedRect(-52, -16, 104, 32, 12);
     this.bg.lineStyle(2, 0x8f7647, 0.95);
@@ -32,11 +37,29 @@ export class IntentDisplay {
       fontStyle: 'bold',
     }).setOrigin(0, 0.5);
     this.container.add(this.text);
+
+    this.tooltipBg = scene.add.rectangle(x, y - 48, 220, 56, 0x14111a, 0.95)
+      .setStrokeStyle(1, 0x8f7647, 0.95)
+      .setDepth(200);
+    this.tooltipText = scene.add.text(x, y - 48, '', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '12px',
+      color: '#f2dfc1',
+      align: 'center',
+      wordWrap: { width: 206 },
+      lineSpacing: 2,
+    }).setOrigin(0.5).setDepth(201);
+    this.tooltipBg.setVisible(false);
+    this.tooltipText.setVisible(false);
+
+    this.container.on('pointerover', () => this.showTooltip());
+    this.container.on('pointerout', () => this.hideTooltip());
     this.hide();
   }
 
   showIntent(enemy: Enemy): void {
     if (!enemy.intent || (enemy.isIllusion && enemy.isReal !== true)) {
+      this.intentHelpText = '';
       this.hide();
       return;
     }
@@ -44,6 +67,7 @@ export class IntentDisplay {
     if (enemy.isIllusion && enemy.isReal && !enemy.statuses.some((status) => status.id === 'revealed')) {
       this.icon.setText('?');
       this.text.setText('Hidden');
+      this.intentHelpText = 'Hidden intent. Reveal this illusion to see the next action.';
       this.container.setVisible(true);
       this.pulse();
       return;
