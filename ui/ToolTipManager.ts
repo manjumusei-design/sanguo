@@ -53,6 +53,7 @@ export class TooltipManager {
 
     el.style.left = `${screenX - 110}px`;
     el.style.top = `${screenY - el.offsetHeight - 10}px`;
+    this.clampTooltipBounds();
     el.style.opacity = '1';
   }
 
@@ -75,8 +76,6 @@ export class TooltipManager {
     this.position(screenX, screenY);
   }
 
-
-//Fade out immediately
   hide(): void {
     if (!this.tooltipEl) return;
     this.tooltipEl.style.opacity = '0';
@@ -105,7 +104,24 @@ export class TooltipManager {
     const el = this.tooltipEl;
     el.style.left = `${screenX - 120}px`;
     el.style.top = `${screenY - el.offsetHeight - 12}px`;
+    this.clampTooltipBounds();
     el.style.opacity = '1';
+  }
+
+
+    private clampTooltipBounds(): void {
+    if (!this.tooltipEl) return;
+    const el = this.tooltipEl;
+    const rect = el.getBoundingClientRect();
+    if (rect.left < 8) {
+      el.style.left = '8px';
+    } else if (rect.right > window.innerWidth - 8) {
+      el.style.left = `${window.innerWidth - rect.width - 8}px`;
+    }
+    if (rect.top < 8) {
+      const currentTop = parseFloat(el.style.top || '0');
+      el.style.top = `${currentTop + rect.height + 24}px`;
+    }
   }
 
   private getEffectDescription(card: Card): string {
