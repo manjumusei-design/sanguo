@@ -220,18 +220,19 @@ export class RestScene extends Phaser.Scene {
     container.setSize(180, 30);
     container.setInteractive({ useHandCursor: true });
     container.on('pointerover', () => text.setColor('#ffffff'));
-    container.on('pointerover', () => text.setColor('#ffffff'));
+    container.on('pointerout', () => text.setColor('#888888'));
     container.on('pointerdown', onClick);
     return container;
   }
 
-  private finish(message?: string); void {
+  private finish(message?: string): void {
     if (message && this.messageText) {
       this.messageText.setText(message);
     }
     this.time.delayedCall(message ? 700 : 100, () => {
-      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.fadeOut(400, 0x000000);
       this.time.delayedCall(400, () => this.scene.start('MapScene'));
     });
   }
 }
+
