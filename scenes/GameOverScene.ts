@@ -44,7 +44,7 @@ export class GameOverScene extends Phaser.Scene {
 
     this.add.rectangle(cx, cy, w, h, 0x000000);
 
-    this.add.text(cx, 280 * sy, '💀 Defeat', {
+    this.add.text(cx, cy - 120, 'Defeat', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '48px',
       color: '#ff6b6b',
@@ -56,7 +56,24 @@ export class GameOverScene extends Phaser.Scene {
       color: '#aaaaaa',
     }).setOrigin(0.5);
 
-    const btn = this.add.text(cx, 440 * sy, 'Return to Menu', {
+    if (this.summary) {
+      const statsY = cy + 10;
+      const line1 = `${this.summary.character.toUpperCase()}  ·  Act ${this.summary.act}  ·  ${this.summary.hp}/${this.summary.maxHp} HP`;
+      const line2 = `${this.summary.gold} Gold  ·  ${this.summary.deckCount} Cards  ·  ${this.summary.relicCount} Relics`;
+      this.add.text(cx, statsY, line1, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '16px',
+        color: '#cccccc',
+      }).setOrigin(0.5);
+      this.add.text(cx, statsY + 28, line2, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '14px',
+        color: '#888888',
+      }).setOrigin(0.5);
+    }
+
+    const btnY = this.summary ? cy + 90 : cy + 40;
+    const btn = this.add.text(cx, btnY, 'Return to Menu', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '20px',
       color: '#ffffff',
