@@ -863,44 +863,6 @@ export class MapScene extends Phaser.Scene {
     this.nodeInfoPanel?.setVisible(false);
   }
 
-  private createNodePromptBanner(): void {
-    if (this.nodePromptBanner) {
-      this.nodePromptBanner.destroy(true);
-      this.nodePromptBanner = null;
-    }
-    if (!this.promptNodeChoice || this.hudPreviewMode) return;
-
-    const w = this.scale.width;
-    const y = 96;
-    const bg = this.add.rectangle(Math.round(w / 2), y, 340, 40, 0x000000, 0.82)
-      .setStrokeStyle(1, 0x8f7647, 1);
-    const text = this.add.text(Math.round(w / 2), y, 'Choose your next node', {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '14px',
-      color: '#f0d5a3',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-    const banner = this.add.container(0, 0, [bg, text]).setDepth(250);
-    this.registerUiObject(bg);
-    this.registerUiObject(text);
-    this.nodePromptBanner = banner;
-
-    this.events.once('nodeSelected', () => {
-      if (!this.nodePromptBanner) return;
-      this.tweens.add({
-        targets: this.nodePromptBanner,
-        alpha: 0,
-        y: -8,
-        duration: 140,
-        onComplete: () => {
-          this.nodePromptBanner?.destroy(true);
-          this.nodePromptBanner = null;
-        },
-      });
-      this.promptNodeChoice = false;
-    });
-  }
-
   private centerCameraOnCurrent(map: MapGraph, currentNodeId: string | null): void {
     let targetX = this.PAD_X + this.MAP_W / 2;
     let targetY = this.PAD_Y + this.MAP_H / 2;
