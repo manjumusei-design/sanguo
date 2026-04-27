@@ -300,9 +300,44 @@ export class HUDScene extends Phaser.Scene {
       const contentX = x + 18;
       const contentY = y + 48;
       const contentW = panelW - 36;
-      const contentH = panelH - 66;
-      const list = this.createScrollableList(panel, contentX, contentY, contentW, contentH, 1601);
+      const detailH = 70;
+      const contentH = panelH - 66 - detailH;
+      const detailBg = this.add.rectangle(
+        x + panelW / 2,
+        y + panelH - Math.round(detailH / 2) - 8,
+        contentW,
+        detailH,
+        0x0f0f0f,
+        1
+      ).setStrokeStyle(1, 0x555555, 1);
+      const detailText = this.add.text(
+        x + 24,
+        y + panelH - detailH - 2,
+        {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '12px',
+          color: '#e8dcc8',
+          wordWrap: { width: contentW - 16 },
+          lineSpacing: 3,
+        }
+      );
+      panel.add([detailBg, detailText]);
+
+      const list = this.createScrollableList(panel, contentX, contentY, contentW, contentH, 1601, {
+        showDescriptions: false,
+        onHoverItem: (item) => {
+          detailText.setText(`${item.title}\n${item.description}`);
+          detailText.setStyle({ color: '#e8dcc8' });
+        },
+        onLeaveItem: () => {
+          detailText.setText('Hover a relic to view its effect.');
+          detailText.setStyle({ color: '#e8dcc8' });
+        },
+      });
       list.setItems(relics.map((r) => ({ title: r.name, description: r.description })));
+      bg.on('wheel', (_pointer: Phaser.Input.Pointer, _over: boolean, _dx: number, dy: number, _dz: number) => {
+        list.scrollBy(dy);
+      });
     }
 
     this.relicPanelContainer = panel;
