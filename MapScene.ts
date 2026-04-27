@@ -1463,6 +1463,7 @@ export class MapScene extends Phaser.Scene {
           eventId: (node.data as { forcedEventId?: string })?.forcedEventId,
           eventPool: 'general',
           eventSource: 'mystery',
+          returnNodeId: node.id,
         });
       });
       return;
