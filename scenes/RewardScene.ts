@@ -126,10 +126,7 @@ export class RewardScene extends Phaser.Scene {
     this.add.rectangle(cx, cy, w, h, 0x0a0a10, 1);
     this.add.rectangle(cx, cy, panelW, panelH, 0x000000, 1).setStrokeStyle(2, 0x444444, 1);
     this.add.rectangle(cx, panelTop + 2, panelW, 3, 0x8f7647, 1);
-    this.scene.launch('HUDScene');
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.scene.stop('HUDScene');
-    });
+    this.ensureHUD();
 
     this.add.text(cx, panelTop + 42, 'Victory!', {
       fontFamily: 'system-ui, sans-serif',
