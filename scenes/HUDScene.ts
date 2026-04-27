@@ -628,9 +628,9 @@ export class HUDScene extends Phaser.Scene {
       }
     });
 
-    if (cards.length > maxVisible) {
+    if (entries.length > maxVisible) {
       const moreText = this.add.text(panelX + panelW / 2, panelY + panelH - 14,
-        `+ ${cards.length - maxVisible} more...`, {
+        '+ ' + (entries.length - maxVisible) + ' more...', {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '12px',
           color: '#6b5b45',
