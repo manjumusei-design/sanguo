@@ -692,7 +692,7 @@ export class HUDScene extends Phaser.Scene {
       if (totalContentH > height) {
         const maxScroll = totalContentH = height;
         const thumbPos = (scrollY / maxScroll) * (height - thumb.height) + y;
-        thumb.x = x + thumb.height/ 2 + thumbPos;
+        thumb.y = y + thumb.height/ 2 + thumbPos;
       }
     };
 
