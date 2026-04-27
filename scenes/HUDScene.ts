@@ -19,7 +19,13 @@ export class HUDScene extends Phaser.Scene {
   private hasLoggedRenderDebug = false;
   private lastRenderDebugMatch: boolean | null = null;
   private glossaryPanelContainer: Phaser.GameObjects.Container | null = null;
-
+  private glossaryWheelHandler?: (
+    pointer: Phaser.Input.Pointer,
+    currentlyOver: Phaser.GameObjects.GameObject[],
+    dx: number,
+    dy: number,
+    dz: number
+  ) => void;
 
   constructor() {
     super({ key: 'HUDScene' });
@@ -139,7 +145,6 @@ export class HUDScene extends Phaser.Scene {
         });
       }
     }
-    this.loadSettings();
     this.refreshStats();
     this.refreshTimer = this.time.addEvent({
       delay: 200,
@@ -148,6 +153,10 @@ export class HUDScene extends Phaser.Scene {
     });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.refreshTimer?.remove();
+      if (this.glossaryWheelHandler) {
+        this.input.off('wheel', this.glossaryWheelHandler);
+        this.glossaryWheelHandler = undefined;
+      }
     });
   }
 
