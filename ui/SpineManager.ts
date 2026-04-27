@@ -60,6 +60,10 @@ export class SpineManager {
       }
 
       go.setAnimation(0, options?.initialAnimation ?? ANIMATION_DEFAULT, true);
+      const depthSetter = (go as unknown as { setDepth?: (depth: number) => void }).setDepth;
+      if (typeof depthSetter === 'function' && options?.depth !== undefined) {
+        depthSetter.call(go, options.depth);
+      }
       return go;
     } catch (error) {
       console.warn('[SpineManager] Failed to create SpineBridge:', error);
