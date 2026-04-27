@@ -11,11 +11,27 @@ export class MerchantScene extends Phaser.Scene {
     super({ key: 'MerchantScene' });
   }
 
-  create(): void {
-    this.scene.launch('HUDScene');
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.scene.stop('HUDScene');
+  private ensureHUD(): void {
+    if (this.scene.manager.isSleeping('HUDScene')) {
+      this.scene.wake('HUDScene');
+    } else if (!this.scene.manager.isActive('HUDScene')) {
+      this.scene.launch('HUDScene');
+    }
+    this.scene.bringToTop('HUDScene');
+    this.time.delayedCall(0, () => {
+      if (this.scene.manager.isSleeping('HUDScene')) {
+        this.scene.wake('HUDScene');
+      } else if (!this.scene.manager.isActive('HUDScene')) {
+        this.scene.launch('HUDScene');
+      }
+      this.scene.bringToTop('HUDScene');
     });
+  }
+
+  create(): void {
+    this.shopEnterHookApplied = false;
+    this.ensureHUD();
+    this.applyShopEnterRelicHooks();
     this.renderShop();
   }
 
