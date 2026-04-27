@@ -774,7 +774,7 @@ export class RewardScene extends Phaser.Scene {
         this.relicChoiceResolved = true;
       }
       if (!this.relicChoiceRow) {
-        // Choice row is removed only after a confirmed relic choice.
+        // Choice row is removed only after a confirmed relic choicem previously it would lock in and either not allow the user to pass or just crash the game outright.
         this.relicChoiceResolved = true;
       }
     }
