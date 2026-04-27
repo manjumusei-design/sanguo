@@ -857,4 +857,29 @@ export class HUDScene extends Phaser.Scene {
       list.setItems(entries.map((e) => ({ title: e.term, description: e.description })));
     };
 
-    
+    tabNames.forEach((name, i) => {
+      const tx = x + 20 + i * tabW + tabW / 2;
+      const tabText = this.add.text(tx, tabY, name, {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '13px',
+        color: '#8a7e6b',
+      }).setOrigin(0.5).setDepth(1701).setInteractive({ useHandCursor: true });
+      tabText.on('pointerdown', () => {
+        activeCategory = tabValues[i];
+        renderList(activeCategory);
+        refreshTabs();
+      });
+      tabTexts.push(tabText);
+      panel.add(tabText);
+    });
+    refreshTabs();
+    renderList(activeCategory);
+
+    this.glossaryPanelContainer = panel;
+  }
+
+  private closeGlossaryPanel(): void {
+    this.glossaryPanelContainer?.destroy(true);
+    this.glossaryPanelContainer = null;
+  }
+}
