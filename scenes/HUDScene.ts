@@ -770,21 +770,35 @@ export class HUDScene extends Phaser.Scene {
       container.removeAll(true);
       let currentY = 0;
       const rowH = 36;
+      const showDescriptions = options?.showDescriptions !== false;
       items.forEach((item) => {
-        const titleText = this.add.text(0, currentY, item.title, {
+        const row = this.add.container(0, currentY);
+        const titleText = this.add.text(0, 0, item.title, {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '13px',
           color: '#e8dcc8',
           fontStyle: 'bold',
         }).setDepth(depth);
+        row.add(titleText);
+
+        let rowHeight = rowH;
+        if (showDescriptions) {
         const descText = this.add.texxt(0, currentY + 16, item..description, {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '12px',
           color '#a09580',
           wordWrap: { width: width - 12 },
         }).setDepth(depth);
-        container.add([titleText, descText]);
-        current += rowH;
+          row.add(descText);
+          rowHeight = Math.max(rowH, 16 + descText.height + 8);
+        }
+
+        row.setSize(width - 14, rowHeight);
+        row.setInteractive({ useHandCursor: Boolean(options?.onHoverItem) });
+        row.on('pointerover', () => options?.onHoverItem?.(item));
+        row.on('pointerout', () => options?.onLeaveItem?.());
+        container.add(row);
+        currentY += rowHeight;
       });
       totalContentH = currentY;
       scrollY = 0;
@@ -887,6 +901,15 @@ export class HUDScene extends Phaser.Scene {
     bg.on('wheel', (_pointer: Phaser.Input.Pointer, _over: boolean, _dx: number, dy: number, _dz: number) => {
       list.scrollBy(dy);
     });
+    this.glossaryWheelHandler = (pointer, _currentlyOver, _dx, dy) => {
+      if (!this.glossaryPanelContainer) return;
+      const withinX = pointer.x >= x && pointer.x <= x + panelW;
+      const withinY = pointer.y >= y && pointer.y <= y + panelH;
+      if (withinX && withinY) {
+        list.scrollBy(dy);
+      }
+    };
+    this.input.on('wheel', this.glossaryWheelHandler);
 
     const tabNames = ['Statuses', 'Keywords', 'Effects', 'Types'];
     const tabValues = ['Status', 'Keyword', 'Effect', 'Card Type'];
@@ -930,5 +953,9 @@ export class HUDScene extends Phaser.Scene {
   private closeGlossaryPanel(): void {
     this.glossaryPanelContainer?.destroy(true);
     this.glossaryPanelContainer = null;
+    if (this.glossaryWheelHandler) {
+      this.input.off('wheel', this.glossaryWheelHandler);
+      this.glossaryWheelHandler = undefined;
+    }
   }
 }
