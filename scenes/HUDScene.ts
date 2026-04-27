@@ -829,7 +829,17 @@ export class HUDScene extends Phaser.Scene {
       {term: 'Curse', description: 'A harmful non-playable card that clutters your deck.', category: 'Card Type'},
     ];
 
+    let activeCategory = 'Status';
+    const contentX = x + 20;
+    const contentY = y + 74;
+    const contentW = panelW - 40;
+    const contentH = panelH - 94;
+    const list = this.createScrollableList(panel, contentX, contentY, contentW, contentH, 1701);
+    bg.on('wheel', (_pointer: Phaser.Input.Pointer, _over: boolean, _dx: number, dy: number, _dz: number) => {
+      list.scrollBy(dy);
+    });
 
+  
 
 
 
