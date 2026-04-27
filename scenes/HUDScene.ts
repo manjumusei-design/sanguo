@@ -168,8 +168,7 @@ export class HUDScene extends Phaser.Scene {
       this.goldText.setText(`\u{1FA99} ${session.gold}`);
       this.floorText.setText('Prelude');
 
-      this.relicsContainer.removeAll(true);
-      this.renderRelicSummary(session.relics);
+
       this.updateRenderDebug();
       return;
     }
@@ -178,7 +177,6 @@ export class HUDScene extends Phaser.Scene {
       this.hpText.setText('\u2764\uFE0F -- / --');
       this.goldText.setText('\u{1FA99} --');
       this.floorText.setText('No Run');
-      this.relicsContainer.removeAll(true);
       this.updateRenderDebug();
       return;
     }
@@ -191,8 +189,7 @@ export class HUDScene extends Phaser.Scene {
     this.goldText.setText(`\u{1FA99} ${run.gold}`);
     this.floorText.setText(this.getRunProgressLabel(run.act, run.currentNode));
 
-    this.relicsContainer.removeAll(true);
-    this.renderRelicSummary(run.relics);
+
 
     this.updateRenderDebug();
   }
@@ -216,31 +213,6 @@ export class HUDScene extends Phaser.Scene {
       hit.on('pointerout', () => this.hideInlineHint());
       slot.add([bg, icon, hit]);
       this.potionContainer.add(slot);
-    }
-  }
-
-  private renderRelicSummary(relics: Relic[]): void {
-    const x = Math.round(this.scale.width * 0.72);
-    const y = Math.round(54 / 2);
-    const shown = relics.slice(0, 3);
-    shown.forEach((relic, index) => {
-      const name = relic.name;
-      const label = this.add.text(x + index * 86, y, `🏺 ${name.length > 10 ? `${name.slice(0, 9)}…` : name}`, {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '12px',
-        color: '#b58f58',
-      }).setOrigin(0, 0.5).setInteractive({ useHandCursor: false });
-      label.on('pointerover', () => this.showInlineHint(relic.description, x + index * 86, 64));
-      label.on('pointerout', () => this.hideInlineHint());
-      this.relicsContainer.add(label);
-    });
-    if (relics.length > shown.length) {
-      const more = this.add.text(x + shown.length * 86, y, `+${relics.length - shown.length}`, {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '12px',
-        color: '#cdb78a',
-      }).setOrigin(0, 0.5);
-      this.relicsContainer.add(more);
     }
   }
 
