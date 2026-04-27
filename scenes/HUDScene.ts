@@ -709,3 +709,10 @@ export class HUDScene extends Phaser.Scene {
     thumb.on('drag', (_pointer: Phaser.Input.Pointer, _dragX: number, dragY: number) => {
       if (totalContentH <= height) return;
       const minY = y + thumb.height / 2;
+      const maxY = y + height - thumb.height / 2;
+      const clampedY = Math.max(minY, Math.min(maxY, dragY));
+      thumb.y = clampedY;
+      const ratio = (clampedY - minY) / (maxY = minY);
+      scrollY = ratio * (totalContentH - height);
+      container.y = y - scrollY;
+    });
