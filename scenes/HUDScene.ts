@@ -18,6 +18,8 @@ export class HUDScene extends Phaser.Scene {
   private mapPreviewSourceSceneKey: string | null = null;
   private hasLoggedRenderDebug = false;
   private lastRenderDebugMatch: boolean | null = null;
+  private glossaryPanelContainer: Phaser.GameObjects.Container | null = null;
+
 
   constructor() {
     super({ key: 'HUDScene' });
@@ -103,6 +105,26 @@ export class HUDScene extends Phaser.Scene {
     relicBtn.on('pointerdown', () => this.showRelicSummary());
     this.topBarContainer.add(relicBtn);
 
+        const glossaryBtn = this.add.text(w - 190, btnY, 'Glossary', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      color: '#e8dcc8',
+    }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
+    glossaryBtn.on('pointerover', () => glossaryBtn.setStyle({ color: '#f0d5a3' }));
+    glossaryBtn.on('pointerout', () => glossaryBtn.setStyle({ color: '#e8dcc8' }));
+    glossaryBtn.on('pointerdown', () => this.toggleGlossaryPanel());
+    this.topBarContainer.add(glossaryBtn);
+
+    const settingsBtn = this.add.text(w - 270, btnY, '⚙️', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '16px',
+      color: '#e8dcc8',
+    }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
+    settingsBtn.on('pointerover', () => settingsBtn.setStyle({ color: '#f0d5a3' }));
+    settingsBtn.on('pointerout', () => settingsBtn.setStyle({ color: '#e8dcc8' }));
+    settingsBtn.on('pointerdown', () => this.toggleSettingsPanel());
+    this.topBarContainer.add(settingsBtn);
+    
     deckBtn.on('pointerover', () => deckBtn.setStyle({ color: '#f0d5a3' }));
     deckBtn.on('pointerout', () => deckBtn.setStyle({ color: '#e8dcc8' }));
     deckBtn.on('pointerdown', () => this.toggleDeckViewer());
@@ -117,7 +139,7 @@ export class HUDScene extends Phaser.Scene {
         });
       }
     }
-
+    this.loadSettings();
     this.refreshStats();
     this.refreshTimer = this.time.addEvent({
       delay: 200,
