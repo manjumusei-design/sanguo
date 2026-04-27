@@ -91,7 +91,28 @@ export class IntentDisplay {
   }
 
   destroy(): void {
+    this.hideTooltip();
+    this.tooltipBg.destroy();
+    this.tooltipText.destroy();
     this.container.destroy();
+  }
+
+    private showTooltip(): void {
+    if (!this.container.visible || !this.intentHelpText) return;
+    this.tooltipText.setText(this.intentHelpText);
+    const bounds = this.tooltipText.getBounds();
+    const width = Math.max(220, Math.ceil(bounds.width + 20));
+    const height = Math.max(56, Math.ceil(bounds.height + 18));
+    this.tooltipBg.setSize(width, height);
+    this.tooltipBg.setPosition(this.container.x, this.container.y - 50 - height / 2);
+    this.tooltipText.setPosition(this.container.x, this.container.y - 50 - height / 2);
+    this.tooltipBg.setVisible(true);
+    this.tooltipText.setVisible(true);
+  }
+
+  private hideTooltip(): void {
+    this.tooltipBg.setVisible(false);
+    this.tooltipText.setVisible(false);
   }
 
   private pulse(): void {
@@ -145,6 +166,38 @@ export class IntentDisplay {
     return { icon: '?', text: intent.value > 0 ? `${intent.value}` : (intent.label ?? '') };
   }
 
+  private getIntentHelpText(enemy: Enemy): string {
+    const intent = enemy.intent;
+    if (!intent) return '';
+
+    const effects = intent.effects ?? [];
+    const damageEffects = effects.filter((effect) => effect.type === 'damage');
+    const blockEffect = effects.find((effect) => effect.type === 'block');
+    const statusEffect = effects.find((effect) => effect.type === 'apply_status' && effect.statusId);
+
+    if (damageEffects.length > 1) {
+      const perHit = damageEffects[0]?.value ?? intent.value;
+      return `Intent: Multi-hit attack.\nExpected: ${damageEffects.length} hits for ${perHit} each.`;
+    }
+    if (damageEffects.length === 1) {
+      return `Intent: Attack.\nExpected: ${damageEffects[0]?.value ?? intent.value} damage.`;
+    }
+    if (blockEffect) {
+      return `Intent: Defend.\nExpected: gains ${blockEffect.value} block.`;
+    }
+    if (statusEffect?.statusId) {
+      return `Intent: Apply ${statusEffect.statusId.replace(/_/g, ' ')}.\nExpected: ${statusEffect.value} stack(s).`;
+    }
+    if (intent.type === 'summon') {
+      return 'Intent: Summon.\nExpected: calls reinforcements.';
+    }
+    if (intent.type === 'draw') {
+      return `Intent: Prepare.\nExpected: draws ${intent.value} card(s).`;
+    }
+
+    return intent.label ? `Intent: ${intent.label}` : 'Intent: Special action.';
+  }
+  
   private getStatusEmoji(statusId: StatusId): string {
     const mapped = EMOJI[statusId as keyof typeof EMOJI];
     if (mapped) return mapped;
