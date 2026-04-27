@@ -269,7 +269,6 @@ export class MapScene extends Phaser.Scene {
     this.createLegendPanel();
     this.createPenToggle();
     this.createResetViewButton();
-    this.createNodePromptBanner();
   }
 
   private renderMap(map: MapGraph, currentNodeId: string | null, animate: boolean): void {
