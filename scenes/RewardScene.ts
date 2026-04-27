@@ -206,7 +206,7 @@ export class RewardScene extends Phaser.Scene {
 
     const gap = 20;
     const cardW = Math.min(240, Math.floor((panelW - 160 - gap * 2) / 3));
-    const cardH = 320;
+    const cardH = Math.min(320, Math.max(220, Math.floor(this.scale.height * 0.38)));
     const startX = cx - ((cardIds.length * cardW + (cardIds.length - 1) * gap) / 2) + cardW / 2;
 
     cardIds.forEach((cardId, index) => {
@@ -605,8 +605,8 @@ export class RewardScene extends Phaser.Scene {
     });
 
     const descBoxY = y + 162;
-    this.add.rectangle(cx, descBoxY, rowWidth, 92, 0x000000, 1).setStrokeStyle(1, 0x4a3f32, 1);
-    this.relicChoiceDescriptionText = this.add.text(cx, descBoxY, selectedChoice?.description ?? '', {
+    this.add.rectangle(cx, descBoxY, rowWidth, 92, 0x000000, 1).setStrokeStyle(1, 0x8f7647, 1);
+    this.relicChoiceDescriptionText = this.add.text(cx, descBoxY, selectedChoice?.description ?? 'Select a relic, then click Take Relic or Skip.', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '13px',
       color: '#d8c8af',
