@@ -17,10 +17,7 @@ export class RestScene extends Phaser.Scene {
       this.scene.start('MenuScene');
       return;
     }
-    this.scene.launch('HUDScene');
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.scene.stop('HUDScene');
-    });
+    this.ensureHUD();
     this.renderRoot();
   }
 
