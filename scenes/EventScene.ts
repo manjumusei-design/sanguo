@@ -20,6 +20,23 @@ export class EventScene extends Phaser.Scene {
     super({ key: 'EventScene' });
   }
 
+    private ensureDialogueHUD(): void {
+    if (this.scene.manager.isSleeping('HUDScene')) {
+      this.scene.wake('HUDScene');
+    } else if (!this.scene.manager.isActive('HUDScene')) {
+      this.scene.launch('HUDScene');
+    }
+    this.scene.bringToTop('HUDScene');
+    this.time.delayedCall(0, () => {
+      if (this.scene.manager.isSleeping('HUDScene')) {
+        this.scene.wake('HUDScene');
+      } else if (!this.scene.manager.isActive('HUDScene')) {
+        this.scene.launch('HUDScene');
+      }
+      this.scene.bringToTop('HUDScene');
+    });
+  }
+
   init(data?: {
     eventId?: string;
     eventPool?: 'general' | 'risk_reward';
@@ -62,11 +79,9 @@ export class EventScene extends Phaser.Scene {
       return;
     }
 
-    this.scene.launch('HUDScene');
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.scene.stop('HUDScene');
-    });
 
+    this.ensureDialogueHUD();
+    
     const rng = getRNG(run.seed, `event:${run.currentNode}`);
     const selected = this.forcedEventId
       ? { eventId: this.forcedEventId, definition: undefined, category: 'shared' as const }
