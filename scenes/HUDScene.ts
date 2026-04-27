@@ -526,14 +526,10 @@ export class HUDScene extends Phaser.Scene {
     backdrop.on('pointerdown', () => this.closeDeckViewer());
     this.deckPanelContainer.add(backdrop);
 
-    const g = this.add.graphics();
-    g.fillStyle(0xede3d1, 1);
-    g.lineStyle(2, 0x8a7a60, 1);
-    g.fillRoundedRect(panelX, panelY, panelW, panelH, 8);
-    g.strokeRoundedRect(panelX, panelY, panelW, panelH, 8);
-    g.setDepth(1001);
-    const bg: Phaser.GameObjects.Graphics = g;
-    this.deckPanelContainer.add(bg);
+    const panelBg = this.add.rectangle(panelX + panelW / 2, panelY + panelH / 2, panelW, panelH, 0x000000, 1)
+      .setStrokeStyle(2, 0x8f7647, 1)
+      .setDepth(1001);
+    this.deckPanelContainer.add(panelBg);
 
     const title = this.add.text(panelX + panelW / 2, panelY + 18, `Deck \u2014 ${cards.length} cards`, {
       fontFamily: 'system-ui, sans-serif',
