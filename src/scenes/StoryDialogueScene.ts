@@ -40,6 +40,23 @@ export class StoryDialogueScene extends Phaser.Scene {
     super({ key: 'StoryDialogueScene' });
   }
 
+    private ensureDialogueHUD(): void {
+    if (this.scene.manager.isSleeping('HUDScene')) {
+      this.scene.wake('HUDScene');
+    } else if (!this.scene.manager.isActive('HUDScene')) {
+      this.scene.launch('HUDScene');
+    }
+    this.scene.bringToTop('HUDScene');
+    this.time.delayedCall(0, () => {
+      if (this.scene.manager.isSleeping('HUDScene')) {
+        this.scene.wake('HUDScene');
+      } else if (!this.scene.manager.isActive('HUDScene')) {
+        this.scene.launch('HUDScene');
+      }
+      this.scene.bringToTop('HUDScene');
+    });
+  }
+
   init(data?: {
     beat?: StoryBeat;
     returnNodeId?: string;
