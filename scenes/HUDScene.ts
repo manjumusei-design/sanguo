@@ -841,8 +841,8 @@ export class HUDScene extends Phaser.Scene {
 
     const tabNames = ['Statuses', 'Keywords', 'Effects', 'Types'];
     const tabValues = ['Status', 'Keyword', 'Effect', 'Card Type'];
-    const tabW = (panelW - 30) / tabNames.length;
-    const tabY = y + 45;
+    const tabW = (panelW - 40) / tabNames.length;
+    const tabY = y + 48;
     const tabTexts: Phaser.GameObjects.Text[] = [];
 
     const refreshTabs = () => {
