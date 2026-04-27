@@ -101,6 +101,7 @@ export class StoryDialogueScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.scene.stop('HUDScene');
     });
+    this.ensureDialogueHUD();
 
     const sy = h / 720;
     this.textures.exists('ui_dialogue_parchment')
