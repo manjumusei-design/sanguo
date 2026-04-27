@@ -137,6 +137,12 @@ export class StoryDialogueScene extends Phaser.Scene {
       lineSpacing: 6,
     }).setOrigin(0.5);
 
+        this.textures.exists('ui_dialogue_parchment')
+      ? this.add.image(cx, 182 * sy, 'ui_dialogue_parchment').setDisplaySize(780, 220 * sy).setAlpha(0.95)
+      : this.add.rectangle(cx, 182 * sy, 780, 220 * sy, 0xe2cfab, 0.95);
+    this.add.rectangle(cx, 182 * sy, 780, 220 * sy, 0x000000, 0.14).setStrokeStyle(2, 0x6a5534, 1);
+    this.add.rectangle(cx, 74 * sy, 780, 2, 0x8f7647, 1);
+
     const choices = this.beat.choices.length ? this.beat.choices : ['Continue'];
     choices.forEach((choiceLabel, index) => {
       const y = Math.round((356 + index * 76) * sy);
@@ -158,11 +164,13 @@ export class StoryDialogueScene extends Phaser.Scene {
         bg.setFillStyle(0xe8d8b8, 0.98);
         shade.setFillStyle(0x000000, 0.06);
         shade.setStrokeStyle(2, 0xb39058, 1);
+        accent.setFillStyle(0xd0ab6a, 1);
       });
       btn.on('pointerout', () => {
         bg.setFillStyle(0xe2cfab, 0.95);
         shade.setFillStyle(0x000000, 0.12);
         shade.setStrokeStyle(2, 0x5f4b2f, 1);
+        accent.setFillStyle(0x8f7647, 1);
       });
       btn.on('pointerdown', () => this.complete(choiceLabel, index));
     });
