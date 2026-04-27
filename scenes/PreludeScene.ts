@@ -77,11 +77,13 @@ export class PreludeScene extends Phaser.Scene {
         return;
       }
       this.scene.launch('HUDScene');
+      this.ensureDialogueHUD();
       this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
         this.scene.stop('HUDScene');
         this.destroyPreludeBackground();
       });
       this.renderNode();
+      this.maybeShowPreludeTutorial();
     } catch (error) {
       console.error(error);
       this.showError('Failed to load prelude.');
@@ -94,6 +96,124 @@ export class PreludeScene extends Phaser.Scene {
       this.preludeActor.destroy();
       this.preludeActor = null;
     }
+    this.tutorialOverlay?.destroy(true);
+    this.tutorialOverlay = null;
+  }
+
+  private maybeShowPreludeTutorial(): void {
+    if (RunManager.hasSeenPreludeTutorial(this.characterId)) return;
+    this.tutorialStepIndex = 0;
+    this.renderTutorialStep();
+  }
+
+  private getTutorialSteps(): Array<{ title: string; body: string }> {
+    return [
+      {
+        title: `Welcome, ${this.characterId.toUpperCase()} Commander`,
+        body: 'Quick tutorial: this Prelude teaches your faction and unlocks core progression. I will keep it  short and practical.',
+      },
+      {
+        title: 'Cards And Energy',
+        body: 'In battle, cards cost Energy (shown in the top HUD). Attack cards deal damage, Skill cards defend or support, Power cards give lasting effects.',
+      },
+      {
+        title: 'Block And Status Effects',
+        body: 'Block prevents incoming damage for the turn. Status effects can buff or weaken either side, so always read enemy intents and your status icons.',
+      },
+      {
+        title: 'Prelude Choices Matter',
+        body: 'Dialogue choices can shift axis values, change rewards, and influence later outcomes. If unsure, pick the option that matches your strategy.',
+      },
+      {
+        title: 'Map Flow',
+        body: 'You will move through nodes: events, battles, and key story moments. Win battles, collect rewards, and shape your deck as you go.',
+      },
+      {
+        title: 'You Are Ready',
+        body: 'That is enough to begin. Play at your pace, test ideas, and adapt your deck after each reward. Good luck, Commander.',
+      },
+    ];
+  }
+
+  private renderTutorialStep(): void {
+    this.tutorialOverlay?.destroy(true);
+    this.tutorialOverlay = null;
+
+    const steps = this.getTutorialSteps();
+    const step = steps[this.tutorialStepIndex];
+    if (!step) {
+      this.completePreludeTutorial();
+      return;
+    }
+
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cx = Math.round(w / 2);
+    const cy = Math.round(h / 2);
+
+    const overlay = this.add.container(0, 0).setDepth(4000);
+    const blocker = this.add.rectangle(cx, cy, w, h, 0x000000, 0.72).setInteractive({ useHandCursor: true });
+    const panelW = Math.min(860, w - 100);
+    const panelH = Math.min(420, h - 120);
+    const panel = this.add.rectangle(cx, cy, panelW, panelH, 0xe2cfab, 0.96)
+      .setStrokeStyle(2, 0x6a5534, 1);
+    const panelShade = this.add.rectangle(cx, cy, panelW, panelH, 0x000000, 0.1);
+    const header = this.add.text(cx, cy - Math.round(panelH * 0.35), step.title, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '30px',
+      color: '#2c2015',
+      fontStyle: 'bold',
+      align: 'center',
+      wordWrap: { width: panelW - 70 },
+    }).setOrigin(0.5);
+    const progress = this.add.text(cx, cy - Math.round(panelH * 0.23), `Tutorial ${this.tutorialStepIndex + 1}/${steps.length}`, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      color: '#6a5534',
+    }).setOrigin(0.5);
+    const body = this.add.text(cx, cy - 4, step.body, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '20px',
+      color: '#241a11',
+      align: 'center',
+      wordWrap: { width: panelW - 90 },
+      lineSpacing: 6,
+    }).setOrigin(0.5);
+
+    const skipBtn = this.add.text(cx - 130, cy + Math.round(panelH * 0.34), 'Skip Tutorial', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '18px',
+      color: '#f5e8d1',
+      backgroundColor: '#3f3121',
+      padding: { x: 14, y: 8 },
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    skipBtn.on('pointerdown', () => this.completePreludeTutorial());
+
+    const isLast = this.tutorialStepIndex >= steps.length - 1;
+    const nextBtn = this.add.text(cx + 130, cy + Math.round(panelH * 0.34), isLast ? 'Start Prelude' : 'Next', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '18px',
+      color: '#f5e8d1',
+      backgroundColor: '#8f7647',
+      padding: { x: 18, y: 8 },
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    nextBtn.on('pointerdown', () => {
+      if (isLast) {
+        this.completePreludeTutorial();
+        return;
+      }
+      this.tutorialStepIndex += 1;
+      this.renderTutorialStep();
+    });
+
+    overlay.add([blocker, panel, panelShade, header, progress, body, skipBtn, nextBtn]);
+    this.tutorialOverlay = overlay;
+  }
+
+  private completePreludeTutorial(): void {
+    RunManager.markPreludeTutorialSeen(this.characterId);
+    this.tutorialOverlay?.destroy(true);
+    this.tutorialOverlay = null;
   }
 
   private getPreludeBackgroundKey(): string {
