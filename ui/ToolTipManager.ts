@@ -31,7 +31,7 @@ export class TooltipManager {
   }
 
 
-//Display card details at cursor position
+//Display card details for hover
   show(card: Card, screenX: number, screenY: number): void {
     if (!this.tooltipEl) return;
 
@@ -76,6 +76,7 @@ export class TooltipManager {
     this.position(screenX, screenY);
   }
 
+
   hide(): void {
     if (!this.tooltipEl) return;
     this.tooltipEl.style.opacity = '0';
@@ -88,7 +89,7 @@ export class TooltipManager {
     this.tooltipEl = null;
   }
 
-  private getTypeColor(type: Card['type']): string { //For now, might want to swap colours in the future to red green and blue for caocao, liubei and sunquan 
+  private getTypeColor(type: Card['type']): string {
     switch (type) {
       case 'ATTACK': return '#c0392b';
       case 'SKILL': return '#2980b9';
@@ -98,6 +99,7 @@ export class TooltipManager {
       default: return '#ffffff';
     }
   }
+
 
   private position(screenX: number, screenY: number): void {
     if (!this.tooltipEl) return;
