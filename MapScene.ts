@@ -1086,6 +1086,7 @@ export class MapScene extends Phaser.Scene {
             eventId: eventData.forcedEventId,
             eventPool: eventData.eventPool ?? 'general',
             eventSource: 'event',
+            returnNodeId: node.id,
           });
         });
         break;
