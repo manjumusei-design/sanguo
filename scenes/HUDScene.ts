@@ -839,7 +839,21 @@ export class HUDScene extends Phaser.Scene {
       list.scrollBy(dy);
     });
 
-  
+    const tabNames = ['Statuses', 'Keywords', 'Effects', 'Types'];
+    const tabValues = ['Status', 'Keyword', 'Effect', 'Card Type'];
+    const tabW = (panelW - 60) / tabNames.length;
+    const tabY = y + 90;
+    const tabTexts: Phaser.GameObjects.Text[] = [];
 
+    const refreshTabs = () => {
+      tabTexts.forEach((t, i) => {
+        const isActive = tabValues[i] === activeCategory;
+        t.setStyle({color:isActive ? '#ffffff' : '#888888', fontStyle: isActive ? 'bold' : 'normal' })
+      });
+    };
 
+    const renderList = (category: string) => {
+      const entries = glossaryData.filter((e) => e.category === category);
+      list.setItems(entries.map((e) => ({ title: e.term, description: e.description })));
+    };
 
