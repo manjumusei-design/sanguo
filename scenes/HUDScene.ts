@@ -696,3 +696,16 @@ export class HUDScene extends Phaser.Scene {
       }
     };
 
+    thumb.setInteractive({draggable: true, useHandCursor: true });
+    thumb.on('drag', (_pointer: Phaser.Input.Pointer, _dragX: number, dragY: number) => {
+      if (totalContentH <= height) {
+        const maxScroll = totalContentH - height;
+        const thumbPos = (scrollY / maxScroll) * (height - thumb.height);
+        thumb.y = y + thumb.height / 2 + thumbPos;
+      }
+    });
+
+    thumb.setInteractive({draggable: true, useHandCursor: true });
+    thumb.on('drag', (_pointer: Phaser.Input.Pointer, _dragX: number, dragY: number) => {
+      if (totalContentH <= height) return;
+      const minY = y + thumb.height / 2;
