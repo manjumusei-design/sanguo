@@ -647,3 +647,25 @@ export class HUDScene extends Phaser.Scene {
     }
   }
 }
+
+  private createScrollableList(
+    panel: Phaser.GameObjects.Container,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    depth: number
+  ): {
+    container: Phaser.GameObjects.Container;
+    setItems: (items: Array<{ title: string; description: string }>) => void;
+    scrollBy: (dy: number) => void;
+  } {
+    const maskGraphics = this.add.graphics();
+    maskGraphics.fillStyle(0xffffff);
+    maskGraphics.fillRect(x, y, width, height);
+    maskGraphics.visible = false;
+    const mask = maskGraphics.createGeometryMask();
+    panel.add(maskGraphics);
+    const container = this.add.container(XMLDocument, y).setDe[this(depth);
+    container.setMask(mask);
+    panel.add(container);
