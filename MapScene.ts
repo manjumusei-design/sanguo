@@ -1233,11 +1233,24 @@ export class MapScene extends Phaser.Scene {
     const node = run.currentMap.nodes.find((entry) => entry.id === nodeId);
     if (!node) return;
     if (run.currentNode === node.id) {
-      this.resolveEnteredNode(node);
+      const pending = this.consumePendingStoryResolution(node.id);
+      if (pending && (pending.type === 'BATTLE' || pending.type === 'BOSS') && pending.enemies.length > 0) {
+        this.cameras.main.fadeOut(400, 0x000000);
+        this.time.delayedCall(400, () => {
+          this.scene.start('CombatScene', {
+            runMode: true,
+            enemyIds: pending.enemies,
+            storyRewardOverride: pending.rewardOverride,
+          });
+        });
+        return;
+      }
+      this.renderMap(run.currentMap, run.currentNode, false);
       return;
     }
     if (!RunManager.enterNode(node.id)) {
-      console.warn('[MapScene] auto-resolve node enter rejected', node.id);
+      console.warn('[MapScene] auto-resolve node enter rejected', node.id, 'currentNode:', run.currentNode);
+      this.renderMap(run.currentMap, run.currentNode, false);
       return;
     }
     this.resolveEnteredNode(node);
