@@ -531,10 +531,11 @@ export class HUDScene extends Phaser.Scene {
       .setDepth(1001);
     this.deckPanelContainer.add(panelBg);
 
-    const title = this.add.text(panelX + panelW / 2, panelY + 18, `Deck \u2014 ${cards.length} cards`, {
+    const title = this.add.text(panelX + panelW / 2, panelY + 18, 'Deck — ' + cards.length + ' cards', {
       fontFamily: 'system-ui, sans-serif',
-      fontSize: '18px',
-      color: '#3a2e22',
+      fontSize: '20px',
+      color: '#f0d5a3',
+      fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(1002);
     this.deckPanelContainer.add(title);
 
@@ -597,7 +598,19 @@ export class HUDScene extends Phaser.Scene {
       }).setOrigin(0, 0.5).setDepth(1002);
       this.deckPanelContainer!.add(nameText);
 
-      const typeText = this.add.text(listX + listW - 10, y + rowH / 2, card.type, {
+      let rightX = listX + listW - 10;
+
+      if (entry.count > 1) {
+        const countText = this.add.text(rightX, y + rowH / 2, '×' + entry.count, {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '12px',
+          color: '#8a7e6b',
+        }).setOrigin(1, 0.5).setDepth(1002);
+        this.deckPanelContainer!.add(countText);
+        rightX -= 36;
+      }
+
+      const typeText = this.add.text(rightX, y + rowH / 2, card.type, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '11px',
         color: '#6b5b45',
