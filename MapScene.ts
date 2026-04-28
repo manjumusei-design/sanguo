@@ -1421,19 +1421,7 @@ export class MapScene extends Phaser.Scene {
   private resolveTreasure(node: MapNode): void {
     const data = (node.data as { gold?: number; cardId?: string; relicId?: string } | undefined) ?? {};
     const goldReward = data.gold ?? 50;
-    const randomRelicId = !data.relicId ? this.pickRandomTreasureRelic() : undefined;
-    RunManager.modifyGold(goldReward);
-    if (data.cardId) {
-      RunManager.addCardToDeck(data.cardId);
-    }
-    if (data.relicId) {
-      RunManager.applyReward({ gold: 0, relicId: data.relicId });
-    } else if (randomRelicId) {
-      RunManager.applyReward({ gold: 0, relicId: randomRelicId });
-    }
-    if (!data.cardId && !data.relicId && !randomRelicId) {
-      RunManager.heal(5);
-    }
+
 
     this.cameras.main.shake(120, 0.005);
     const run = RunManager.getRunState();
