@@ -57,3 +57,30 @@ export const caoCaoCards: RawCard[] = [
 		],
 		fleeting: true,
 	},
+	{
+		id: 'caocao_retreat',
+		name: 'Tactical Retreat',
+		type: 'skill',
+		cost: 0,
+		target: 'SELF',
+		rarity: 'basic',
+		effects: [
+			{type: 'block', value: 4, target: 'SELF'},
+			{type: 'draw', value: 1, target: 'SELF'},
+		],
+	},
+
+	//Common
+	{
+		id: 'caocao_sweep_plains',
+		name: 'Sweep the Plains',
+		type: 'ATTACK',
+		cost: 2,
+		target: 'ALL_ENEMIES',
+		value: 4,
+		rarity: 'common',
+		effects: [
+      {type: 'damage', value: 4, target: 'ALL_ENEMIES'},
+      {type: 'apply_status', value: 1, target: 'ALL_ENEMIES', statusId: 'panic'},
+    ],
+		]
