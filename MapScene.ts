@@ -1491,6 +1491,7 @@ export class MapScene extends Phaser.Scene {
       mystery.combatModifiers?.playerStatuses?.forEach((status) => {
         RunManager.addPendingStatus(status.id, status.stacks);
       });
+      this.playNodeTransitionShake('BATTLE');
       this.cameras.main.fadeOut(400, 0x000000);
       this.time.delayedCall(400, () => {
         this.scene.start('CombatScene', {
@@ -1524,6 +1525,21 @@ export class MapScene extends Phaser.Scene {
 
     this.cameras.main.shake(200, 0.01);
     this.renderMap(RunManager.getRunState()!.currentMap, node.id, false);
+  }
+
+  private playNodeTransitionShake(type: NodeType): void {
+    const intensityByType: Partial<Record<NodeType, { duration: number; intensity: number }>> = {
+      BATTLE: { duration: 140, intensity: 0.005 },
+      ELITE: { duration: 140, intensity: 0.005},
+      EVENT: {duration: 140, intensity: 0.005},
+      REST: {duration: 140, intensity: 0.005},
+      MERCHANT: {duration: 140, intensity: 0.005},
+      MYSTERY: {duration: 140, intensity: 0.005},
+      TREASURE: {duration: 140, intensity: 0.05},
+      BOSS: {duration: 140, intensity : 0.05},
+  };
+  const config = intesityByTyoe[type] ?? {duration: 140, intensity: 0.004};
+  this.cameras.main.shake(config.duration, config.intensity);
   }
 
   private createLegendPanel(): void {
