@@ -1972,6 +1972,33 @@ export class CombatScene extends Phaser.Scene {
   }
 
   private getEnemySpineKey(enemyId: string): string | null {
+    const rawId = enemyId;
+    switch (rawId) {
+      case 'huangzu_boss':
+        return 'enemy_huangzu_boss';
+      case 'caoren_boss':
+        return 'enemy_caoren_boss';
+      case 'xiahouyuan_super3':
+      case 'xiahouyuan_solo_boss':
+        return 'enemy_xiahouyuan_boss';
+      case 'shanyue_ambusher':
+        return 'enemy_shanyue_ambusher';
+      case 'wei_mountain_skirmisher_group':
+        return 'enemy_wei_mountain_skirmisher';
+      case 'ruxu_fleet_super2':
+        return 'enemy_wei_marine';
+      case 'caocao_fleet_boss':
+        return 'enemy_caocao_finalboss';
+      case 'huangzu_river_skirmisher':
+        return 'enemy_huangzu_river_skirmisher';
+      case 'liubei_boss':
+        return 'enemy_liubei_boss';
+      case 'caocao_finalboss':
+        return 'enemy_caocao_finalboss';
+      default:
+        break;
+    }
+
     const baseId = getEnemyTemplateId(enemyId);
     switch (baseId) {
       case 'yellow_turban_warband':
@@ -1984,10 +2011,68 @@ export class CombatScene extends Phaser.Scene {
         return 'enemy_rogue_cavalry';
       case 'dong_zhuo_vanguard':
         return 'enemy_dong_zhuo_vanguard';
+      case 'starving_conscript':
+        return 'enemy_starving_conscript';
+      case 'lubu_outrider':
+        return 'enemy_lubu_outrider';
+      case 'pillager_blade_bandit':
+        return 'enemy_pillager_blade_bandit';
+      case 'pillager_club_bandit':
+        return 'enemy_pillager_club_bandit';
+      case 'pillager_bigsword_bandit':
+        return 'enemy_pillager_bigsword_bandit';
+      case 'xuhuang_gatebreaker':
+        return 'enemy_xuhuang_gatebreaker';
+      case 'chengyu_schemer':
+        return 'enemy_chengyu_schemer';
+      case 'ys_honor_guard_commander':
+        return 'enemy_ys_honor_guard_commander';
+      case 'ys_honor_guard':
+        return 'enemy_ys_honor_guard';
+      case 'lubu_blitz_super':
+        return 'enemy_lubu_blitz_super';
+      case 'lubu_boss':
+        return 'enemy_lubu_boss';
+      case 'yuan_vanguard_spearman':
+        return 'enemy_yuan_vanguard_spearman';
+      case 'crossbow_ambusher':
+        return 'enemy_crossbow_ambusher';
+      case 'feathered_war_scout':
+        return 'enemy_shanyue_ambusher';
+      case 'wei_soldier':
+        return 'enemy_wei_marine';
+      case 'imperial_shield_captain':
+        return 'enemy_caoren_boss';
+      case 'wenchou_avalanche':
+        return 'enemy_wenchou_avalanche';
+      case 'yuanshao_retinue_captain':
+        return 'enemy_yuanshao_retinue_captain';
+      case 'yuanshao_retinue_guard':
+        return 'enemy_yuanshao_retinue_guard';
+      case 'granary_wuchao':
+        return 'enemy_granary_wuchao';
+      case 'yuanshao_lord_delusion':
+        return 'enemy_yuanshao_lord_delusion';
+      case 'gan_ning_pirate_reaver':
+        return 'enemy_gan_ning_pirate_reaver';
+      case 'chen_dao_vanguard':
+        return 'enemy_chen_dao_vanguard';
+      case 'jiaxu_silent_knife':
+        return 'enemy_jiaxu_silent_knife';
+      case 'huanggai_fireship_assault':
+        return 'enemy_huanggai_fireship_assault';
+      case 'zhouyu_admiral':
+        return 'enemy_zhouyu_admiral';
+      case 'zhugeliang_strategist':
+        return 'enemy_zhugeliang_strategist';
+      case 'caocao_flagship':
+        return 'enemy_caocao_finalboss';
       default:
-        return null;
+        // Fallback 
+        return 'enemy_crossbow_ambusher';
     }
   }
+
 
   private getEnemySpineScale(enemyId: string): number {
     const baseId = getEnemyTemplateId(enemyId);
