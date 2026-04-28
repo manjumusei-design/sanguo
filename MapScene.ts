@@ -1427,7 +1427,7 @@ export class MapScene extends Phaser.Scene {
       cardOptions: data.cardId ? [data.cardId] : undefined,
       relicId,
     };
-    this.palyNodeTransitionShake('TREASURE');
+    this.playNodeTransitionShake('TREASURE');
     this.cameras.main.shake(120, 0.005);
     const run = RunManager.getRunState();
     if (run) {
