@@ -362,5 +362,18 @@ export const caoCaoCards: RawCard[] = [
 			{type: 'apply_status', value: 1, target: 'SELF', statusId: 'command'},
 		],
 	},
+	{
+		id: 'caocao_fortress_defense',
+		name: 'Fortress Defense',
+		type: 'SKILL',
+		cost: 2,
+		target: 'SELF',
+		value: 12,
+		rarity: 'common',
+    effects: [
+      { type: 'block', value: 12, target: 'SELF' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'formation' },
+    ],
+	},
 ]
 		
