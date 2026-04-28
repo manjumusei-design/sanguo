@@ -186,5 +186,17 @@ export const caoCaoCards: RawCard[] = [
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'command' },
     ],
 	},
+	{
+		id: 'caocao_logistics_read',
+		name: 'Logistics Read',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		rarity: 'common',
+    effects: [
+      { type: 'draw', value: 2, target: 'SELF' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'formation' },
+    ],
+  },
 		]
 	
