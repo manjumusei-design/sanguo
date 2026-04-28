@@ -149,3 +149,16 @@ export const caoCaoCards: RawCard[] = [
       { type: 'energy', value: -1, target: 'SELF' },
     ],
 	},
+	{
+		id: 'caocao_requisition',
+		name: 'Requisition',
+		type: 'SKILL',
+		cost: 0,
+		target: 'ENEMY',
+		rarity: 'common',
+		effects: [
+			{type: 'apply_status', value: 1, target: 'ENEMY', statusId: 'supply_shortage'},
+			{type: 'draw', value: 1, target: 'SELF'},
+		],
+	},
+		]
