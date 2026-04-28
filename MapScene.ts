@@ -1063,7 +1063,7 @@ export class MapScene extends Phaser.Scene {
           nodeId: node.id,
           enemies,
         });
-        this.playNodeTransitionShake(node.type);
+        this.playNodeTransitionShake('EVENT');
         this.cameras.main.fadeOut(400, 0x000000);
         this.time.delayedCall(400, () => {
           this.scene.start('CombatScene', {
@@ -1098,6 +1098,7 @@ export class MapScene extends Phaser.Scene {
           reason: 'rest_node',
           nodeId: node.id,
         });
+        this.playNodeTransitionShake('REST');
         this.cameras.main.fadeOut(400, 0x000000);
         this.time.delayedCall(400, () => {
           this.scene.start('RestScene');
