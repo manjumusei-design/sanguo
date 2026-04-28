@@ -84,6 +84,7 @@ export const caoCaoCards: RawCard[] = [
       {type: 'apply_status', value: 1, target: 'ALL_ENEMIES', statusId: 'panic'},
     ],
 	},
+	
 	{
 		id: 'caocao_ambush',
 		name: 'Ambush',
@@ -96,6 +97,19 @@ export const caoCaoCards: RawCard[] = [
 			{type: 'damage', value: 5, target: 'ENEMY'},
 			{type: 'block', value: 3, target: 'SELF'},
 		],
+	},
+	{
+		id: 'caocao_fortify',
+		name: 'Fortify',
+		type: 'SKILL',
+		cost: 2,
+		target: 'SELF',
+		value: 10,
+		rarity: 'common',
+    effects: [
+      { type: 'block', value: 10, target: 'SELF' },
+      { type: 'apply_status', value: 2, target: 'SELF', statusId: 'formation' },
+    ],
 	},
 	{
 		id: 'caocao_suppress',
@@ -218,5 +232,25 @@ export const caoCaoCards: RawCard[] = [
     rarity: 'common',
     effects: [{ type: 'damage', value: 9, target: 'ENEMY' }],
   },
+  {
+    id: 'caocao_structure_withdrawal',
+    name: 'Structured Withdrawal',
+    type: 'SKILL',
+    cost: 1,
+    target: 'SELF',
+    value: 7,
+    rarity: 'common',
+    effects: [
+      { type: 'block', value: 7, target: 'SELF' },
+      { type: 'draw', value: 1, target: 'SELF' },
+    ],
+    retain: true,
+  },
+	{
+		id: 'caocao_forced_labor',
+		name: 'Forced Labor',
+		type: 'SKILL',
+
+	}
 		]		
 	
