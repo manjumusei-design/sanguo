@@ -1146,6 +1146,7 @@ export class MapScene extends Phaser.Scene {
         return;
       }
       this.queueStoryBeatAdvanceOnVictory(act, beatIndex + 1);
+      this.playNodeTransitionShake('BOSS');
       this.cameras.main.fadeOut(400, 0x000000);
       this.time.delayedCall(400, () => {
         this.scene.start('CombatScene', {
@@ -1156,7 +1157,7 @@ export class MapScene extends Phaser.Scene {
       });
       return;
     }
-
+    this.playNodeTransitionShake(beat.nodeType === 'boss_battle' ? 'BOSS' : 'EVENT');
     this.cameras.main.fadeOut(400, 0x000000);
     this.time.delayedCall(400, () => {
       this.scene.start('StoryDialogueScene', {
