@@ -1421,20 +1421,13 @@ export class MapScene extends Phaser.Scene {
   private resolveTreasure(node: MapNode): void {
     const data = (node.data as { gold?: number; cardId?: string; relicId?: string } | undefined) ?? {};
     const goldReward = data.gold ?? 50;
-    const randomRelicId = !data.relicId ? this.pickRandomTreasureRelic() : undefined;
-    RunManager.modifyGold(goldReward);
-    if (data.cardId) {
-      RunManager.addCardToDeck(data.cardId);
-    }
-    if (data.relicId) {
-      RunManager.applyReward({ gold: 0, relicId: data.relicId });
-    } else if (randomRelicId) {
-      RunManager.applyReward({ gold: 0, relicId: randomRelicId });
-    }
-    if (!data.cardId && !data.relicId && !randomRelicId) {
-      RunManager.heal(5);
-    }
-
+    const relicId = data.relicId ?? this.pickRandomTreasureRelic();
+    const reward = {
+      gold: goldReward,
+      cardOptions: data.cardId ? [data.cardId] : undefined,
+      relicId,
+    };
+    this.playNodeTransitionShake('TREASURE');
     this.cameras.main.shake(120, 0.005);
     const run = RunManager.getRunState();
     if (run) {
@@ -1481,6 +1474,7 @@ export class MapScene extends Phaser.Scene {
     });
 
     if (mystery.mysteryType === 'event') {
+      this.playNodeTransitionShake('EVENT');
       this.cameras.main.fadeOut(400, 0x000000);
       this.time.delayedCall(400, () => {
         this.scene.start('EventScene', {
@@ -1497,6 +1491,7 @@ export class MapScene extends Phaser.Scene {
       mystery.combatModifiers?.playerStatuses?.forEach((status) => {
         RunManager.addPendingStatus(status.id, status.stacks);
       });
+      this.playNodeTransitionShake('BATTLE');
       this.cameras.main.fadeOut(400, 0x000000);
       this.time.delayedCall(400, () => {
         this.scene.start('CombatScene', {
@@ -1530,6 +1525,21 @@ export class MapScene extends Phaser.Scene {
 
     this.cameras.main.shake(200, 0.01);
     this.renderMap(RunManager.getRunState()!.currentMap, node.id, false);
+  }
+
+  private playNodeTransitionShake(type: NodeType): void {
+    const intensityByType: Partial<Record<NodeType, { duration: number; intensity: number }>> = {
+      BATTLE: { duration: 140, intensity: 0.005 },
+      ELITE: { duration: 140, intensity: 0.005},
+      EVENT: {duration: 140, intensity: 0.005},
+      REST: {duration: 140, intensity: 0.005},
+      MERCHANT: {duration: 140, intensity: 0.005},
+      MYSTERY: {duration: 140, intensity: 0.005},
+      TREASURE: {duration: 140, intensity: 0.05},
+      BOSS: {duration: 140, intensity : 0.05},
+  };
+  const config = intesityByTyoe[type] ?? {duration: 140, intensity: 0.004};
+  this.cameras.main.shake(config.duration, config.intensity);
   }
 
   private createLegendPanel(): void {
