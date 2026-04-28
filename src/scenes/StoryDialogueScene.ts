@@ -28,6 +28,7 @@ interface StoryBeat {
     control?: number;
     momentum?: number;
   }>;
+  choiceMetaByChoice?: Array<string[] | null>;
 }
 
 export class StoryDialogueScene extends Phaser.Scene {
@@ -145,11 +146,15 @@ export class StoryDialogueScene extends Phaser.Scene {
 
     const choices = this.beat.choices.length ? this.beat.choices : ['Continue'];
     choices.forEach((choiceLabel, index) => {
-      const y = Math.round((356 + index * 76) * sy);
+      const choiceMetaLines = this.beat?.choiceMetaByChoice?.[index] ?? null;
+      const hasMeta = Array.isArray(choiceMetaLines) && choiceMetaLines.length > 0;
+      const y = Math.round((80 + index * 100) * sy);
       const btn = this.add.container(cx, y);
-      const bg = this.add.rectangle(0, 0, 700, 56, 0xe2cfab, 0.95);
-      const shade = this.add.rectangle(0, 0, 700, 56, 0x000000, 0.12).setStrokeStyle(2, 0x5f4b2f, 1);
-      const label = this.add.text(0, 0, choiceLabel, {
+      const buttonHeight = hasMeta ? 104 : 80;
+      const bg = this.add.rectangle(0, 0, 660, buttonHeight, 0xe2cfab, 0.95);
+      const shade = this.add.rectangle(0, 0, 660, buttonHeight, 0x000000, 0.14).setStrokeStyle(2, 0x5f4b2f, 1);
+      const accent = this.add.rectangle(-328, 0, 6, buttonHeight, 0x8f7647, 1);
+      const label = this.add.text(-310, hasMeta ? -18 : 0, choiceLabel, {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '15px',
         color: '#271d13',
