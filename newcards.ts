@@ -271,5 +271,18 @@ export const caoCaoCards: RawCard[] = [
       { type: 'apply_status', value: 1, target: 'ALL_ENEMIES', statusId: 'exposed' },
     ],
   },
+	{
+		id: 'caocao_large_scale_maneuver',
+		name: 'Large Scale Maeuver',
+		type: 'ATTACK',
+		cost: 2,
+		target: 'ALL_ENEMIES',
+		value: 5,
+		rarity: 'common',
+    effects: [
+      { type: 'damage', value: 5, target: 'ALL_ENEMIES' },
+      { type: 'apply_status', value: 1, target: 'ALL_ENEMIES', statusId: 'broken_formation' },
+    ],
+	},
 ]
 		
