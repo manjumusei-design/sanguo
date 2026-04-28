@@ -1281,7 +1281,7 @@ export class MapScene extends Phaser.Scene {
     act?: number;
     beatIndex?: number;
     axisDeltaByChoice?: Array<{ legitimacy?: number; control?: number; momentum?: number }>;
-    choiceMetaByChoice? : Array<string[] | null;
+    choiceMetaByChoice? : Array<string[] | null>;
   } {
     const body = beat.body?.length ? beat.body : [];
     const choices = (beat.choices ?? [])
