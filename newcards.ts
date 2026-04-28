@@ -258,5 +258,18 @@ export const caoCaoCards: RawCard[] = [
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'low_morale' },
     ],
   },
-		]		
-	
+  {
+    id: 'caocao_quell_revolt',
+    name: 'Quell Revolt',
+    type: 'ATTACK',
+    cost: 2,
+    target: 'ALL_ENEMIES',
+    value: 6,
+    rarity: 'common',
+    effects: [
+      { type: 'damage', value: 6, target: 'ALL_ENEMIES' },
+      { type: 'apply_status', value: 1, target: 'ALL_ENEMIES', statusId: 'exposed' },
+    ],
+  },
+]
+		
