@@ -1,10 +1,9 @@
 import Phaser from 'phaser';
 import type { CharacterId } from '../types';
-import { EMOJI } from '../data/emoji';
-import { getCharacter, traits } from '../data/characters';
+import { getCharacter, getCharacterSpineKey } from '../data/characters';
 import { RunManager } from '../core/RunManager';
 import { GameSession } from '../core/GameSession';
-import { SpineManager } from '../ui/SpineManager';
+import { SpineManager, type SpineGameObject } from '../ui/SpineManager';
 
 export class MenuScene extends Phaser.Scene {
   private contentContainer!: Phaser.GameObjects.Container;
