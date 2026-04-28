@@ -387,5 +387,17 @@ export const caoCaoCards: RawCard[] = [
       { type: 'apply_status', value: 1, target: 'ENEMY', statusId: 'supply_shortage' },
     ],
   },
+	{
+		id: 'caocao_immovable',
+		name: 'Immovable',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		value: 9, 
+		rarity: 'common',
+    effects: [
+      { type: 'block', value: 9, target: 'SELF' },
+      { type: 'energy', value: -1, target: 'SELF' },
+    ],
 ]
 		
