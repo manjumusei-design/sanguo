@@ -13,6 +13,13 @@ export class VictoryScene extends Phaser.Scene {
     seed: string;
   } | null = null;
 
+    private preludeData: {
+    characterId: string;
+    unlockedCharacter?: string;
+    trait?: string;
+    relic?: string;
+  } | null = null;
+  
   private getFactionColor(character: string): string {
     switch (character.toLowerCase()) {
       case 'caocao': return '#ff6b6b';
