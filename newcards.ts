@@ -399,5 +399,18 @@ export const caoCaoCards: RawCard[] = [
       { type: 'block', value: 9, target: 'SELF' },
       { type: 'energy', value: -1, target: 'SELF' },
     ],
+  {
+    id: 'caocao_coordinated_strike',
+    name: 'Coordinated Strike',
+    type: 'ATTACK',
+    cost: 1,
+    target: 'ENEMY',
+    value: 5,
+    rarity: 'common',
+    effects: [
+      { type: 'damage', value: 5, target: 'ENEMY' },
+      { type: 'damage', value: 3, target: 'ENEMY', condition: 'player_has_command' },
+    ],
+  },
 ]
 		
