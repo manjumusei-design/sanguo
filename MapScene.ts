@@ -1474,6 +1474,7 @@ export class MapScene extends Phaser.Scene {
     });
 
     if (mystery.mysteryType === 'event') {
+      this.playNodeTransitionShake('EVENT');
       this.cameras.main.fadeOut(400, 0x000000);
       this.time.delayedCall(400, () => {
         this.scene.start('EventScene', {
