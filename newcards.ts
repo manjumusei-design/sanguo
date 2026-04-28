@@ -311,5 +311,17 @@ export const caoCaoCards: RawCard[] = [
     ],
     fleeting: true,
   },
+	{
+		id: 'caocao_encircle',
+		name: 'Encircle',
+		type: 'ATTACK',
+		target: 'ENEMY',
+		value: 10,
+		rarity: 'common',
+    effects: [
+      { type: 'damage', value: 10, target: 'ENEMY' },
+      { type: 'apply_status', value: 1, target: 'ENEMY', statusId: 'encircled' },
+    ],
+  },
 ]
 		
