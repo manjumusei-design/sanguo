@@ -162,8 +162,17 @@ export class StoryDialogueScene extends Phaser.Scene {
         align: 'center',
       }).setOrigin(0.5);
 
-      btn.add([bg, shade, label]);
-      btn.setSize(700, 56);
+      const metaText = hasMeta
+        ? this.add.text(310, 26, (choiceMetaLines as string[]).slice(0, 2).join(' | '), {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '12px',
+          color: '#5a4c37',
+          wordWrap: { width: 600 },
+        }).setOrigin(0, 0.5)
+        : null;
+
+      btn.add(metaText ? [bg, shade, accent, label, metaText] : [bg, shade, accent, label]);
+      btn.setSize(660, buttonHeight);
       btn.setInteractive({ useHandCursor: true });
       btn.on('pointerover', () => {
         bg.setFillStyle(0xe8d8b8, 0.98);
