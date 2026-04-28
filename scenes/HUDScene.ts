@@ -33,18 +33,17 @@ export class HUDScene extends Phaser.Scene {
 
   create(): void {
     const w = this.scale.width;
-    const barH = 44;
-    const cy = Math.round(barH / 2);
-    this.topBarContainer = this.add.container(0, 0).setDepth(1200);
+    this.cameras.main.setViewport(0, 0, w, this.scale.height);
+    this.cameras.main.setScroll(0, 0);
+    this.topBarContainer = this.add.container(0, 0).setDepth(1200).setScrollFactor(0);
 
     const bar = this.add.graphics();
-    // Slim STS-style top strip (remove oversized rounded panel).
     bar.fillStyle(0x000000, 1);
     bar.fillRect(0, 0, w, barH);
     bar.lineStyle(1, 0x8f7647, 0.55);
     bar.lineBetween(0, barH, w, barH);
     this.topBarContainer.add(bar);
-
+//Used emojis for render to save time
     this.hpText = this.add.text(22, cy, '❤️ -- / --', {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '14px',
