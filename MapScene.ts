@@ -1528,7 +1528,7 @@ export class MapScene extends Phaser.Scene {
     const panelH = padY * 2 + entries.length * rowH;
 
     const panelX = this.scale.width - panelW - 12;
-    const panelY = 60;
+    const panelY = 72;
 
     const g = this.add.graphics();
     g.fillStyle(0xede3d1, 1);
