@@ -349,5 +349,18 @@ export const caoCaoCards: RawCard[] = [
     ],
     exhaust: true,
   },
+	{
+		id: 'caocao_ordered_shot',
+		name: 'Ordered Shot',
+		type: 'ATTACK',
+		cost: 1,
+		target: 'ENEMY',
+		value: 6,
+		rarity: 'common',
+		effects: [
+			{type: 'damage', value: 6, target: 'ENEMY'},
+			{type: 'apply_status', value: 1, target: 'SELF', statusId: 'command'},
+		],
+	},
 ]
 		
