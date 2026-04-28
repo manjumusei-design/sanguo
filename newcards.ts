@@ -110,3 +110,18 @@ export const caoCaoCards: RawCard[] = [
 			{type: 'apply_status', value: 1, target: 'ENEMY', statusId: 'exposed'},
 		],
 	},
+	{
+		id: 'caocao_harsh_march',
+		name: 'Harsh March',
+		type: 'ATTACK',
+		const 1, 
+		target: 'ENEMY',
+		value: 7;
+		rarity: 'common',
+		effects: [
+			{type: 'damage', value: 7, target: 'ENEMY'},
+			{type: 'apply_status', value: 1, target: 'ENEMY', statusId: 'panic'},
+		],
+	},
+	{
+		]
