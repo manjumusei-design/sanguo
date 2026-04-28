@@ -1320,7 +1320,26 @@ export class MapScene extends Phaser.Scene {
         control: Number(choice.axisChanges?.control ?? 0),
         momentum: Number(choice.axisChanges?.momentum ?? 0),
       })),
-    };
+      choiceMetaByChoice: (beat.choices ?? []).map((choice) => {
+        const meta: string[] = [];
+        if (Array.isArray(choice.preview) && choice.preview.length > 0) {
+          meta.push(...choice.preview.filter((line): line is string => typeof line === 'string' && line.trim().length > 0));
+        }
+        if (choice.flagsSet && Object.keys(choice.flagsSet).length > 0) {
+          meta.push(`Flags: ${Object.keys(choice.flagsSet).join(', ')}`);
+        }
+        if (choice.axisChanges) {
+          const parts: string[] = [];
+          const l = Number(choice.axisChanges.legitimacy ?? 0);
+          const c = Number(choice.axisChanges.control ?? 0);
+          const m = Number(choice.axisChanges.momentum ?? 0);
+          if (l !== 0) parts.push(`Legitimacy ${l > 0 ? '+' : ''}${l}`);
+          if (c !== 0) parts.push(`Control ${c > 0 ? '+' : ''}${c}`);
+          if (m !== 0) parts.push(`Momentum ${m > 0 ? '+' : ''}${m}`);
+          if (parts.length > 0) meta.push(`Axis: ${parts.join(', ')}`);
+        }
+        return meta.length > 0 ? meta : null;
+      }),
   }
 
   private consumePendingStoryResolution(nodeId: string): {
