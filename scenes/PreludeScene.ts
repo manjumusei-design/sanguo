@@ -14,7 +14,7 @@ import {
 import { RunManager } from '../core/RunManager';
 import { GameSession } from '../core/GameSession';
 import { getRelic } from '../data/relics';
-import { getCharacter } from '../data/characters';
+import { getCharacter, getCharacterSpineKey } from '../data/characters';
 import { EMOJI } from '../data/emoji';
 import { SpineManager, type SpineGameObject } from '../ui/SpineManager';
 
@@ -263,7 +263,7 @@ export class PreludeScene extends Phaser.Scene {
     const h = this.scale.height;
     const x = Math.round(w * 0.16);
     const y = Math.round(h * 0.84);
-    const spineKey = `char_${this.characterId}`;
+    const spineKey = getCharacterSpineKey(this.characterId, 1);
     const hasSpineAssets = this.cache.text.exists(`${spineKey}:atlas`)
       && this.cache.text.exists(`${spineKey}:json`)
       && this.textures.exists(`${spineKey}:skeleton.png`);
@@ -645,37 +645,16 @@ export class PreludeScene extends Phaser.Scene {
     }
 
     GameSession.clear();
-    this.clearContent();
-    const w = this.scale.width;
-    const cx = Math.round(w / 2);
-    const sy = this.scale.height / 720;
-
-    this.add.text(cx, 300 * sy, 'Ã¢Å“Â¨ Prelude Complete', {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '36px',
-      color: '#f0c060',
-    }).setOrigin(0.5);
-
-    this.add.text(cx, 360 * sy, `${this.characterId.toUpperCase()} unlocked for roguelike runs.`, {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '18px',
-      color: '#aaaaaa',
-    }).setOrigin(0.5);
-
-    const btn = this.add.text(cx, 440 * sy, 'Return to Menu', {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '20px',
-      color: '#ffffff',
-      backgroundColor: '#111111',
-      padding: { x: 20, y: 10 },
-    })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerover', () => btn.setScale(1.05))
-      .on('pointerout', () => btn.setScale(1))
-      .on('pointerdown', () => {
-        this.cameras.main.fadeOut(300, 0x000000);
-        this.time.delayedCall(300, () => this.scene.start('MenuScene'));
+    this.cameras.main.fadeOut(400, 0x000000);
+    this.time.delayedCall(400, () => {
+      this.scene.start('VictoryScene', {
+        preludeCharacterId: this.characterId,
+        preludeUnlockCharacter: unlock?.character,
+        preludeUnlockTrait: unlock?.trait,
+        preludeUnlockRelic: unlock?.relic,
+      });
+    });
+  }
       });
   }
 
