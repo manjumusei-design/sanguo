@@ -124,4 +124,16 @@ export const caoCaoCards: RawCard[] = [
 		],
 	},
 	{
+		id: 'caocao_chain_orders',
+		name: 'Chain Orders',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		value: 5,
+		rarity: 'common',
+		effects: [
+			{type: 'block', value: 5, target: 'SELF'},
+			{type: 'apply_status', value: 1, target: 'SELF', statusId: 'command'},
+		],
+	},
 		]
