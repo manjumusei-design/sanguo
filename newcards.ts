@@ -412,5 +412,16 @@ export const caoCaoCards: RawCard[] = [
       { type: 'damage', value: 3, target: 'ENEMY', condition: 'player_has_command' },
     ],
   },
+	{
+		id: 'caocao_cavalry_raid',
+		name: 'Cavalry Raid',
+		type: 'ATTACK',
+		cost: 2,
+		target: 'ENEMY',
+		value: 14,
+		rarity: 'common',
+		effects: [{type: 'damage', value: 14, target: 'ENEMY'}],
+		exhaust: true,
+	},
 ]
 		
