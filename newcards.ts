@@ -250,7 +250,13 @@ export const caoCaoCards: RawCard[] = [
 		id: 'caocao_forced_labor',
 		name: 'Forced Labor',
 		type: 'SKILL',
-
-	}
+		cost: 0,
+		target: 'SELF',
+		rarity: 'common',
+    effects: [
+      { type: 'draw', value: 3, target: 'SELF' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'low_morale' },
+    ],
+  },
 		]		
 	
