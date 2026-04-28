@@ -284,5 +284,18 @@ export const caoCaoCards: RawCard[] = [
       { type: 'apply_status', value: 1, target: 'ALL_ENEMIES', statusId: 'broken_formation' },
     ],
 	},
+	{
+		id: 'caocao_edict_of_supply',
+		name: 'Edict of Supply',
+		type: 'SKILL',
+		type: 1,
+		target: 'SELF',
+		rarity: 'common',
+    effects: [
+      { type: 'block', value: 6, target: 'SELF' },
+      { type: 'energy', value: 1, target: 'SELF' },
+    ],
+    exhaust: true,
+  },
 ]
 		
