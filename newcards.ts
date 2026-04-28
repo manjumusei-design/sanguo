@@ -325,7 +325,29 @@ export const caoCaoCards: RawCard[] = [
     ],
   },
 	{
-
-	}
+		id: 'caocao_requistion_orders',
+		name: 'Requisition Orders',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		rarity: 'common',
+    effects: [
+      { type: 'draw', value: 2, target: 'SELF' },
+      { type: 'energy', value: -1, target: 'SELF' },
+    ],
+	},
+	{
+    id: 'caocao_false_surrender',
+    name: 'False Surrender',
+    type: 'SKILL',
+    cost: 1,
+    target: 'ENEMY',
+    rarity: 'common',
+    effects: [
+      { type: 'apply_status', value: 2, target: 'ENEMY', statusId: 'panic' },
+      { type: 'block', value: 4, target: 'SELF' },
+    ],
+    exhaust: true,
+  },
 ]
 		
