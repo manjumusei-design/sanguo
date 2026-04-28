@@ -423,5 +423,17 @@ export const caoCaoCards: RawCard[] = [
 		effects: [{type: 'damage', value: 14, target: 'ENEMY'}],
 		exhaust: true,
 	},
+	{
+		id: 'caocao_drill_seargeant',
+		name: 'Drill Seargeant',
+		type: 'SKILL',
+		cost: 2,
+		target: 'SELF',
+		rarity: 'common',
+    effects: [
+      { type: 'block', value: 8, target: 'SELF' },
+      { type: 'apply_status', value: 2, target: 'SELF', statusId: 'command' },
+    ],
+  },
 ]
 		
