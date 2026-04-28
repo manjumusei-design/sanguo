@@ -120,7 +120,7 @@ export class StoryDialogueScene extends Phaser.Scene {
       .setStrokeStyle(1, 0x4a3a25, 1);
     this.add.text(edgePad, topBarY, characterLabel, {
       fontFamily: 'system-ui, sans-serif',
-      fontSize: '14px',
+      fontSize: '15px',
       color: '#f8e7c0',
       fontStyle: 'bold',
     }).setOrigin(0, 0.10);
