@@ -199,16 +199,21 @@ export const caoCaoCards: RawCard[] = [
     ],
   },
   {
-    id: 'caocao_tax_levy',
-    name: 'Tax Levy',
+    id: 'caocao_conscription',
+    name: 'Conscription',
     type: 'SKILL',
     cost: 1,
     target: 'SELF',
     rarity: 'common',
-    effects: [
-      { type: 'draw', value: 1, target: 'SELF' },
-      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'command' },
-    ],
+    effects: [{ type: 'draw', value: 4, target: 'SELF' }],
+    exhaust: true,
   },
+	{
+		id: 'caocao_logistics_read',
+		name: 'Logistics Read',
+		type: 'SKILL',
+		cost: 1,
+		target: ''
+	}
 		]		
 	
