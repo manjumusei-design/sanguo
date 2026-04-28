@@ -161,4 +161,17 @@ export const caoCaoCards: RawCard[] = [
 			{type: 'draw', value: 1, target: 'SELF'},
 		],
 	},
+  {
+    id: 'caocao_execution_order',
+    name: 'Execution Order',
+    type: 'ATTACK',
+    cost: 1,
+    target: 'ENEMY',
+    value: 8,
+    rarity: 'common',
+    effects: [
+      { type: 'damage', value: 8, target: 'ENEMY' },
+      { type: 'damage', value: 4, target: 'ENEMY', condition: 'target_has_panic' },
+    ],
+  },
 		]
