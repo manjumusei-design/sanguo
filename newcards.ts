@@ -174,4 +174,17 @@ export const caoCaoCards: RawCard[] = [
       { type: 'damage', value: 4, target: 'ENEMY', condition: 'target_has_panic' },
     ],
   },
+	{
+		id: 'caocao_tax_levy',
+		name: 'Tax Levy',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		rarity: 'common',
+    effects: [
+      { type: 'draw', value: 1, target: 'SELF' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'command' },
+    ],
+	},
 		]
+	
