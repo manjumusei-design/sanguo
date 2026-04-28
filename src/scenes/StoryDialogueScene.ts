@@ -123,7 +123,7 @@ export class StoryDialogueScene extends Phaser.Scene {
       fontSize: '14px',
       color: '#f8e7c0',
       fontStyle: 'bold',
-    }).setOrigin(0, 0.5);
+    }).setOrigin(0, 0.10);
     this.add.text(w - edgePad, topBarY, progressLabel, {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '14px',
