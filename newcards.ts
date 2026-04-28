@@ -136,4 +136,16 @@ export const caoCaoCards: RawCard[] = [
 			{type: 'apply_status', value: 1, target: 'SELF', statusId: 'command'},
 		],
 	},
-		]
+	{
+    id: 'caocao_iron_discipline',
+    name: 'Iron Discipline',
+    type: 'SKILL',
+    cost: 1,
+    target: 'SELF',
+    value: 8,
+    rarity: 'common',
+    effects: [
+      { type: 'block', value: 8, target: 'SELF' },
+      { type: 'energy', value: -1, target: 'SELF' },
+    ],
+	},
