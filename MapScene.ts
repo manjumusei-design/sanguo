@@ -1111,6 +1111,7 @@ export class MapScene extends Phaser.Scene {
           reason: 'merchant_node',
           nodeId: node.id,
         });
+        this.playNodeTransitionShake('MERCHANT');
         this.cameras.main.fadeOut(400, 0x000000);
         this.time.delayedCall(400, () => {
           this.scene.start('MerchantScene');
