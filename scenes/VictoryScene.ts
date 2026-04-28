@@ -19,7 +19,7 @@ export class VictoryScene extends Phaser.Scene {
     trait?: string;
     relic?: string;
   } | null = null;
-  
+
   private getFactionColor(character: string): string {
     switch (character.toLowerCase()) {
       case 'caocao': return '#ff6b6b';
@@ -33,7 +33,22 @@ export class VictoryScene extends Phaser.Scene {
     super({ key: 'VictoryScene' });
   }
 
-  init(): void {
+  init(data?: {
+    preludeCharacterId?: string;
+    preludeUnlockCharacter?: string;
+    preludeUnlockTrait?: string;
+    preludeUnlockRelic?: string;
+  }): void {
+    if (data?.preludeCharacterId) {
+      this.preludeData = {
+        characterId: data.preludeCharacterId,
+        unlockedCharacter: data.preludeUnlockCharacter,
+        trait: data.preludeUnlockTrait,
+        relic: data.preludeUnlockRelic,
+      };
+      return;
+    }
+
     const run = RunManager.getRunState();
     if (run) {
       this.summary = {
