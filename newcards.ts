@@ -297,5 +297,19 @@ export const caoCaoCards: RawCard[] = [
     ],
     exhaust: true,
   },
+	{
+		id: 'caocao_silent_threat',
+		name: 'Silent Threat',
+		type: 'ATTACK',
+		cost: 0,
+		target: 'ENEMY',
+		value: 4,
+		rarity: 'common',
+    effects: [
+      { type: 'damage', value: 4, target: 'ENEMY' },
+      { type: 'apply_status', value: 1, target: 'ENEMY', statusId: 'panic' },
+    ],
+    fleeting: true,
+  },
 ]
 		
