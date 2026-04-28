@@ -208,12 +208,15 @@ export const caoCaoCards: RawCard[] = [
     effects: [{ type: 'draw', value: 4, target: 'SELF' }],
     exhaust: true,
   },
-	{
-		id: 'caocao_logistics_read',
-		name: 'Logistics Read',
-		type: 'SKILL',
-		cost: 1,
-		target: ''
-	}
+  {
+    id: 'caocao_precise_strike',
+    name: 'Precise Strike',
+    type: 'ATTACK',
+    cost: 1,
+    target: 'ENEMY',
+    value: 9,
+    rarity: 'common',
+    effects: [{ type: 'damage', value: 9, target: 'ENEMY' }],
+  },
 		]		
 	
