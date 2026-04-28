@@ -375,5 +375,17 @@ export const caoCaoCards: RawCard[] = [
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'formation' },
     ],
 	},
+	{
+		id: 'caocao_tax_collection',
+		name: 'Tax Collection',
+		type: 'SKILL',
+		cost: 0,
+		target: 'SELF',
+		rarity: 'common',
+    effects: [
+      { type: 'draw', value: 1, target: 'SELF' },
+      { type: 'apply_status', value: 1, target: 'ENEMY', statusId: 'supply_shortage' },
+    ],
+  },
 ]
 		
