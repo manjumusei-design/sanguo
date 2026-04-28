@@ -17,18 +17,20 @@ u know Slay the Spire? yeah like that but instead of some random ironclad dude u
 - **Phaser 3.90** - the game engine doing all the heavy lifting
 - **TypeScript** - because javascript without types is chaos and we don't do chaos here
 - **Spine** - for those smooth character animations (made by my cousin!)
-- **Vite** - dev server go brrr
 
 
 ## cool features we actually implemented
 
 - fully working reward screen with card picks 
 - enemy intent system (yes they telegraph their moves, use ur brain)
-
+- hoverable intent systems describing what the enemy will do 
+- cool mechanics like illusion which sees if you have a multi targetting spell or good luck
 ## current status
 
 Cao Cao prelude is the main focus rn. we're locking down the exact route:
 intro -> map -> combat -> reward -> next node -> final outcome
+
+as of 28/4/2026 all of the gameplay should be available to be tested and used, work still left is regarding character mapping + blurriness from phaser + edge case errors and mostly UI + resizing bugs, id say maybe 30% of work is left to do 
 
 ## notes
 
@@ -39,3 +41,7 @@ intro -> map -> combat -> reward -> next node -> final outcome
 ## credits
 
 *"I would rather betray the world than let the world betray me"* - probably u after taking a risky path and dying to a random elite
+
+
+
+Art is authorized for my uisage by my cousin, please do not fork assets or clone the game since its not completed + it is his assets. 
