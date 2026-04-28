@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { RunManager } from '../core/RunManager';
 import { GameSession } from '../core/GameSession';
-import type { MapNode, MapGraph, CharacterId } from '../types';
+import type { MapNode, MapGraph, CharacterId, NodeType } from '../types';
 import { getReachableNodes } from '../systems/MapGenerator';
 import { GameDebug } from '../systems/GameDebug';
 import { PointerDebug } from '../systems/PointerDebug';
@@ -1063,6 +1063,7 @@ export class MapScene extends Phaser.Scene {
           nodeId: node.id,
           enemies,
         });
+        this.playNodeTransitionShake(node.type);
         this.cameras.main.fadeOut(400, 0x000000);
         this.time.delayedCall(400, () => {
           this.scene.start('CombatScene', {
