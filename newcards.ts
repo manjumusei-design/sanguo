@@ -83,4 +83,30 @@ export const caoCaoCards: RawCard[] = [
       {type: 'damage', value: 4, target: 'ALL_ENEMIES'},
       {type: 'apply_status', value: 1, target: 'ALL_ENEMIES', statusId: 'panic'},
     ],
-		]
+	},
+	{
+		id: 'caocao_ambush',
+		name: 'Ambush',
+		type: 'SKILL',
+		cost: 1,
+		target: 'ENEMY',
+		value: 5,
+		rarity: 'common',
+		effects: [
+			{type: 'damage', value: 5, target: 'ENEMY'},
+			{type: 'block', value: 3, target: 'SELF'},
+		],
+	},
+	{
+		id: 'caocao_suppress',
+		name: 'Suppress',
+		type: 'ATTACK',
+		cost: 2,
+		target: 'ENEMY',
+		value: 8,
+		rarity: 'common',
+		effects: [
+			{type: 'damage', value: 8, target: 'ENEMY'},
+			{type: 'apply_status', value: 1, target: 'ENEMY', statusId: 'exposed'},
+		],
+	},
