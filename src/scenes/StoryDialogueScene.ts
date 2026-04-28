@@ -167,7 +167,7 @@ export class StoryDialogueScene extends Phaser.Scene {
           fontFamily: 'system-ui, sans-serif',
           fontSize: '12px',
           color: '#5a4c37',
-          wordWrap: { width: 600 },
+          wordWrap: { width: 620 },
         }).setOrigin(0, 0.5)
         : null;
 
