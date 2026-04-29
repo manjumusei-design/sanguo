@@ -1031,3 +1031,63 @@ export const caoCaoCards: RawCard[] = [
     exhaust: true,
   },
 ];
+
+
+//LiuBei
+
+export const liuBeiCards: RawCard[] = [
+  //  Basic
+  {
+    id: 'liubei_strike',
+    name: 'Shu Strike',
+    type: 'ATTACK',
+    cost: 1,
+    target: 'ENEMY',
+    value: 6,
+    rarity: 'basic',
+    effects: [{ type: 'damage', value: 6, target: 'ENEMY' }],
+  },
+  {
+    id: 'liubei_defend',
+    name: 'Shu Defend',
+    type: 'SKILL',
+    cost: 1,
+    target: 'SELF',
+    value: 5,
+    rarity: 'basic',
+    effects: [{ type: 'block', value: 5, target: 'SELF' }],
+  },
+  {
+    id: 'liubei_oath',
+    name: 'Oath of Brotherhood',
+    type: 'SKILL',
+    cost: 1,
+    target: 'SELF',
+    rarity: 'basic',
+    effects: [{ type: 'draw', value: 2, target: 'SELF' }],
+  },
+	{
+		id: 'liubei_loyalty',
+		name: 'Loyalty',
+		type: 'SKILL',
+		cost: 0,
+		target: 'SELF',
+		rarity: 'basic',
+    effects: [{ type: 'block', value: 3, target: 'SELF' }],
+		retain: true,
+	},
+	{
+		id: 'liubei_sworn_brothers',
+		name: 'Sworn Brothers',
+		type: 'ATTACK',
+		cost: 1,
+		target: 'ENEMY',
+		value: 4,
+		rarity: 'basic',
+    effects: [
+      { type: 'damage', value: 4, target: 'ENEMY' },
+      { type: 'draw', value: 1, target: 'SELF' },
+    ],
+  },
+];
+
