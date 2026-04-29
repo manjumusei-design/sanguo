@@ -481,5 +481,17 @@ export const caoCaoCards: RawCard[] = [
       { type: 'damage', value: 5, target: 'ALL_ENEMIES' },
       { type: 'apply_status', value: 1, target: 'ALL_ENEMIES', statusId: 'panic' },
     ],
-  }
+  },
+  {
+    id: 'caocao_seize_stores',
+    name: 'Seize Stores',
+    type: 'SKILL',
+    cost: 1,
+    target: 'SELF',
+    rarity: 'uncommon',
+    effects: [
+      { type: 'energy', value: 1, target: 'SELF' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'command' },
+    ],
+  },
 ];
