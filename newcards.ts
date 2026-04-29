@@ -443,6 +443,18 @@ export const caoCaoCards: RawCard[] = [
 	target: 'ENEMY',
 	rarity: 'common',
 	effects: [{type: 'apply_status', value: 2, target: 'ENEMY', statusId: 'panic'}
-  }
+  },
+  
+  // Uncommon
+  {
+	id: 'caocao_command_reserve',
+	name: 'Command Reserve',
+	type: 'SKILL',
+	cost: 1,
+	target: 'SELF',
+	rarity: 'uncommon',
+    effects: [{ type: 'apply_status', value: 3, target: 'SELF', statusId: 'command' }],
+	exhaust: true,
+  },
 ]
-		
+
