@@ -494,4 +494,16 @@ export const caoCaoCards: RawCard[] = [
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'command' },
     ],
   },
+  {
+	id: 'caocao_formation_drill',
+	name: 'Formation Drill',
+	type: 'SKILL',
+	cost: 2,
+	target: 'SELF',
+	value: 11,
+	rarity: 'uncommon',
+    effects: [
+      { type: 'block', value: 11, target: 'SELF' },
+      { type: 'apply_status', value: 3, target: 'SELF', statusId: 'formation' },
+    ],
 ];
