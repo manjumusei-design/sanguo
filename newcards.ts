@@ -469,4 +469,17 @@ export const caoCaoCards: RawCard[] = [
       { type: 'apply_status', value: 2, target: 'ENEMY', statusId: 'supply_shortage' },
     ],
   },
+  {
+	id: 'caocao_administrive_purge',
+	name: 'Administrative Purge',
+	type: 'ATTACK',
+	cost: 2,
+	target: 'ALL_ENEMIES',
+	value: 5,
+	rarity: 'uncommon',
+    effects: [
+      { type: 'damage', value: 5, target: 'ALL_ENEMIES' },
+      { type: 'apply_status', value: 1, target: 'ALL_ENEMIES', statusId: 'panic' },
+    ],
+  }
 ];
