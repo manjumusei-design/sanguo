@@ -506,4 +506,5 @@ export const caoCaoCards: RawCard[] = [
       { type: 'block', value: 11, target: 'SELF' },
       { type: 'apply_status', value: 3, target: 'SELF', statusId: 'formation' },
     ],
+  },
 ];
