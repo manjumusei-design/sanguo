@@ -456,5 +456,17 @@ export const caoCaoCards: RawCard[] = [
     effects: [{ type: 'apply_status', value: 3, target: 'SELF', statusId: 'command' }],
 	exhaust: true,
   },
-]
-
+  {
+    id: 'caocao_punitive_raid',
+    name: 'Punitive Raid',
+    type: 'ATTACK',
+    cost: 2,
+    target: 'ENEMY',
+    value: 11,
+    rarity: 'uncommon',
+    effects: [
+      { type: 'damage', value: 11, target: 'ENEMY' },
+      { type: 'apply_status', value: 2, target: 'ENEMY', statusId: 'supply_shortage' },
+    ],
+  },
+];
