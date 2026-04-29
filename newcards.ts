@@ -435,5 +435,14 @@ export const caoCaoCards: RawCard[] = [
       { type: 'apply_status', value: 2, target: 'SELF', statusId: 'command' },
     ],
   },
+  {
+	id: 'caocao_intimidation',
+	name: 'Intimidation',
+	type: 'SKILL',
+	cost: 1,
+	target: 'ENEMY',
+	rarity: 'common',
+	effects: [{type: 'apply_status', value: 2, target: 'ENEMY', statusId: 'panic'}
+  }
 ]
 		
