@@ -38,7 +38,7 @@ export const caoCaoCards: RawCard[] = [
 		id: 'caocao_influence',
 		name: 'Gather Influence',
 		type: 'SKILL',
-		cost: 0;
+		cost: 0,
 		target: 'SELF',
 		rarity: 'basic',
 		effects: [{ type: 'draw', value: 2, target: 'SELF' }],
@@ -128,9 +128,9 @@ export const caoCaoCards: RawCard[] = [
 		id: 'caocao_harsh_march',
 		name: 'Harsh March',
 		type: 'ATTACK',
-		const 1, 
+		const: 1, 
 		target: 'ENEMY',
-		value: 7;
+		value: 7,
 		rarity: 'common',
 		effects: [
 			{type: 'damage', value: 7, target: 'ENEMY'},
@@ -288,7 +288,7 @@ export const caoCaoCards: RawCard[] = [
 		id: 'caocao_edict_of_supply',
 		name: 'Edict of Supply',
 		type: 'SKILL',
-		type: 1,
+		cost: 1,
 		target: 'SELF',
 		rarity: 'common',
     effects: [
@@ -399,7 +399,8 @@ export const caoCaoCards: RawCard[] = [
       { type: 'block', value: 9, target: 'SELF' },
       { type: 'energy', value: -1, target: 'SELF' },
     ],
-  {
+	},
+	{
     id: 'caocao_coordinated_strike',
     name: 'Coordinated Strike',
     type: 'ATTACK',
@@ -442,7 +443,7 @@ export const caoCaoCards: RawCard[] = [
 	cost: 1,
 	target: 'ENEMY',
 	rarity: 'common',
-	effects: [{type: 'apply_status', value: 2, target: 'ENEMY', statusId: 'panic'}
+	effects: [{type: 'apply_status', value: 2, target: 'ENEMY', statusId: 'panic'}],
   },
   
   // Uncommon
@@ -735,7 +736,7 @@ export const caoCaoCards: RawCard[] = [
   },
   {
 	id: 'caocao_concentrated_fire',
-	name: 'Concentrated Fire';
+	name: 'Concentrated Fire',
 	type: 'ATTACK',
 	cost: 2,
 	target: 'ENEMY',
@@ -743,7 +744,7 @@ export const caoCaoCards: RawCard[] = [
 	rarity: 'uncommon',
 	effects: [{type: 'damage', value: 15, target: 'ENEMY'}],
 	exhaust: true,
-  }
+  },
   {
 	id: 'caocao_tactical_genius',
 	name: 'Tactica Genius',
@@ -756,7 +757,7 @@ export const caoCaoCards: RawCard[] = [
       { type: 'draw', value: 1, target: 'SELF' },
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'command' },
     ],
-  }
+  },
   {
 	id: 'caocao_subjugate',
 	name: 'Subjugate',
@@ -802,7 +803,7 @@ export const caoCaoCards: RawCard[] = [
 	type: 'ATTACK',
 	cost: 3,
 	target: 'ENEMY', 
-	value: 18;
+	value: 18,
 	rarity: 'rare',
     effects: [
       { type: 'damage', value: 18, target: 'ENEMY' },
@@ -1129,13 +1130,13 @@ export const liuBeiCards: RawCard[] = [
       { type: 'draw', value: 1, target: 'SELF' },
     ],
     exhaust: true,
+	},
 	{
 		id: 'liubei_honor',
 		name: 'Honor',
 		type: 'SKILL',
 		cost: 1,
 		target: 'SELF',
-		cost: 1,
 		rarity: 'common',
     effects: [
       { type: 'draw', value: 1, target: 'SELF' },
@@ -1212,7 +1213,7 @@ export const liuBeiCards: RawCard[] = [
       { type: 'block', value: 11, target: 'SELF' },
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'formation' },
     ],
-	}
+	},
 	{
 		id: 'liubei_binding_promise',
 		name: 'Binding Promise',
@@ -1225,7 +1226,7 @@ export const liuBeiCards: RawCard[] = [
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'rallied' },
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'formation' },
     ],
-	}
+	},
 	{
 		id: 'liubei_carry_the_wounded',
 		name: 'Carry the Wounded',
