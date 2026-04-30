@@ -1727,8 +1727,7 @@ export const liuBeiCards: RawCard[] = [
 		type: 'SKILL',
 		cost: 1, 
 		target: 'SELF',
-		value: 8,
-		rarity: 'rare',
+		rarity: 'uncommon',
     effects: [
       { type: 'block', value: 6, target: 'SELF' },
       { type: 'apply_status', value: 2, target: 'SELF', statusId: 'rallied' },
@@ -1797,5 +1796,18 @@ export const liuBeiCards: RawCard[] = [
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'rallied' },
     ],
   },
+
+	// Rare
+	{
+		id: 'liubei_mandate_of_heaven',
+		name: 'Mandate of Heaven',
+		type: 'POWER',
+		cost: 3,
+		target: 'SELF',
+		rarity: 'rare',
+		effects: [],
+		description: 'Power: At the start of your turn, draw 1 card.',
+	},
+
 ];
 
