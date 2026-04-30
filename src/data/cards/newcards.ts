@@ -1,4 +1,5 @@
 import type {Card} from '../../types';
+import { EffectSource } from '../../../campaign/characters/combat/combat/EffectQueue';
 import {
     analyzeImportedCards,
     assertNoImportErrors,
@@ -10,8 +11,6 @@ type RawCard = ImportedCard;
 
 
 //caocao
-
-
 export const caoCaoCards: RawCard[] = [
     // This is the starting deck which is 4 cards of each attack and defend + 1 skill card
   {
@@ -1809,6 +1808,186 @@ export const liuBeiCards: RawCard[] = [
 		effects: [],
 		description: 'Power: At the start of your turn, draw 1 card.',
 	},
-
+	{
+		id: 'liubei_collapse_of_virtue',
+		name: 'Collapse of Virtue',
+		type: 'SKILL',
+		cost: 2,
+		target: 'SELF',
+		rarity: 'rare',
+    effects: [
+      { type: 'draw', value: 4, target: 'SELF' },
+      { type: 'apply_status', value: 3, target: 'SELF', statusId: 'rallied' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'low_morale' },
+    ],
+	},
+	{
+		id: 'liubei_peoples_will',
+		name: 'The People\'s Will',
+		type: 'POWER',
+		cost: 2,
+		target: 'SELF',
+		rarity: 'rare',
+		effects: [],
+		description: 'Power: Whenever you gain Rallied, gain 3 Block.',
+  },
+  {
+    id: 'liubei_to_the_last_banner',
+    name: 'To the Last Banner',
+		type: 'ATTACK',
+		cost: 3,
+		target: 'ENEMY',
+		value: 20,
+		rarity: 'rare',
+    effects: [
+      { type: 'damage', value: 20, target: 'ENEMY' },
+      { type: 'apply_status', value: 2, target: 'SELF', statusId: 'rallied' },
+    ],
+	},
+	{
+		id: 'liubeoo_hope_amidst_ruins',
+		name: 'Hope Amidst Ruin',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		rarity: 'rare',
+    effects: [
+      { type: 'block', value: 14, target: 'SELF' },
+      { type: 'draw', value: 2, target: 'SELF' },
+    ],
+		exhaust: true,
+	},
+	{
+		id: 'liubei_sworn_reckoning',
+		name: 'Sworn Reckoning',
+		type: 'ATTACK',
+		cost: 2,
+		target: 'ALL_ENEMIES',
+		value: 8,
+		rarity: 'rare',
+		effects: [
+      { type: 'damage', value: 8, target: 'ALL_ENEMIES' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'rallied' },
+    ],
+		exhaust: true,
+	},
+	{
+		id:'liubei_fragile_legitimacy',
+		name: 'Fragile Legitimacy',
+		type: 'POWER',
+		cost: 2,
+		target: 'SELF',
+		rarity: 'rare',
+		effects: [],
+		description: 'Power: At the end of your turn, if you still have Block, gain 1 Rallied.',
+	},
+	{
+		id: 'liubei_entrust_or_persist', //lmao i dont know the exact translation for 托孤守志 but it refers to liubeis deathbed wishes
+		name: 'Entrust or Persist',
+		type: 'SKILL',
+		cost: 2,
+		target: 'SELF',
+		rarity: 'rare',
+    effects: [
+      { type: 'apply_status', value: 2, target: 'SELF', statusId: 'command' },
+      { type: 'draw', value: 3, target: 'SELF' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'low_morale' },
+    ],
+    exhaust: true,
+  },
+	{
+		id: 'liubei_undying_devotion',
+		name: 'Undying Devotion',
+		type: 'POWER',
+		cost: 2,
+		target: 'SELF',
+		rarity: 'rare',
+		effects: [],
+		description: 'Power: At the start of your turn, if your hp is below 25%, gain 1 rallied and 3 block.',
+	},
+	{
+		id: 'liubei_vow_of_vengeance',
+		name: 'Vow of Vengeance',
+		type: 'ATTACK',
+		cost: 2,
+		target: 'ENEMY',
+		value: 18,
+		rarity: 'rare',
+    effects: [
+      { type: 'damage', value: 18, target: 'ENEMY' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'low_morale' },
+    ],
+	},
+	{
+		id: 'liubei_last_emperor',
+		name: 'Last Emperor',
+		type: 'POWER',
+		cost: 3,
+		target: 'SELF',
+		raroty: 'rare',
+		effects: [],
+		description: 'Power: At the end of your turn, if your HP bar did not take any damage this turn, gain 1 Rallied and draw 1 card.',
+	},
+	{
+		id: 'liubei_winter_march',
+		name: 'March Through Winter',
+		type: 'SKILL',
+		cost: 2,
+		target: 'SELF',
+		rarity: 'rare',
+		effects: [
+			{ type: 'block', value: 10, target: 'SELF' },
+			{ type: 'apply_status', value: 3, target: 'SELF', statusId: 'rallied' },
+		],
+	}
+	{
+		id: 'liubei_shared_destiny',
+		name: 'Shared Destiny',
+		type: 'POWER',
+		cost: 2,
+		target: 'SELF',
+		rarity: 'rare',
+		effects: [],
+		description: 'Power: Whenever you receive a debuff, gain 1 Rallied.'
+	},
+	{
+		id: 'liubei_eternal_watch',
+		name: 'Eternal Watch',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		rarity: 'rare',
+		effect: [
+			{ type: 'block', value: 8, target: 'SELF' },
+			{ type: 'apply_status', value: 2, target: 'SELF', statusID: 'rallied' },
+		],
+		retain: true,
+	},
+	{
+		id: 'liubei_the_great_unifier',
+		name: 'The Great Unifier',
+		type: 'ATTACK',
+		cost: 3,
+		target: 'ALL_ENEMIES',
+		value: 9,
+		rarity: 'rare',
+    effects: [
+      { type: 'damage', value: 9, target: 'ALL_ENEMIES' },
+      { type: 'apply_status', value: 2, target: 'SELF', statusId: 'rallied' },
+    ],
+	},
+	{
+		id: 'liubei_weeping_sky',
+		name: 'Weeping Sky',
+		type: 'SKILL',
+		cost: 2,
+		target: 'SELF',
+		rarity: 'rare',
+    effects: [
+      { type: 'draw', value: 4, target: 'SELF' },
+      { type: 'apply_status', value: 2, target: 'SELF', statusId: 'rallied' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'low_morale' },
+    ],
+  },
 ];
 
