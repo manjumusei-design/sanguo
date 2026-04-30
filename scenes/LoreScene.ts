@@ -273,7 +273,7 @@ export class LoreScene extends Phaser.Scene {
     this.continueButton = btn;
   }
 
-  //Timeline
+  //Timeline (AI GENERATED and reviewed ofc)
 
   private advanceTimeline(): void {
     if (this.currentIndex >= LORE_EVENTS.length - 1) {
