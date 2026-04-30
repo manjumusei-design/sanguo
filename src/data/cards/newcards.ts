@@ -1820,6 +1820,7 @@ export const liuBeiCards: RawCard[] = [
       { type: 'apply_status', value: 3, target: 'SELF', statusId: 'rallied' },
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'low_morale' },
     ],
+		exhaust: true,
 	},
 	{
 		id: 'liubei_peoples_will',
@@ -1845,7 +1846,7 @@ export const liuBeiCards: RawCard[] = [
     ],
 	},
 	{
-		id: 'liubeoo_hope_amidst_ruins',
+		id: 'liubei_hope_amidst_ruins',
 		name: 'Hope Amidst Ruin',
 		type: 'SKILL',
 		cost: 1,
@@ -1939,7 +1940,7 @@ export const liuBeiCards: RawCard[] = [
 			{ type: 'block', value: 10, target: 'SELF' },
 			{ type: 'apply_status', value: 3, target: 'SELF', statusId: 'rallied' },
 		],
-	}
+	},
 	{
 		id: 'liubei_shared_destiny',
 		name: 'Shared Destiny',
@@ -1956,6 +1957,7 @@ export const liuBeiCards: RawCard[] = [
 		type: 'SKILL',
 		cost: 1,
 		target: 'SELF',
+		value: 8,
 		rarity: 'rare',
 		effect: [
 			{ type: 'block', value: 8, target: 'SELF' },
@@ -1989,5 +1991,55 @@ export const liuBeiCards: RawCard[] = [
       { type: 'apply_status', value: 1, target: 'SELF', statusId: 'low_morale' },
     ],
   },
+	{
+		id: 'liubei_final_oath',
+		name: 'Final Oath',
+		type: 'ATTACK',
+		cost: 2,
+		target: 'ENEMY',
+		value: 15,
+		rarity: 'rare',
+    effects: [
+      { type: 'damage', value: 15, target: 'ENEMY' },
+      { type: 'apply_status', value: 2, target: 'SELF', statusId: 'rallied' },
+    ],
+	exhaust: true,
+	},
+	{
+		id: 'liubei_inevitable_dawn',
+		name: 'Inevitable Dawn',
+		type: 'POWER',
+		cost: 2,
+		target: 'SELF',
+		rarity: 'rare',
+		effects: [],
+		description: 'Power: At the start of your turn. If you have 3 or more Rallied, draw 1 card.',
+	},
+	{
+		id: 'liubei_noble_sacrifice',
+		name: 'Noble Sacrifice',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		rarity: 'rare',
+		effects: [
+			{ type: 'block', value: 16, target: 'SELF' },
+			{ types: 'apply_status', value: 2, target: 'SELF', statusId: 'low_morale' },
+		],
+		exhaust: true,
+	},
+	{
+		id: 'liubei_promise_of_spring',
+		name: 'Promise of Spring',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		rarity: 'rare',
+		effects: [
+			{ type: 'draw', value: 3, target: 'SELF' },
+			{ type: 'apply_status', value: 1, target: 'SELF', statusId: 'rallied' },
+		],
+		exhaustive: true,
+	}
 ];
 
