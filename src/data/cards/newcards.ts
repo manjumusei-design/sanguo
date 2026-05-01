@@ -2040,6 +2040,149 @@ export const liuBeiCards: RawCard[] = [
 			{ type: 'apply_status', value: 1, target: 'SELF', statusId: 'rallied' },
 		],
 		exhaustive: true,
-	}
+	},
 ];
+
+
+// Sun Quan
+
+
+export const sunQuanCards: RawCard[] = [
+	// Basic
+	{
+		id: 'sunquan_strike',
+		name: 'Wu Strike',
+		type: 'ATTACK',
+		cost: 1,
+		target: 'ENEMY',
+		value: 6,
+		rarity: 'basic',
+    effects: [{ type: 'block', value: 5, target: 'SELF' }],
+	},
+	{
+		id: 'sunquan_defend',
+		name: 'Wu Defend',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		value: 5,
+		rarity: 'basic',
+    effects: [{ type: 'draw', value: 1, target: 'SELF' }],
+	},
+  {
+    id: 'sunquan_admirals_order',
+    name: 'Admiral\'s Order',
+    type: 'SKILL',
+    cost: 0,
+    target: 'SELF',
+    rarity: 'basic',
+    effects: [{ type: 'draw', value: 1, target: 'SELF' }],
+  },
+	{
+		id: 'sunquan_rising_tide',
+		name: 'Rising Tide',
+		type: 'ATTACK',
+		cost: 1,
+		target: 'ENEMY',
+		value: 5,
+		rarity: 'basic',
+		effects: [
+			{ type: 'damage', value: '5', target: 'ENEMY' },
+			{ type: 'apply_status', value: 1, target: 'ENEMY', statusId: 'burning' },
+		],
+	},
+	{
+		id: 'sunquan_river_defense',
+		name: 'River Defense',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		value: 6,
+		rarity: 'basic',
+		effect: [
+			{ type: 'block', value: 6, target: 'SELF' },
+			{ type: 'apply_status', value: 1, target: 'SELF', statusId: 'entrenched' },
+		],
+	},
+
+	// COMMON
+	{
+		id: 'sunquan_current',
+		name: 'Current',
+		type: 'SKILL',
+		cost: 1,
+		target: 'ENEMY',
+		value: 4,
+		rarity: 'common',
+		effects: [
+			{ type: 'damage', value: 4, target: 'ENEMY' },
+			{ type: 'block', value: 4, target: 'SELF' },
+		],
+	},
+	{
+		id: 'sunquan_fire_at_red_cliffs',
+		name: 'Fire at Red Cliffs',
+		type: 'ATTACK', 
+		cost: 2,
+		target: 'ALL_ENEMIES',
+		value: 6,
+		rarity: 'common',
+		effects: [
+			{ type: 'damage', value: 6, target: 'ALL_ENEMIES' },
+			{ type: 'apply_status', value: 2, target: 'ALL_ENEMIES', statusId: 'burning' },
+		],
+	},
+	{
+		id: 'sunquan_fleet_commander',
+		name: 'Fleet Commander',
+		type: 'SKILL',
+		cost: 1,
+		target: 'SELF',
+		value: 7,
+		rarity: 'common',
+    effects: [
+      { type: 'block', value: 7, target: 'SELF' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'entrenched' },
+    ],
+	},
+  	{
+    id: 'sunquan_hold_the_line',
+    name: 'Hold the Line',
+    type: 'SKILL',
+    cost: 1,
+    target: 'SELF',
+    value: 7,
+    rarity: 'common',
+    effects: [
+      { type: 'block', value: 7, target: 'SELF' },
+      { type: 'apply_status', value: 1, target: 'SELF', statusId: 'entrenched' },
+    ],
+ 	 },
+	{
+		id: 'sunquan_smoke_screen',
+		name: 'Smoke on the River',
+		type: 'SKILL',
+		cost: 1,
+		target: 'ENEMY',
+		rarity: 'common',
+		effect: [
+			{ type: 'apply_status', value: 1, target: 'ENEMY', statusId: 'panic'}
+		],
+	},
+	{
+		id: 'sunquan_probe_current',
+		name: 'Probe the Current', //IDK HOW TO TRANSLATE IT. Maybe Summon the current? 
+		type: 'ATTACK',
+		cost: 1, 
+		target: 'ENEMY',
+		value: 7,
+		rarity: 'common',
+		effects: [
+			{ type: 'apply_staus', value: 1, }
+		]
+	}
+
+	
+
+]
 
